@@ -1,343 +1,72 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
-<title>NovaClass</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%}
-:root{--bg:#FFF;--section:#F8FAFC;--text:#1E293B;--muted:#64748B;--brand:#0F172A;
-  --accent:#2563EB;--accent-h:#1D4ED8;--danger:#DC2626;--border:#E2E8F0;--rc:20px;--ri:14px;--rt:12px}
-body{font-family:'Comfortaa',sans-serif;background:var(--bg);color:var(--text);
-  font-size:16px;line-height:1.5;overflow:hidden;-webkit-font-smoothing:antialiased}
-.hidden{display:none!important}
-#loader{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;background:#fff}
-#loader .loader-logo{width:96px;height:96px;border-radius:22px;overflow:hidden;
-  box-shadow:0 12px 30px -8px rgba(37,99,235,.35);animation:pulse 1.4s ease-in-out infinite}
-#loader .loader-logo svg{width:100%;height:100%;display:block}
-#loader .loader-title{margin-top:18px;font-size:16px;font-weight:700;color:var(--brand)}
-#loader .loader-bar{margin-top:18px;width:180px;height:4px;border-radius:99px;background:#EFF3F9;overflow:hidden}
-#loader .loader-bar>span{display:block;height:100%;width:0;background:linear-gradient(90deg,#3B82F6,#1D4ED8);
-  border-radius:99px;animation:fill 2s ease-out forwards}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
-@keyframes fill{from{width:0}to{width:100%}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-@keyframes zoom{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
-@keyframes shake{
-  10%,90%{transform:translateX(-2px)}
-  20%,80%{transform:translateX(4px)}
-  30%,50%,70%{transform:translateX(-6px)}
-  40%,60%{transform:translateX(6px)}
-}
-#authView{display:flex;align-items:center;justify-content:center;min-height:100vh;
-  padding:20px;background:var(--section);animation:up .4s ease both}
-.card{width:100%;max-width:400px;background:#fff;border:1px solid var(--border);
-  border-radius:var(--rc);padding:26px 26px 24px;box-shadow:0 4px 6px -1px rgba(0,0,0,.05);
-  animation:zoom .35s ease both}
-.logo{text-align:center;margin-bottom:18px}
-.logo-mark{display:inline-flex;align-items:center;justify-content:center;width:80px;height:80px;
-  border-radius:20px;overflow:hidden;margin-bottom:12px;box-shadow:0 8px 20px -8px rgba(37,99,235,.35)}
-.logo-mark svg{width:100%;height:100%;display:block}
-.logo h1{font-size:18px;font-weight:700;color:var(--brand)}
-.tabs{position:relative;display:flex;background:var(--section);border:1px solid var(--border);
-  border-radius:var(--rt);padding:5px;margin-bottom:18px;overflow:hidden}
-.tabs .slider{position:absolute;top:5px;left:5px;width:calc(50% - 5px);height:calc(100% - 10px);
-  background:var(--accent);border-radius:10px;transition:transform .45s cubic-bezier(.34,1.4,.64,1);
-  z-index:0;box-shadow:0 4px 12px -4px rgba(37,99,235,.5)}
-.tabs[data-active="reg"] .slider{transform:translateX(100%)}
-.tab{position:relative;z-index:1;flex:1;padding:10px 8px;border:none;background:transparent;
-  color:var(--muted);font-family:inherit;font-size:13.5px;font-weight:500;cursor:pointer;
-  border-radius:10px;transition:color .3s ease}
-.tab.active{color:#fff;font-weight:700}
-.tab:active{transform:scale(.97)}
-.forms-wrap{position:relative;overflow:hidden;height:0;transition:height .45s cubic-bezier(.4,.1,.2,1)}
-.slider-track{display:flex;width:200%;transition:transform .45s cubic-bezier(.4,.1,.2,1);
-  will-change:transform;align-items:flex-start}
-.slider-track[data-active="reg"]{transform:translateX(-50%)}
-.slide-pane{width:50%;flex-shrink:0;padding:0 2px}
-.field{margin-bottom:12px}
-.field label{display:block;font-size:12px;font-weight:500;color:var(--muted);
-  margin-bottom:6px;padding-left:2px}
-input{width:100%;padding:12px 15px;border:1px solid var(--border);border-radius:var(--ri);
-  background:#fff;color:var(--text);font-family:inherit;font-size:14px;outline:none;
-  transition:border-color .2s ease,box-shadow .2s ease}
-input::placeholder{color:#94A3B8}
-input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(37,99,235,.12)}
-input.error{border-color:var(--danger);box-shadow:0 0 0 4px rgba(220,38,38,.14);
-  animation:shake .5s cubic-bezier(.36,.07,.19,.97) both}
-.btn{width:100%;padding:12px;border:none;border-radius:var(--ri);background:var(--accent);
-  color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;margin-top:6px;
-  transition:background .2s ease,transform .15s ease,box-shadow .2s ease}
-.btn:hover{background:var(--accent-h);box-shadow:0 8px 20px -8px rgba(37,99,235,.5)}
-.btn:active{transform:scale(.97)}
-.btn:disabled{opacity:.55;cursor:wait}
-.err{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA;border-radius:var(--ri);
-  padding:10px 13px;font-size:13px;margin-bottom:12px;line-height:1.45;animation:up .25s ease both}
-#appView{position:fixed;inset:0;z-index:10;background:#fff;animation:fadeIn .35s ease both}
-</style>
-</head>
-<body>
+const SHEET_NAME = 'Users';
+const HEADERS = ['email', 'password', 'name', 'createdAt'];
 
-<div id="loader" class="hidden">
-  <div class="loader-logo">
-    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#3FA9FF"/>
-          <stop offset="50%" stop-color="#1E6EE8"/>
-          <stop offset="100%" stop-color="#0A47CC"/>
-        </linearGradient>
-      </defs>
-      <rect width="200" height="200" fill="url(#bgGrad)"/>
-      <path d="M60 75 C 60 68, 64 64, 72 64 C 84 64, 92 70, 98 76 L 98 138 C 92 132, 84 128, 72 128 C 64 128, 60 132, 60 138 Z" fill="#F0F4FA"/>
-      <path d="M140 75 C 140 68, 136 64, 128 64 C 116 64, 108 70, 102 76 L 102 138 C 108 132, 116 128, 128 128 C 136 128, 140 132, 140 138 Z" fill="#FFFFFF"/>
-      <ellipse cx="100" cy="140" rx="14" ry="10" fill="#F5F8FD"/>
-      <path d="M92 148 Q 96 156, 100 150 Q 104 156, 108 148" stroke="#F5F8FD" stroke-width="6" stroke-linecap="round" fill="none"/>
-    </svg>
-  </div>
-  <div class="loader-title">NovaClass</div>
-  <div class="loader-bar"><span></span></div>
-</div>
-
-<div id="authView">
-  <div class="card">
-    <div class="logo">
-      <div class="logo-mark">
-        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="bgGrad2" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#3FA9FF"/>
-              <stop offset="50%" stop-color="#1E6EE8"/>
-              <stop offset="100%" stop-color="#0A47CC"/>
-            </linearGradient>
-          </defs>
-          <rect width="200" height="200" fill="url(#bgGrad2)"/>
-          <path d="M60 75 C 60 68, 64 64, 72 64 C 84 64, 92 70, 98 76 L 98 138 C 92 132, 84 128, 72 128 C 64 128, 60 132, 60 138 Z" fill="#F0F4FA"/>
-          <path d="M140 75 C 140 68, 136 64, 128 64 C 116 64, 108 70, 102 76 L 102 138 C 108 132, 116 128, 128 128 C 136 128, 140 132, 140 138 Z" fill="#FFFFFF"/>
-          <ellipse cx="100" cy="140" rx="14" ry="10" fill="#F5F8FD"/>
-          <path d="M92 148 Q 96 156, 100 150 Q 104 156, 108 148" stroke="#F5F8FD" stroke-width="6" stroke-linecap="round" fill="none"/>
-        </svg>
-      </div>
-      <h1>NovaClass</h1>
-    </div>
-
-    <div class="tabs" id="tabs" data-active="login">
-      <div class="slider"></div>
-      <button class="tab active" id="tabLogin">Вход</button>
-      <button class="tab" id="tabReg">Регистрация</button>
-    </div>
-
-    <div id="errBox" class="err hidden"></div>
-
-    <div class="forms-wrap" id="formsWrap">
-      <div class="slider-track" id="track" data-active="login">
-
-        <div class="slide-pane" data-pane="login">
-          <div class="field">
-            <label>Логин</label>
-            <input id="loginEmail" type="text" placeholder="Введите логин" autocomplete="username" spellcheck="false">
-          </div>
-          <div class="field">
-            <label>Пароль</label>
-            <input id="loginPass" type="password" placeholder="Введите пароль" autocomplete="current-password">
-          </div>
-          <button class="btn" id="loginBtn">Войти</button>
-        </div>
-
-        <div class="slide-pane" data-pane="reg">
-          <div class="field">
-            <label>Имя пользователя</label>
-            <input id="regName" type="text" placeholder="Введите имя" autocomplete="name" spellcheck="false">
-          </div>
-          <div class="field">
-            <label>Логин</label>
-            <input id="regEmail" type="text" placeholder="Введите логин" autocomplete="username" spellcheck="false">
-          </div>
-          <div class="field">
-            <label>Пароль</label>
-            <input id="regPass" type="password" placeholder="Минимум 6 символов" autocomplete="new-password">
-          </div>
-          <div class="field">
-            <label>Повтор пароля</label>
-            <input id="regPass2" type="password" placeholder="Повторите пароль" autocomplete="new-password">
-          </div>
-          <button class="btn" id="regBtn">Создать аккаунт</button>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="appView" class="hidden"></div>
-
-<script>
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbw-fWUM0ZaLtzS_I62c_sS5APOg-rdOaBvS_fUqIinVqWIas9iQPBCcdd0rRO9vQwwU/exec';
-const $ = id => document.getElementById(id);
-const SESSION_KEY = 'nc_session';
-const SESSION_MS = 30 * 24 * 60 * 60 * 1000;
-
-function saveSession(user) {
-  try { localStorage.setItem(SESSION_KEY, JSON.stringify({
-    user, loginAt: Date.now(), expiresAt: Date.now() + SESSION_MS })); } catch (e) {}
-}
-function getSession() {
+function doGet(e) {
+  const p = (e && e.parameter) || {};
+  const cb = p.callback;
+  let result;
   try {
-    const raw = localStorage.getItem(SESSION_KEY);
-    if (!raw) return null;
-    const d = JSON.parse(raw);
-    if (!d || !d.expiresAt) return null;
-    if (Date.now() >= d.expiresAt) { localStorage.removeItem(SESSION_KEY); return null; }
-    return d;
-  } catch (e) { return null; }
-}
-
-function fitFormHeight() {
-  const pane = document.querySelector('.slide-pane[data-pane="' + $('track').dataset.active + '"]');
-  if (pane) $('formsWrap').style.height = pane.scrollHeight + 'px';
-}
-
-$('tabLogin').onclick = () => switchTab('login');
-$('tabReg').onclick = () => switchTab('reg');
-
-function switchTab(which) {
-  hideErr();
-  const isLogin = which === 'login';
-  $('tabLogin').classList.toggle('active', isLogin);
-  $('tabReg').classList.toggle('active', !isLogin);
-  $('tabs').dataset.active = isLogin ? 'login' : 'reg';
-  $('track').dataset.active = isLogin ? 'login' : 'reg';
-  fitFormHeight();
-}
-
-let jsonpCounter = 0;
-function jsonp(params) {
-  return new Promise((resolve, reject) => {
-    const cbName = 'nc_cb_' + (++jsonpCounter) + '_' + Date.now();
-    let finished = false;
-    window[cbName] = function(data) {
-      finished = true;
-      try { resolve(data); } finally {
-        delete window[cbName];
-        if (script.parentNode) script.parentNode.removeChild(script);
-      }
-    };
-    const qs = new URLSearchParams(Object.assign({}, params, { callback: cbName })).toString();
-    const script = document.createElement('script');
-    script.src = GAS_URL + '?' + qs + '&_=' + Date.now();
-    script.onerror = function() {
-      if (finished) return;
-      finished = true;
-      delete window[cbName];
-      if (script.parentNode) script.parentNode.removeChild(script);
-      reject(new Error('Не удалось связаться с сервером.'));
-    };
-    document.body.appendChild(script);
-    setTimeout(() => {
-      if (finished) return;
-      finished = true;
-      delete window[cbName];
-      if (script.parentNode) script.parentNode.removeChild(script);
-      reject(new Error('Сервер не ответил. Попробуйте позже.'));
-    }, 20000);
-  });
-}
-
-document.querySelectorAll('input').forEach(inp => {
-  inp.addEventListener('input', () => inp.classList.remove('error'));
-});
-
-function markEmpty(inputs) {
-  let any = false;
-  inputs.forEach(inp => {
-    if (!inp.value.trim()) {
-      inp.classList.remove('error');
-      void inp.offsetWidth;
-      inp.classList.add('error');
-      any = true;
-    }
-  });
-  return any;
-}
-
-$('loginBtn').onclick = doLogin;
-$('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-
-async function doLogin() {
-  hideErr();
-  if (markEmpty([$('loginEmail'), $('loginPass')])) { showErr('Введите данные!'); return; }
-  $('loginBtn').disabled = true;
-  try {
-    const res = await jsonp({
-      action: 'login',
-      email: $('loginEmail').value.trim().toLowerCase(),
-      pass: $('loginPass').value
-    });
-    if (res.status !== 'ok') { showErr(res.message || 'Неверный логин или пароль'); return; }
-    saveSession(res.user);
-    goToApp();
-  } catch (e) { showErr(e.message); }
-  finally { $('loginBtn').disabled = false; }
-}
-
-$('regBtn').onclick = doRegister;
-$('regPass2').addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); });
-
-async function doRegister() {
-  hideErr();
-  if (markEmpty([$('regName'), $('regEmail'), $('regPass'), $('regPass2')])) { showErr('Введите данные!'); return; }
-  const pass = $('regPass').value;
-  const pass2 = $('regPass2').value;
-  if (pass.length < 6) { markEmpty([$('regPass')]); showErr('Пароль минимум 6 символов'); return; }
-  if (pass !== pass2) { markEmpty([$('regPass2')]); showErr('Пароли не совпадают'); return; }
-
-  $('regBtn').disabled = true;
-  try {
-    const res = await jsonp({
-      action: 'register',
-      email: $('regEmail').value.trim().toLowerCase(),
-      pass: pass,
-      name: $('regName').value.trim()
-    });
-    if (res.status !== 'ok') { showErr(res.message || 'Ошибка регистрации'); return; }
-    saveSession(res.user);
-    goToApp();
-  } catch (e) { showErr(e.message); }
-  finally { $('regBtn').disabled = false; }
-}
-
-function goToApp() {
-  $('authView').classList.add('hidden');
-  $('loader').classList.remove('hidden');
-  setTimeout(() => {
-    $('loader').classList.add('hidden');
-    $('appView').classList.remove('hidden');
-  }, 2000);
-}
-
-function showErr(m) {
-  $('errBox').textContent = m;
-  $('errBox').classList.remove('hidden');
-  fitFormHeight();
-}
-function hideErr() { $('errBox').classList.add('hidden'); }
-
-(function init() {
-  if (getSession()) {
-    $('authView').classList.add('hidden');
-    $('appView').classList.remove('hidden');
-    return;
+    const a = p.action || '';
+    if (a === 'register')   result = register(p);
+    else if (a === 'login') result = login(p);
+    else                    result = { status: 'ok', message: 'API работает' };
+  } catch (err) {
+    result = { status: 'error', message: 'Ошибка: ' + err.message };
   }
-  requestAnimationFrame(fitFormHeight);
-  window.addEventListener('resize', fitFormHeight);
-  window.addEventListener('load', fitFormHeight);
-})();
-</script>
-</body>
-</html>
+  const body = cb ? cb + '(' + JSON.stringify(result) + ')' : JSON.stringify(result);
+  const type = cb ? ContentService.MimeType.JAVASCRIPT : ContentService.MimeType.JSON;
+  return ContentService.createTextOutput(body).setMimeType(type);
+}
+
+function getSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sh = ss.getSheetByName(SHEET_NAME);
+  if (!sh) {
+    sh = ss.insertSheet(SHEET_NAME);
+    sh.appendRow(HEADERS);
+    sh.setFrozenRows(1);
+  }
+  if (sh.getLastRow() === 0) {
+    sh.appendRow(HEADERS);
+    sh.setFrozenRows(1);
+  }
+  return sh;
+}
+
+function register(p) {
+  const email = String(p.email || '').trim().toLowerCase();
+  const pass  = String(p.pass  || '').trim();
+  const name  = String(p.name  || '').trim();
+  if (!email || !pass || !name) return { status: 'error', message: 'Заполните все поля' };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { status: 'error', message: 'Неверный логин' };
+  if (pass.length < 6) return { status: 'error', message: 'Пароль минимум 6 символов' };
+
+  const sh = getSheet();
+  const last = sh.getLastRow();
+  if (last > 1) {
+    const emails = sh.getRange(2, 1, last - 1, 1).getValues();
+    for (let i = 0; i < emails.length; i++) {
+      if (String(emails[i][0]).trim().toLowerCase() === email)
+        return { status: 'error', message: 'Такой пользователь уже зарегистрирован' };
+    }
+  }
+  sh.appendRow([email, pass, name, new Date().toISOString()]);
+  return { status: 'ok', user: { email: email, name: name } };
+}
+
+function login(p) {
+  const email = String(p.email || '').trim().toLowerCase();
+  const pass  = String(p.pass  || '').trim();
+  if (!email || !pass) return { status: 'error', message: 'Заполните поля' };
+  const sh = getSheet();
+  const last = sh.getLastRow();
+  if (last < 2) return { status: 'error', message: 'Нет пользователей' };
+  const rows = sh.getRange(2, 1, last - 1, 3).getValues();
+  for (let i = 0; i < rows.length; i++) {
+    if (String(rows[i][0]).trim().toLowerCase() === email && String(rows[i][1]).trim() === pass) {
+      const n = String(rows[i][2] || '').trim() || email.split('@')[0];
+      return { status: 'ok', user: { email: email, name: n } };
+    }
+  }
+  return { status: 'error', message: 'Неверный логин или пароль' };
+}
