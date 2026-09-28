@@ -15,12 +15,11 @@ html,body{height:100%}
 body{font-family:'Comfortaa',sans-serif;background:var(--bg);color:var(--text);
   font-size:16px;line-height:1.5;overflow:hidden;-webkit-font-smoothing:antialiased}
 .hidden{display:none!important}
-
 #loader{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;
   align-items:center;justify-content:center;background:#fff}
 #loader .loader-logo{width:96px;height:96px;border-radius:22px;overflow:hidden;
   box-shadow:0 12px 30px -8px rgba(37,99,235,.35);animation:pulse 1.4s ease-in-out infinite}
-#loader .loader-logo img{width:100%;height:100%;object-fit:cover;display:block}
+#loader .loader-logo svg{width:100%;height:100%;display:block}
 #loader .loader-title{margin-top:18px;font-size:16px;font-weight:700;color:var(--brand)}
 #loader .loader-bar{margin-top:18px;width:180px;height:4px;border-radius:99px;background:#EFF3F9;overflow:hidden}
 #loader .loader-bar>span{display:block;height:100%;width:0;background:linear-gradient(90deg,#3B82F6,#1D4ED8);
@@ -36,7 +35,6 @@ body{font-family:'Comfortaa',sans-serif;background:var(--bg);color:var(--text);
   30%,50%,70%{transform:translateX(-6px)}
   40%,60%{transform:translateX(6px)}
 }
-
 #authView{display:flex;align-items:center;justify-content:center;min-height:100vh;
   padding:20px;background:var(--section);animation:up .4s ease both}
 .card{width:100%;max-width:400px;background:#fff;border:1px solid var(--border);
@@ -45,9 +43,8 @@ body{font-family:'Comfortaa',sans-serif;background:var(--bg);color:var(--text);
 .logo{text-align:center;margin-bottom:18px}
 .logo-mark{display:inline-flex;align-items:center;justify-content:center;width:80px;height:80px;
   border-radius:20px;overflow:hidden;margin-bottom:12px;box-shadow:0 8px 20px -8px rgba(37,99,235,.35)}
-.logo-mark img{width:100%;height:100%;object-fit:cover;display:block}
+.logo-mark svg{width:100%;height:100%;display:block}
 .logo h1{font-size:18px;font-weight:700;color:var(--brand)}
-
 .tabs{position:relative;display:flex;background:var(--section);border:1px solid var(--border);
   border-radius:var(--rt);padding:5px;margin-bottom:18px;overflow:hidden}
 .tabs .slider{position:absolute;top:5px;left:5px;width:calc(50% - 5px);height:calc(100% - 10px);
@@ -59,13 +56,11 @@ body{font-family:'Comfortaa',sans-serif;background:var(--bg);color:var(--text);
   border-radius:10px;transition:color .3s ease}
 .tab.active{color:#fff;font-weight:700}
 .tab:active{transform:scale(.97)}
-
 .forms-wrap{position:relative;overflow:hidden;height:0;transition:height .45s cubic-bezier(.4,.1,.2,1)}
 .slider-track{display:flex;width:200%;transition:transform .45s cubic-bezier(.4,.1,.2,1);
   will-change:transform;align-items:flex-start}
 .slider-track[data-active="reg"]{transform:translateX(-50%)}
 .slide-pane{width:50%;flex-shrink:0;padding:0 2px}
-
 .field{margin-bottom:12px}
 .field label{display:block;font-size:12px;font-weight:500;color:var(--muted);
   margin-bottom:6px;padding-left:2px}
@@ -76,17 +71,14 @@ input::placeholder{color:#94A3B8}
 input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(37,99,235,.12)}
 input.error{border-color:var(--danger);box-shadow:0 0 0 4px rgba(220,38,38,.14);
   animation:shake .5s cubic-bezier(.36,.07,.19,.97) both}
-
 .btn{width:100%;padding:12px;border:none;border-radius:var(--ri);background:var(--accent);
   color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;margin-top:6px;
   transition:background .2s ease,transform .15s ease,box-shadow .2s ease}
 .btn:hover{background:var(--accent-h);box-shadow:0 8px 20px -8px rgba(37,99,235,.5)}
 .btn:active{transform:scale(.97)}
 .btn:disabled{opacity:.55;cursor:wait}
-
 .err{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA;border-radius:var(--ri);
   padding:10px 13px;font-size:13px;margin-bottom:12px;line-height:1.45;animation:up .25s ease both}
-
 #appView{position:fixed;inset:0;z-index:10;background:#fff;animation:fadeIn .35s ease both}
 </style>
 </head>
@@ -94,7 +86,28 @@ input.error{border-color:var(--danger);box-shadow:0 0 0 4px rgba(220,38,38,.14);
 
 <div id="loader" class="hidden">
   <div class="loader-logo">
-    <img src="https://files.deepseeksvc.com/api/file?file_id=be5b63c6-1f9c-4c5a-afb5-3e7c7b0fee7a&state=mR%2Bkd44iqvaveIuUdjOWFjJ%2FamZOXMSs6zm0yysYjzQfv7ky1NXduHZcvoTUral%2Bs4HTtTYNlOsldE%2BIGbbQJ6zXWRS78pYqfNHBUNdvoJUH1SDLkTnFDDWwmtjtXNnYVD5JQbIA3xKyXnRHeQmJAjuqYRbzTNdFjLJURAktffi0dik%2BhJygEwFI%2BIpvcaNEusyEYhgJGJmbc1vvPYPoPsjo99xWoDXrTLzGZVwgZZo91uWghglE5TNgDkjveBmh60oOzzRx%2BAKdI8mDpkrbAbtUgqfpdPzryz32CmCoh8IRG8POxRtJ2HqE1zHjOutDEqjjzgL%2BVyqUU9RsyW1OI7VvqUwpgamm70xVlY0KSJd29sPOJeWe0RE1&ty=p" alt="">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#3FA9FF"/>
+          <stop offset="50%" stop-color="#1E6EE8"/>
+          <stop offset="100%" stop-color="#0A47CC"/>
+        </linearGradient>
+        <linearGradient id="pageGradL" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#F0F4FA"/>
+          <stop offset="100%" stop-color="#FFFFFF"/>
+        </linearGradient>
+        <linearGradient id="pageGradR" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#FFFFFF"/>
+          <stop offset="100%" stop-color="#F0F4FA"/>
+        </linearGradient>
+      </defs>
+      <rect width="200" height="200" fill="url(#bgGrad)"/>
+      <path d="M60 75 C 60 68, 64 64, 72 64 C 84 64, 92 70, 98 76 L 98 138 C 92 132, 84 128, 72 128 C 64 128, 60 132, 60 138 Z" fill="url(#pageGradL)"/>
+      <path d="M140 75 C 140 68, 136 64, 128 64 C 116 64, 108 70, 102 76 L 102 138 C 108 132, 116 128, 128 128 C 136 128, 140 132, 140 138 Z" fill="url(#pageGradR)"/>
+      <ellipse cx="100" cy="140" rx="14" ry="10" fill="#F5F8FD"/>
+      <path d="M92 148 Q 96 156, 100 150 Q 104 156, 108 148" stroke="#F5F8FD" stroke-width="6" stroke-linecap="round" fill="none"/>
+    </svg>
   </div>
   <div class="loader-title">NovaClass</div>
   <div class="loader-bar"><span></span></div>
@@ -104,7 +117,20 @@ input.error{border-color:var(--danger);box-shadow:0 0 0 4px rgba(220,38,38,.14);
   <div class="card">
     <div class="logo">
       <div class="logo-mark">
-        <img src="https://files.deepseeksvc.com/api/file?file_id=be5b63c6-1f9c-4c5a-afb5-3e7c7b0fee7a&state=mR%2Bkd44iqvaveIuUdjOWFjJ%2FamZOXMSs6zm0yysYjzQfv7ky1NXduHZcvoTUral%2Bs4HTtTYNlOsldE%2BIGbbQJ6zXWRS78pYqfNHBUNdvoJUH1SDLkTnFDDWwmtjtXNnYVD5JQbIA3xKyXnRHeQmJAjuqYRbzTNdFjLJURAktffi0dik%2BhJygEwFI%2BIpvcaNEusyEYhgJGJmbc1vvPYPoPsjo99xWoDXrTLzGZVwgZZo91uWghglE5TNgDkjveBmh60oOzzRx%2BAKdI8mDpkrbAbtUgqfpdPzryz32CmCoh8IRG8POxRtJ2HqE1zHjOutDEqjjzgL%2BVyqUU9RsyW1OI7VvqUwpgamm70xVlY0KSJd29sPOJeWe0RE1&ty=p" alt="">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="bgGrad2" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#3FA9FF"/>
+              <stop offset="50%" stop-color="#1E6EE8"/>
+              <stop offset="100%" stop-color="#0A47CC"/>
+            </linearGradient>
+          </defs>
+          <rect width="200" height="200" fill="url(#bgGrad2)"/>
+          <path d="M60 75 C 60 68, 64 64, 72 64 C 84 64, 92 70, 98 76 L 98 138 C 92 132, 84 128, 72 128 C 64 128, 60 132, 60 138 Z" fill="#F0F4FA"/>
+          <path d="M140 75 C 140 68, 136 64, 128 64 C 116 64, 108 70, 102 76 L 102 138 C 108 132, 116 128, 128 128 C 136 128, 140 132, 140 138 Z" fill="#FFFFFF"/>
+          <ellipse cx="100" cy="140" rx="14" ry="10" fill="#F5F8FD"/>
+          <path d="M92 148 Q 96 156, 100 150 Q 104 156, 108 148" stroke="#F5F8FD" stroke-width="6" stroke-linecap="round" fill="none"/>
+        </svg>
       </div>
       <h1>NovaClass</h1>
     </div>
@@ -167,8 +193,7 @@ const SESSION_MS = 30 * 24 * 60 * 60 * 1000;
 
 function saveSession(user) {
   try { localStorage.setItem(SESSION_KEY, JSON.stringify({
-    user: user, loginAt: Date.now(), expiresAt: Date.now() + SESSION_MS
-  })); } catch (e) {}
+    user, loginAt: Date.now(), expiresAt: Date.now() + SESSION_MS })); } catch (e) {}
 }
 function getSession() {
   try {
@@ -182,8 +207,7 @@ function getSession() {
 }
 
 function fitFormHeight() {
-  const active = $('track').dataset.active;
-  const pane = document.querySelector('.slide-pane[data-pane="' + active + '"]');
+  const pane = document.querySelector('.slide-pane[data-pane="' + $('track').dataset.active + '"]');
   if (pane) $('formsWrap').style.height = pane.scrollHeight + 'px';
 }
 
@@ -200,13 +224,11 @@ function switchTab(which) {
   fitFormHeight();
 }
 
-/* === JSONP — обходит CORS и работает из file:// === */
 let jsonpCounter = 0;
 function jsonp(params) {
   return new Promise((resolve, reject) => {
     const cbName = 'nc_cb_' + (++jsonpCounter) + '_' + Date.now();
     let finished = false;
-
     window[cbName] = function(data) {
       finished = true;
       try { resolve(data); } finally {
@@ -214,7 +236,6 @@ function jsonp(params) {
         if (script.parentNode) script.parentNode.removeChild(script);
       }
     };
-
     const qs = new URLSearchParams(Object.assign({}, params, { callback: cbName })).toString();
     const script = document.createElement('script');
     script.src = GAS_URL + '?' + qs + '&_=' + Date.now();
@@ -223,11 +244,10 @@ function jsonp(params) {
       finished = true;
       delete window[cbName];
       if (script.parentNode) script.parentNode.removeChild(script);
-      reject(new Error('Не удалось связаться с сервером. Проверь интернет.'));
+      reject(new Error('Не удалось связаться с сервером. Проверь, что в Apps Script стоит доступ «Anyone» и развёрнута новая версия.'));
     };
     document.body.appendChild(script);
-
-    setTimeout(function() {
+    setTimeout(() => {
       if (finished) return;
       finished = true;
       delete window[cbName];
@@ -270,11 +290,8 @@ async function doLogin() {
     if (res.status !== 'ok') { showErr(res.message || 'Неверный логин или пароль'); return; }
     saveSession(res.user);
     goToApp();
-  } catch (e) {
-    showErr(e.message);
-  } finally {
-    $('loginBtn').disabled = false;
-  }
+  } catch (e) { showErr(e.message); }
+  finally { $('loginBtn').disabled = false; }
 }
 
 $('regBtn').onclick = doRegister;
@@ -299,11 +316,8 @@ async function doRegister() {
     if (res.status !== 'ok') { showErr(res.message || 'Ошибка регистрации'); return; }
     saveSession(res.user);
     goToApp();
-  } catch (e) {
-    showErr(e.message);
-  } finally {
-    $('regBtn').disabled = false;
-  }
+  } catch (e) { showErr(e.message); }
+  finally { $('regBtn').disabled = false; }
 }
 
 function goToApp() {
@@ -316,9 +330,8 @@ function goToApp() {
 }
 
 function showErr(m) {
-  const e = $('errBox');
-  e.textContent = m;
-  e.classList.remove('hidden');
+  $('errBox').textContent = m;
+  $('errBox').classList.remove('hidden');
   fitFormHeight();
 }
 function hideErr() { $('errBox').classList.add('hidden'); }
