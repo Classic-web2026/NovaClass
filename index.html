@@ -93,18 +93,10 @@ input.error{border-color:var(--danger);box-shadow:0 0 0 4px rgba(220,38,38,.14);
           <stop offset="50%" stop-color="#1E6EE8"/>
           <stop offset="100%" stop-color="#0A47CC"/>
         </linearGradient>
-        <linearGradient id="pageGradL" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="#F0F4FA"/>
-          <stop offset="100%" stop-color="#FFFFFF"/>
-        </linearGradient>
-        <linearGradient id="pageGradR" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="#FFFFFF"/>
-          <stop offset="100%" stop-color="#F0F4FA"/>
-        </linearGradient>
       </defs>
       <rect width="200" height="200" fill="url(#bgGrad)"/>
-      <path d="M60 75 C 60 68, 64 64, 72 64 C 84 64, 92 70, 98 76 L 98 138 C 92 132, 84 128, 72 128 C 64 128, 60 132, 60 138 Z" fill="url(#pageGradL)"/>
-      <path d="M140 75 C 140 68, 136 64, 128 64 C 116 64, 108 70, 102 76 L 102 138 C 108 132, 116 128, 128 128 C 136 128, 140 132, 140 138 Z" fill="url(#pageGradR)"/>
+      <path d="M60 75 C 60 68, 64 64, 72 64 C 84 64, 92 70, 98 76 L 98 138 C 92 132, 84 128, 72 128 C 64 128, 60 132, 60 138 Z" fill="#F0F4FA"/>
+      <path d="M140 75 C 140 68, 136 64, 128 64 C 116 64, 108 70, 102 76 L 102 138 C 108 132, 116 128, 128 128 C 136 128, 140 132, 140 138 Z" fill="#FFFFFF"/>
       <ellipse cx="100" cy="140" rx="14" ry="10" fill="#F5F8FD"/>
       <path d="M92 148 Q 96 156, 100 150 Q 104 156, 108 148" stroke="#F5F8FD" stroke-width="6" stroke-linecap="round" fill="none"/>
     </svg>
@@ -186,7 +178,7 @@ input.error{border-color:var(--danger);box-shadow:0 0 0 4px rgba(220,38,38,.14);
 <div id="appView" class="hidden"></div>
 
 <script>
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzPvr50A4VBU2rEK-H_hdHF7BZ1c7VXFt0YqUs7MvzaBYh-tloDO2y0DcFBvBDHXH37/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbw-fWUM0ZaLtzS_I62c_sS5APOg-rdOaBvS_fUqIinVqWIas9iQPBCcdd0rRO9vQwwU/exec';
 const $ = id => document.getElementById(id);
 const SESSION_KEY = 'nc_session';
 const SESSION_MS = 30 * 24 * 60 * 60 * 1000;
@@ -244,7 +236,7 @@ function jsonp(params) {
       finished = true;
       delete window[cbName];
       if (script.parentNode) script.parentNode.removeChild(script);
-      reject(new Error('Не удалось связаться с сервером. Проверь, что в Apps Script стоит доступ «Anyone» и развёрнута новая версия.'));
+      reject(new Error('Не удалось связаться с сервером.'));
     };
     document.body.appendChild(script);
     setTimeout(() => {
