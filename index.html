@@ -14,10 +14,9 @@ body{font-family:'Comfortaa',sans-serif;background:var(--section);color:var(--te
 .hidden{display:none!important}
 .msr{font-family:'Material Symbols Rounded';font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;font-size:26px;display:inline-flex;align-items:center;justify-content:center;color:currentColor;line-height:1;user-select:none;flex-shrink:0}
 
-/* ============ LOADER ============ */
+/* LOADER */
 #loader{position:fixed;inset:0;z-index:9999;background:#EFF6FF;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s ease}
 #loader.fade-out{opacity:0;pointer-events:none}
-
 .loader-center{position:relative;width:120px;height:120px}
 .loader-center .ring{position:absolute;inset:0;animation:ringFadeOut .45s ease 1.5s forwards}
 .loader-center .ring svg{width:100%;height:100%;display:block}
@@ -29,25 +28,18 @@ body{font-family:'Comfortaa',sans-serif;background:var(--section);color:var(--te
 .loader-center .blob svg{width:78%;height:78%;display:block;filter:drop-shadow(0 8px 22px rgba(37,99,235,.35));animation:blobSpin 3s linear 2s infinite}
 @keyframes blobIn{0%{opacity:0;transform:scale(.4) rotate(-40deg)}100%{opacity:1;transform:scale(1) rotate(0deg)}}
 @keyframes blobSpin{to{transform:rotate(360deg)}}
-
 .loader-line{position:relative;width:min(420px,78vw);height:22px;margin-top:34px;opacity:0;animation:lineFadeIn .15s ease forwards,lineFadeOut .4s ease 1.9s forwards;overflow:visible}
 @keyframes lineFadeIn{to{opacity:1}}
 @keyframes lineFadeOut{to{opacity:0}}
 .loader-line svg{display:block;width:100%;height:100%;overflow:visible}
-.loader-line .wave-path{
-  fill:none;stroke:#2563EB;stroke-width:9;
-  stroke-linecap:round;stroke-linejoin:round;
-  clip-path:inset(0 100% 0 0);
-  animation:waveReveal .6s cubic-bezier(.4,.1,.2,1) forwards;
-}
+.loader-line .wave-path{fill:none;stroke:#2563EB;stroke-width:9;stroke-linecap:round;stroke-linejoin:round;clip-path:inset(0 100% 0 0);animation:waveReveal .6s cubic-bezier(.4,.1,.2,1) forwards}
 @keyframes waveReveal{to{clip-path:inset(0 0 0 0)}}
 .loader-line .dot{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:#2563EB;animation:dotPulse 1.4s ease-in-out infinite,dotFade .3s ease 1.9s forwards}
 @keyframes dotPulse{0%,100%{opacity:.4;transform:translateY(-50%) scale(.8)}50%{opacity:1;transform:translateY(-50%) scale(1.3)}}
 @keyframes dotFade{to{opacity:0}}
-
 @media (max-width:520px){.loader-center{width:90px;height:90px}.loader-line{margin-top:24px;height:18px}}
 
-/* ============ AUTH ============ */
+/* AUTH */
 #authView{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:var(--section)}
 .card{width:100%;max-width:400px;background:#fff;border:1px solid var(--border);border-radius:var(--rc);padding:28px 28px 26px;box-shadow:var(--shadow);animation:zoom .35s ease both}
 @keyframes zoom{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
@@ -72,15 +64,22 @@ input::placeholder,textarea::placeholder{color:#94A3B8}
 input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(37,99,235,.12)}
 input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animation:shake .5s cubic-bezier(.36,.07,.19,.97) both}
 @keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-6px)}40%,60%{transform:translateX(6px)}}
+.pass-wrap{position:relative}
+.pass-wrap input{padding-right:48px}
+.pass-toggle{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:none;background:transparent;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;border-radius:10px;transition:background .2s ease,color .2s ease;padding:0}
+.pass-toggle:hover{background:var(--section);color:var(--accent)}
+.pass-toggle:active{transform:translateY(-50%) scale(.9)}
+.pass-toggle .msr{font-size:22px}
 .btn{width:100%;padding:13px;border:none;border-radius:var(--ri);background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;transition:background .2s ease,transform .15s ease,box-shadow .2s ease;display:inline-flex;align-items:center;justify-content:center;gap:8px}
 .btn:hover{background:var(--accent-h);box-shadow:var(--shadow-hover)}
 .btn:active{transform:scale(.97)}
-.btn:disabled{opacity:.55;cursor:wait}
+.btn:disabled{opacity:.75;cursor:wait}
 .btn-ghost{background:#fff;color:var(--text);border:1px solid var(--border)}
 .btn-ghost:hover{background:var(--section);box-shadow:none}
 .err{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA;border-radius:var(--ri);padding:11px 14px;font-size:13px;margin-bottom:14px;line-height:1.45}
+.err code{background:rgba(153,27,27,.1);padding:1px 5px;border-radius:4px;font-size:12px}
 
-/* ============ APP ============ */
+/* APP */
 #appView{position:fixed;inset:0;z-index:10;background:var(--section)}
 .app-layout{display:flex;gap:var(--gap);padding:var(--gap);height:100%;overflow:hidden}
 .sidebar{flex-shrink:0;width:var(--sb-mini);background:#fff;border:1px solid var(--border);border-radius:24px;box-shadow:var(--shadow);padding:20px 14px;display:flex;flex-direction:column;overflow:hidden;transition:width .4s cubic-bezier(.4,.1,.2,1);z-index:30}
@@ -135,8 +134,8 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
 .role-badge.teacher{background:rgba(234,88,12,.15);color:#EA580C}
 .role-badge.director{background:rgba(168,85,247,.15);color:#9333EA}
 .role-badge.admin{background:rgba(220,38,38,.15);color:#DC2626}
-.sor-badge{display:inline-block;padding:3px 10px;font-size:10px;font-weight:700;border-radius:999px;background:rgba(234,88,12,.15);color:#EA580C;margin-left:8px}
-.soch-badge{display:inline-block;padding:3px 10px;font-size:10px;font-weight:700;border-radius:999px;background:rgba(124,58,237,.15);color:#7C3AED;margin-left:8px}
+.sor-badge{display:inline-block;padding:3px 10px;font-size:10px;font-weight:700;border-radius:999px;background:rgba(31,158,168,.15);color:#1F9EA8;margin-left:8px;border:1px solid rgba(31,158,168,.35)}
+.soch-badge{display:inline-block;padding:3px 10px;font-size:10px;font-weight:700;border-radius:999px;background:rgba(30,136,229,.15);color:#1E88E5;margin-left:8px;border:1px solid rgba(30,136,229,.35)}
 .week-wrap{display:flex;flex-direction:column;margin-bottom:18px}
 .week-panel{width:100%;border-radius:16px;background:linear-gradient(135deg,#3B82F6 0%,#2563EB 100%);box-shadow:0 10px 22px -10px rgba(37,99,235,.6);display:flex;flex-direction:column;overflow:hidden}
 .wp-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px 8px}
@@ -169,10 +168,12 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
 .lesson-meta .meta-item{display:inline-flex;align-items:center;gap:5px}
 .lesson-meta .meta-item .msr{font-size:16px;color:var(--muted)}
 .lesson-action{flex-shrink:0;display:flex;gap:8px;align-items:center}
-.btn-icon{width:40px;height:40px;border-radius:12px;border:1px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:background .2s ease,color .2s ease,transform .15s ease}
+.btn-icon{width:40px;height:40px;border-radius:12px;border:1px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:background .2s ease,color .2s ease,transform .15s ease,border-color .2s ease,box-shadow .2s ease}
 .btn-icon:hover{background:var(--section);color:var(--accent);transform:translateY(-1px)}
 .btn-icon:active{transform:scale(.94)}
 .btn-icon.danger:hover{background:#FEF2F2;color:#DC2626}
+.btn-icon.primary{color:var(--accent);border-color:rgba(37,99,235,.3)}
+.btn-icon.primary:hover{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 6px 14px -6px rgba(37,99,235,.55)}
 .btn-icon .msr{font-size:20px}
 .empty-state{padding:60px 24px;text-align:center;color:var(--muted);background:#fff;border:1px solid var(--border);border-radius:16px;display:flex;flex-direction:column;align-items:center;gap:14px;animation:paneIn .35s ease both}
 .empty-state .msr{font-size:54px;color:#CBD5E1;display:block}
@@ -228,10 +229,10 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
 .check-field .check-hint{font-size:11px;color:var(--muted);font-weight:500;margin-top:2px}
 .check-field.danger:hover{border-color:#DC2626}
 .check-field.danger input[type=checkbox]{accent-color:#DC2626}
-.check-field.sor:hover{border-color:#EA580C}
-.check-field.sor input[type=checkbox]{accent-color:#EA580C}
-.check-field.soch:hover{border-color:#7C3AED}
-.check-field.soch input[type=checkbox]{accent-color:#7C3AED}
+.check-field.sor:hover{border-color:#1F9EA8}
+.check-field.sor input[type=checkbox]{accent-color:#1F9EA8}
+.check-field.soch:hover{border-color:#1E88E5}
+.check-field.soch input[type=checkbox]{accent-color:#1E88E5}
 .mobile-bottom{position:fixed;left:10px;right:10px;bottom:10px;height:68px;background:#fff;border:1px solid var(--border);border-radius:22px;box-shadow:0 -6px 24px -8px rgba(15,23,42,.15);display:none;align-items:center;padding:6px 8px;gap:4px;z-index:45}
 .mb-item{flex:1;height:56px;border:none;background:transparent;border-radius:16px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:background .25s ease,color .25s ease,transform .15s ease}
 .mb-item:active{transform:scale(.94)}
@@ -254,11 +255,12 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
 }
 #toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(20px);background:#0F172A;color:#fff;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:600;z-index:300;opacity:0;transition:opacity .25s ease,transform .25s ease;pointer-events:none;max-width:90vw;text-align:center;box-shadow:0 10px 30px -10px rgba(15,23,42,.5)}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
 
-<!-- ============ LOADER ============ -->
 <div id="loader">
   <div class="loader-center">
     <div class="ring">
@@ -277,9 +279,7 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
     <svg viewBox="0 0 420 22" preserveAspectRatio="none">
       <path class="wave-path"
         d="M 6 11 Q 16 1, 26 11 Q 36 21, 46 11 Q 56 1, 66 11 Q 76 21, 86 11 Q 96 1, 106 11 Q 116 21, 126 11 Q 136 1, 146 11 Q 156 21, 166 11 Q 176 1, 186 11 Q 196 21, 206 11 Q 216 1, 226 11 Q 236 21, 246 11 Q 256 1, 266 11 Q 276 21, 286 11 Q 296 1, 306 11 Q 316 21, 326 11 Q 336 1, 346 11 Q 356 21, 366 11 Q 376 1, 386 11 Q 396 21, 406 11">
-        <animate attributeName="d"
-          begin="1s" dur="0.6s" fill="freeze"
-          calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1"
+        <animate attributeName="d" begin="1s" dur="0.6s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1"
           values="
             M 6 11 Q 16 1, 26 11 Q 36 21, 46 11 Q 56 1, 66 11 Q 76 21, 86 11 Q 96 1, 106 11 Q 116 21, 126 11 Q 136 1, 146 11 Q 156 21, 166 11 Q 176 1, 186 11 Q 196 21, 206 11 Q 216 1, 226 11 Q 236 21, 246 11 Q 256 1, 266 11 Q 276 21, 286 11 Q 296 1, 306 11 Q 316 21, 326 11 Q 336 1, 346 11 Q 356 21, 366 11 Q 376 1, 386 11 Q 396 21, 406 11;
             M 6 11 Q 16 11, 26 11 Q 36 11, 46 11 Q 56 11, 66 11 Q 76 11, 86 11 Q 96 11, 106 11 Q 116 11, 126 11 Q 136 11, 146 11 Q 156 11, 166 11 Q 176 11, 186 11 Q 196 11, 206 11 Q 216 11, 226 11 Q 236 11, 246 11 Q 256 11, 266 11 Q 276 11, 286 11 Q 296 11, 306 11 Q 316 11, 326 11 Q 336 11, 346 11 Q 356 11, 366 11 Q 376 11, 386 11 Q 396 11, 406 11"/>
@@ -289,7 +289,6 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
   </div>
 </div>
 
-<!-- ============ AUTH ============ -->
 <div id="authView" class="hidden">
   <div class="card">
     <div class="logo">
@@ -316,14 +315,32 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
       <div class="slider-track" id="track" data-active="login">
         <div class="slide-pane" data-pane="login">
           <div class="field"><label>Логин</label><input id="loginEmail" type="text" placeholder="Введите логин" autocomplete="username" spellcheck="false"></div>
-          <div class="field"><label>Пароль</label><input id="loginPass" type="password" placeholder="Введите пароль" autocomplete="current-password"></div>
+          <div class="field">
+            <label>Пароль</label>
+            <div class="pass-wrap">
+              <input id="loginPass" type="password" placeholder="Введите пароль" autocomplete="current-password">
+              <button type="button" class="pass-toggle" data-target="loginPass" title="Показать пароль"><span class="msr">visibility</span></button>
+            </div>
+          </div>
           <button class="btn" id="loginBtn"><span class="msr">login</span> Войти</button>
         </div>
         <div class="slide-pane" data-pane="reg">
           <div class="field"><label>Имя пользователя</label><input id="regName" type="text" placeholder="Введите имя" autocomplete="name" spellcheck="false"></div>
           <div class="field"><label>Логин</label><input id="regEmail" type="text" placeholder="Введите логин" autocomplete="username" spellcheck="false"></div>
-          <div class="field"><label>Пароль</label><input id="regPass" type="password" placeholder="Минимум 6 символов" autocomplete="new-password"></div>
-          <div class="field"><label>Повтор пароля</label><input id="regPass2" type="password" placeholder="Повторите пароль" autocomplete="new-password"></div>
+          <div class="field">
+            <label>Пароль</label>
+            <div class="pass-wrap">
+              <input id="regPass" type="password" placeholder="Минимум 6 символов" autocomplete="new-password">
+              <button type="button" class="pass-toggle" data-target="regPass" title="Показать пароль"><span class="msr">visibility</span></button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Повтор пароля</label>
+            <div class="pass-wrap">
+              <input id="regPass2" type="password" placeholder="Повторите пароль" autocomplete="new-password">
+              <button type="button" class="pass-toggle" data-target="regPass2" title="Показать пароль"><span class="msr">visibility</span></button>
+            </div>
+          </div>
           <button class="btn" id="regBtn"><span class="msr">person_add</span> Создать аккаунт</button>
         </div>
       </div>
@@ -331,7 +348,6 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
   </div>
 </div>
 
-<!-- ============ APP ============ -->
 <div id="appView" class="hidden">
   <div class="app-layout">
     <aside class="sidebar" id="sidebar">
@@ -427,12 +443,15 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
 </div>
 
 <script>
+/* =========================================================
+   NovaClass — чистый фронтенд
+   ========================================================= */
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzzQR5ER-IR-44nE7AcnNkK8RcYNvYmGvTrOfFXuDKfHhkLxa17AHoAUgH730VKQNHW/exec';
 const CREATOR_EMAIL = 'maksimsuhomlinov37@gmail.com';
 const SESSION_KEY = 'nc_session';
 const SESSION_MS = 30*24*60*60*1000;
-const LOADER_TOTAL_MS = 2500;
-const LOADER_MAX_MS = 8000;
+const LOADER_TOTAL_MS = 2600;
+const LOADER_MAX_MS  = 9000;
 
 const $ = id => document.getElementById(id);
 const $$ = sel => document.querySelectorAll(sel);
@@ -443,20 +462,17 @@ let currentPage='home', selectedDate=initialDate(), animating=false;
 let cacheLessons=[], cacheHwStatuses={}, editingId=null, jsonpCounter=0;
 const prefetched = { scheduleByDate:{}, hwStatuses:null, users:null };
 
+/* ---------- LOADER ---------- */
 function showLoader(){
   const l = $('loader'); if(!l) return;
   l.classList.remove('hidden','fade-out');
-  // Перезапускаем CSS-анимации без клонирования (чтобы SVG <animate> не сбивался)
   l.querySelectorAll('.ring, .ring-fg, .blob, .loader-line, .wave-path, .dot').forEach(el => {
     el.style.animation = 'none';
     void el.offsetWidth;
     el.style.animation = '';
   });
-  // Перезапускаем SVG SMIL-анимацию пути
   const anim = l.querySelector('.wave-path animate');
-  if(anim && anim.beginElement){
-    try { anim.beginElement(); } catch(e){}
-  }
+  if(anim && anim.beginElement){ try { anim.beginElement(); } catch(e){} }
 }
 function hideLoader(){
   const l=$('loader'); if(!l) return;
@@ -475,6 +491,7 @@ async function withLoader(promise){
   } finally { hideLoader(); }
 }
 
+/* ---------- SESSION ---------- */
 function saveSession(u){ try{ localStorage.setItem(SESSION_KEY, JSON.stringify({user:u, loginAt:Date.now(), expiresAt:Date.now()+SESSION_MS})); }catch(e){} }
 function getSession(){ try{ const raw=localStorage.getItem(SESSION_KEY); if(!raw) return null; const d=JSON.parse(raw); if(!d||!d.expiresAt) return null; if(Date.now()>=d.expiresAt){ localStorage.removeItem(SESSION_KEY); return null; } return d; }catch(e){ return null; } }
 function clearSession(){ try{ localStorage.removeItem(SESSION_KEY); }catch(e){} }
@@ -484,35 +501,34 @@ function isCreator(){ const u=getCurrentUser(); if(!u) return false; return Stri
 function canEditSchedule(){ return EDITOR_ROLES.indexOf(userRole())!==-1; }
 function isAdmin(){ const r=userRole(); return r==='Администратор'||r==='Создатель'; }
 
+/* ---------- JSONP ---------- */
 function jsonp(params, timeout){
   return new Promise((resolve,reject)=>{
     const cbName='nc_cb_'+(++jsonpCounter)+'_'+Date.now();
     let finished=false, script, to;
     const cleanup=()=>{ try{ delete window[cbName]; }catch(e){} if(script&&script.parentNode) script.parentNode.removeChild(script); clearTimeout(to); };
-    window[cbName]=function(data){ if(finished) return; finished=true; cleanup(); resolve(data); };
+    window[cbName]=function(data){ if(finished) return; finished=true; cleanup(); console.log('[GAS]', params.action, data); resolve(data); };
     const qs=new URLSearchParams(Object.assign({}, params, {callback:cbName})).toString();
     script=document.createElement('script');
     script.src=GAS_URL+'?'+qs+'&_='+Date.now();
-    script.onerror=function(){ if(finished) return; finished=true; cleanup(); reject(new Error('Нет связи с сервером')); };
+    script.onerror=function(){ if(finished) return; finished=true; cleanup(); console.error('[GAS ERROR]', params.action); reject(new Error('Нет связи с сервером')); };
     document.head.appendChild(script);
     to=setTimeout(()=>{ if(finished) return; finished=true; cleanup(); reject(new Error('Превышено время ожидания')); }, timeout||20000);
   });
 }
 
-async function prefetchAll(user){
-  if(!user||!user.email) return;
-  const mon = mondayOf(new Date(selectedDate+'T00:00:00'));
-  const dates=[];
-  for(let i=0;i<5;i++){ const d=new Date(mon); d.setDate(mon.getDate()+i); dates.push(isoOfDate(d)); }
-  const jobs = dates.map(date => jsonp({action:'get_sched', requester:user.email, date}, 12000).then(res=>{ if(res&&res.status==='ok') prefetched.scheduleByDate[date]=res.lessons||[]; }).catch(()=>{}));
-  jobs.push(jsonp({action:'hw_status', requester:user.email}, 10000).then(hr=>{ if(hr&&hr.status==='ok') prefetched.hwStatuses=hr.statuses||{}; }).catch(()=>{}));
-  if(isAdmin()) jobs.push(jsonp({action:'users_list', requester:user.email}, 10000).then(ur=>{ if(ur&&ur.status==='ok') prefetched.users=ur.users||[]; }).catch(()=>{}));
-  await Promise.all(jobs);
+/* ---------- ДАТЫ ---------- */
+function normDate(v){
+  if(!v) return '';
+  const s = String(v).trim();
+  let m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(m) return m[1]+'-'+m[2]+'-'+m[3];
+  m = s.match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})/);
+  if(m) return m[3]+'-'+String(m[2]).padStart(2,'0')+'-'+String(m[1]).padStart(2,'0');
+  const d = new Date(s);
+  if(!isNaN(d.getTime())) return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  return s.slice(0,10);
 }
-
-const MONTHS_NOM=['ЯНВАРЬ','ФЕВРАЛЬ','МАРТ','АПРЕЛЬ','МАЙ','ИЮНЬ','ИЮЛЬ','АВГУСТ','СЕНТЯБРЬ','ОКТЯБРЬ','НОЯБРЬ','ДЕКАБРЬ'];
-const MONTHS_GEN=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
-const WEEK_FULL=['ПОНЕДЕЛЬНИК','ВТОРНИК','СРЕДА','ЧЕТВЕРГ','ПЯТНИЦА'];
 function isoOfDate(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function todayISO(){ return isoOfDate(new Date()); }
 function mondayOf(d){ const x=new Date(d); x.setHours(0,0,0,0); const day=x.getDay(); const diff=(day===0?-6:1-day); x.setDate(x.getDate()+diff); return x; }
@@ -526,12 +542,61 @@ function goToday(){ selectedDate=initialDate(); }
 function dowIdx(iso){ const d=new Date(iso+'T00:00:00'); const day=d.getDay(); return day===0?0:Math.min(day-1,4); }
 function formatRuDate(iso){ const d=new Date(iso+'T00:00:00'); return d.getDate()+' '+MONTHS_GEN[d.getMonth()]+' '+d.getFullYear(); }
 function esc(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function filterByDate(lessons, date){ return (lessons||[]).filter(l => normDate(l.date) === date); }
 
+const MONTHS_NOM=['ЯНВАРЬ','ФЕВРАЛЬ','МАРТ','АПРЕЛЬ','МАЙ','ИЮНЬ','ИЮЛЬ','АВГУСТ','СЕНТЯБРЬ','ОКТЯБРЬ','НОЯБРЬ','ДЕКАБРЬ'];
+const MONTHS_GEN=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+const WEEK_FULL=['ПОНЕДЕЛЬНИК','ВТОРНИК','СРЕДА','ЧЕТВЕРГ','ПЯТНИЦА'];
+
+/* ---------- ПРЕДЗАГРУЗКА (без get_week — только get_sched, который точно есть) ---------- */
+async function prefetchAll(user){
+  if(!user||!user.email) return;
+  const mon = mondayOf(new Date(selectedDate+'T00:00:00'));
+  const dates=[];
+  for(let i=0;i<5;i++){ const d=new Date(mon); d.setDate(mon.getDate()+i); dates.push(isoOfDate(d)); }
+
+  const jobs = dates.map(date =>
+    jsonp({action:'get_sched', requester:user.email, date}, 12000)
+      .then(res => { if(res && res.status==='ok') prefetched.scheduleByDate[date] = filterByDate(res.lessons, date); })
+      .catch(()=>{})
+  );
+  jobs.push(
+    jsonp({action:'hw_status', requester:user.email}, 10000)
+      .then(hr => { if(hr && hr.status==='ok') prefetched.hwStatuses = hr.statuses || {}; })
+      .catch(()=>{})
+  );
+  if(isAdmin()){
+    jobs.push(
+      jsonp({action:'users_list', requester:user.email}, 10000)
+        .then(ur => { if(ur && ur.status==='ok') prefetched.users = ur.users || []; })
+        .catch(()=>{})
+    );
+  }
+  await Promise.all(jobs);
+}
+
+/* ---------- AUTH UI ---------- */
 function fitFormHeight(){ const pane=document.querySelector('.slide-pane[data-pane="'+$('track').dataset.active+'"]'); if(pane) $('formsWrap').style.height=pane.scrollHeight+'px'; }
 function switchTab(w){ hideErr(); const l=w==='login'; $('tabLogin').classList.toggle('active', l); $('tabReg').classList.toggle('active', !l); $('tabs').dataset.active=l?'login':'reg'; $('track').dataset.active=l?'login':'reg'; fitFormHeight(); }
-function showErr(m){ $('errBox').textContent=m; $('errBox').classList.remove('hidden'); fitFormHeight(); }
+function showErr(m, debug){ 
+  const box = $('errBox');
+  box.innerHTML = esc(m) + (debug ? '<br><br><small style="opacity:.7;font-size:11px">Технически: <code>'+esc(debug)+'</code></small>' : '');
+  box.classList.remove('hidden'); 
+  fitFormHeight(); 
+}
 function hideErr(){ $('errBox').classList.add('hidden'); }
 function markEmpty(arr){ let any=false; arr.forEach(i=>{ if(!i.value.trim()){ i.classList.remove('error'); void i.offsetWidth; i.classList.add('error'); any=true; } }); return any; }
+
+document.querySelectorAll('.pass-toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const inp = document.getElementById(btn.dataset.target);
+    if(!inp) return;
+    const show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    btn.querySelector('.msr').textContent = show ? 'visibility_off' : 'visibility';
+    btn.title = show ? 'Скрыть пароль' : 'Показать пароль';
+  });
+});
 
 $('tabLogin').onclick=()=>switchTab('login');
 $('tabReg').onclick=()=>switchTab('reg');
@@ -545,17 +610,34 @@ async function doLogin(){
   hideErr();
   if(markEmpty([$('loginEmail'), $('loginPass')])){ showErr('Введите данные'); return; }
   $('loginBtn').disabled=true;
+  const email = $('loginEmail').value.trim().toLowerCase();
+  const pass  = $('loginPass').value;
+  console.log('[LOGIN] пробую', email, '/', pass.length, 'символов');
+
   try{
-    const res=await withLoader(jsonp({action:'login', email:$('loginEmail').value.trim().toLowerCase(), pass:$('loginPass').value}));
-    if(!res||res.status!=='ok'){ showErr((res&&res.message)||'Ошибка входа'); return; }
+    const res = await withLoader((async()=>{
+      const r = await jsonp({action:'login', email, pass});
+      return r;
+    })());
+    if(!res){
+      showErr('Пустой ответ от сервера', 'res=null'); return;
+    }
+    if(res.status !== 'ok'){
+      showErr(res.message || 'Ошибка входа', res.message || '');
+      return;
+    }
     const u=res.user||{};
     if(!u.name) u.name=u.email?u.email.split('@')[0]:'Пользователь';
     if(!u.role||!ROLES[u.role]) u.role='Ученик';
     if(String(u.email||'').toLowerCase()===CREATOR_EMAIL.toLowerCase()) u.role='Создатель';
     saveSession(u);
     await enterApp();
+    // фоновая предзагрузка
     prefetchAll(u).then(()=>{ if(currentPage==='schedule'||currentPage==='homework') loadPageData(currentPage); });
-  }catch(e){ showErr(e.message); } finally{ $('loginBtn').disabled=false; }
+  }catch(e){
+    showErr('Ошибка связи: '+e.message, e.message);
+    console.error(e);
+  } finally{ $('loginBtn').disabled=false; }
 }
 async function doRegister(){
   hideErr();
@@ -564,17 +646,22 @@ async function doRegister(){
   if(p1.length<6){ markEmpty([$('regPass')]); showErr('Пароль минимум 6 символов'); return; }
   if(p1!==p2){ markEmpty([$('regPass2')]); showErr('Пароли не совпадают'); return; }
   $('regBtn').disabled=true;
+  const email = $('regEmail').value.trim().toLowerCase();
+  const name  = $('regName').value.trim();
+  console.log('[REG]', email);
   try{
-    const res=await withLoader(jsonp({action:'register', email:$('regEmail').value.trim().toLowerCase(), pass:p1, name:$('regName').value.trim()}));
-    if(!res||res.status!=='ok'){ showErr((res&&res.message)||'Ошибка регистрации'); return; }
+    const res=await withLoader(jsonp({action:'register', email, pass:p1, name}));
+    if(!res){ showErr('Пустой ответ от сервера'); return; }
+    if(res.status!=='ok'){ showErr(res.message || 'Ошибка регистрации', res.message||''); return; }
     const u=res.user||{};
-    if(!u.name) u.name=$('regName').value.trim();
+    if(!u.name) u.name=name;
     if(!u.role||!ROLES[u.role]) u.role='Ученик';
     if(String(u.email||'').toLowerCase()===CREATOR_EMAIL.toLowerCase()) u.role='Создатель';
     saveSession(u);
     await enterApp();
     prefetchAll(u).then(()=>{ if(currentPage==='schedule'||currentPage==='homework') loadPageData(currentPage); });
-  }catch(e){ showErr(e.message); } finally{ $('regBtn').disabled=false; }
+  }catch(e){ showErr('Ошибка связи: '+e.message, e.message); console.error(e); }
+  finally{ $('regBtn').disabled=false; }
 }
 async function enterApp(){
   $('authView').classList.add('hidden');
@@ -583,6 +670,7 @@ async function enterApp(){
   requestAnimationFrame(moveIndicator);
 }
 
+/* ---------- APP UI ---------- */
 function applyUserToUI(){
   const u=getCurrentUser(); let name='Пользователь', role='Ученик';
   if(u){ if(u.name&&u.name.trim()) name=u.name.trim(); else if(u.email) name=u.email.split('@')[0]; role=userRole(); }
@@ -614,6 +702,7 @@ function moveIndicator(){
 }
 window.addEventListener('resize', ()=>setTimeout(moveIndicator,50));
 
+/* ---------- HTML-РЕНДЕРЫ ---------- */
 function homeContentHTML(){
   return `<div class="banner"><span class="msr">home</span><div class="banner-title">Главная</div></div>
     <div class="empty-state" style="padding:48px 24px">
@@ -656,10 +745,10 @@ function lessonRowHTML(l, mode, hwStatuses){
   if(mode==='homework'&&status!==undefined){
     badges.push(`<span class="role-badge" style="${status?'background:rgba(16,185,129,.15);color:#059669':'background:#FECACA;color:#991B1B'};margin-left:8px">${status?'СДЕЛАНО':'НЕ СДЕЛАНО'}</span>`);
   }
-  const hwIcon = l.homework ? `<div style="margin-top:8px;font-size:12.5px;color:#1E293B;display:flex;align-items:center;gap:6px"><span class="msr" style="font-size:16px;color:#2563EB">book</span>${esc(l.homework)}</div>` : '';
+  const hwIcon = l.homework ? `<div style="margin-top:8px;font-size:12.5px;color:#1E293B;display:flex;align-items:flex-start;gap:6px;line-height:1.4"><span class="msr" style="font-size:16px;color:#2563EB;flex-shrink:0">menu_book</span><span>${esc(l.homework)}</span></div>` : '';
   const editBtns=(canEditSchedule()&&mode==='schedule')
     ? `<button class="btn-icon" onclick="editLesson('${l.id}')"><span class="msr">edit</span></button><button class="btn-icon danger" onclick="deleteLesson('${l.id}')"><span class="msr">delete</span></button>`
-    : `<button class="btn-icon" onclick="openView('${l.id}','${mode}')"><span class="msr">visibility</span></button>`;
+    : `<button class="btn-icon primary" onclick="openView('${l.id}','${mode}')"><span class="msr">visibility</span></button>`;
   return `<div class="lesson-row ${cls.join(' ')}">
     <div class="lesson-num">${esc(l.lessonNum||'—')}</div>
     <div class="lesson-info">
@@ -714,6 +803,7 @@ function usersListHTML(users){
   }).join('')+'</div>';
 }
 
+/* ---------- РЕНДЕР СТРАНИЦ ---------- */
 const TITLES={home:'Главная',schedule:'Расписание',homework:'Домашние задания',diary:'Дневник',users:'Управление'};
 function buildPane(key){
   const pane=document.createElement('div');
@@ -759,7 +849,7 @@ async function loadPageData(key){
     try{
       const res=await jsonp({action:'get_sched', requester:user.email, date:selectedDate});
       if(res&&res.status==='ok'){
-        cacheLessons=res.lessons||[];
+        cacheLessons=filterByDate(res.lessons, selectedDate);
         prefetched.scheduleByDate[selectedDate]=cacheLessons;
         if(key==='homework'){
           if(prefetched.hwStatuses){ cacheHwStatuses=prefetched.hwStatuses; }
@@ -801,17 +891,18 @@ function refreshCurrentPage(){
   if(currentPage==='schedule'||currentPage==='homework') bindWeekPanel();
 }
 
+/* ---------- SIDE PANEL ---------- */
 window.openView = function(id){
   const l=cacheLessons.find(x=>String(x.id)===String(id)); if(!l) return;
   $('spTitle').textContent=l.subject||'—';
   const parts=[];
-  if(l.date) parts.push(section('Дата', formatRuDate(l.date)));
+  if(l.date) parts.push(section('Дата', formatRuDate(normDate(l.date))));
   if(l.lessonNum) parts.push(section('Номер', l.lessonNum));
   if(l.time) parts.push(section('Время', l.time));
   if(l.teacher) parts.push(section('Учитель', l.teacher));
   if(l.room) parts.push(section('Кабинет', l.room));
-  if(l.sor) parts.push(section('СОР', 'Да', '#EA580C'));
-  if(l.soch) parts.push(section('СОЧ', 'Да', '#7C3AED'));
+  if(l.sor) parts.push(section('СОР', 'Да', '#1F9EA8'));
+  if(l.soch) parts.push(section('СОЧ', 'Да', '#1E88E5'));
   if(l.cancelled) parts.push(section('Отменён', 'Да', '#DC2626'));
   parts.push(section('Домашнее задание', l.homework||'Нет'));
   $('spBody').innerHTML=parts.join('');
@@ -825,11 +916,12 @@ $('spClose').onclick=closePanel;
 $('sidePanelBackdrop').onclick=closePanel;
 function closePanel(){ $('sidePanel').classList.remove('open'); $('sidePanelBackdrop').classList.remove('open'); }
 
+/* ---------- MODAL ---------- */
 window.openModal = function(lesson){
   if(!canEditSchedule()){ showToast('Нет прав'); return; }
   editingId=lesson?lesson.id:null;
   $('modalTitle').textContent=lesson?'Редактировать урок':'Новый урок';
-  $('mDate').value=lesson?lesson.date:selectedDate;
+  $('mDate').value=lesson?normDate(lesson.date):selectedDate;
   $('mLessonNum').value=lesson?lesson.lessonNum:'';
   $('mTime').value=lesson?lesson.time:'';
   $('mSubject').value=lesson?lesson.subject:'';
@@ -851,15 +943,23 @@ $('modalSave').onclick=async()=>{
   const user=getCurrentUser(); if(!user) return;
   const payload={action:'save_sched', requester:user.email, role:userRole(), id:editingId||'', date:$('mDate').value, lessonNum:$('mLessonNum').value, time:$('mTime').value.trim(), subject:$('mSubject').value.trim(), teacher:$('mTeacher').value.trim(), room:$('mRoom').value.trim(), homework:$('mHomework').value.trim(), sor:$('mSor').checked?'true':'false', soch:$('mSoch').checked?'true':'false', cancelled:$('mCancelled').checked?'true':'false'};
   if(!payload.date||!payload.subject){ showToast('Заполните дату и предмет'); return; }
-  $('modalSave').disabled=true;
+  const btn = $('modalSave');
+  const original = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Сохранение…';
   try{
     const res=await jsonp(payload);
-    if(!res||res.status!=='ok'){ showToast((res&&res.message)||'Ошибка'); return; }
-    showToast('Сохранено'); closeModal();
+    if(!res||res.status!=='ok'){ showToast((res&&res.message)||'Ошибка'); btn.disabled=false; btn.innerHTML=original; return; }
+    showToast('Сохранено');
     if(payload.date!==selectedDate) selectedDate=payload.date;
-    delete prefetched.scheduleByDate[payload.date];
+    delete prefetched.scheduleByDate[normDate(payload.date)];
+    btn.innerHTML = '<span class="msr">check</span> Готово';
+    await new Promise(r=>setTimeout(r, 400));
+    closeModal();
+    btn.disabled=false;
+    btn.innerHTML=original;
     await loadPageData(currentPage);
-  }catch(e){ showToast(e.message); } finally{ $('modalSave').disabled=false; }
+  }catch(e){ showToast(e.message); btn.disabled=false; btn.innerHTML=original; }
 };
 
 window.editLesson=function(id){ const l=cacheLessons.find(x=>String(x.id)===String(id)); if(l) openModal(l); };
@@ -890,7 +990,7 @@ document.addEventListener('click',(e)=>{
 });
 $$('[data-logout]').forEach(b=>b.onclick=()=>{ showLoader(); clearSession(); setTimeout(()=>location.reload(), LOADER_TOTAL_MS); });
 
-/* INIT — загрузка показывается ВСЕГДА: при входе, регистрации, перезагрузке */
+/* ---------- INIT ---------- */
 (async function init(){
   requestAnimationFrame(fitFormHeight);
   const s = getSession();
