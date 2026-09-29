@@ -9,116 +9,45 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%}
-:root{--bg:#FFFFFF;--section:#F8FAFC;--text:#1E293B;--muted:#64748B;--brand:#0F172A;--accent:#2563EB;--accent-h:#1D4ED8;--border:#E2E8F0;--rc:20px;--ri:14px;--rt:12px;--rb:10px;--shadow:0 4px 6px -1px rgba(0,0,0,.05);--shadow-hover:0 8px 20px -6px rgba(37,99,235,.25);--shadow-lg:0 20px 40px -16px rgba(15,23,42,.2);--gap:20px;--sb-mini:88px;--sb-full:300px}
+:root{--section:#F8FAFC;--text:#1E293B;--muted:#64748B;--brand:#0F172A;--accent:#2563EB;--accent-h:#1D4ED8;--border:#E2E8F0;--rc:20px;--ri:14px;--rt:12px;--rb:10px;--shadow:0 4px 6px -1px rgba(0,0,0,.05);--shadow-hover:0 8px 20px -6px rgba(37,99,235,.25);--shadow-lg:0 20px 40px -16px rgba(15,23,42,.2);--gap:20px;--sb-mini:88px;--sb-full:300px}
 body{font-family:'Comfortaa',sans-serif;background:var(--section);color:var(--text);font-size:16px;line-height:1.5;overflow:hidden;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
 .hidden{display:none!important}
 .msr{font-family:'Material Symbols Rounded';font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;font-size:26px;display:inline-flex;align-items:center;justify-content:center;color:currentColor;line-height:1;user-select:none;flex-shrink:0}
 
-/* ============================================================
-   LOADER
-   ============================================================ */
-#loader{position:fixed;inset:0;z-index:9999;background:#EFF6FF;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .5s ease}
+/* ============ LOADER ============ */
+#loader{position:fixed;inset:0;z-index:9999;background:#EFF6FF;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s ease}
 #loader.fade-out{opacity:0;pointer-events:none}
 
-/* --- Центр: круг → блоб --- */
 .loader-center{position:relative;width:120px;height:120px}
-.loader-center .ring{
-  position:absolute;inset:0;
-  animation:ringFadeOut .5s ease 1.55s forwards;
-}
+.loader-center .ring{position:absolute;inset:0;animation:ringFadeOut .45s ease 1.5s forwards}
 .loader-center .ring svg{width:100%;height:100%;display:block}
 .loader-center .ring-bg{fill:none;stroke:#DBEAFE;stroke-width:12}
-.loader-center .ring-fg{
-  fill:none;stroke:#2563EB;stroke-width:12;stroke-linecap:round;
-  stroke-dasharray:80 314;
-  transform-origin:60px 60px;
-  animation:ringSpin 1.2s linear infinite;
-}
-@keyframes ringSpin{
-  0%{transform:rotate(0deg);stroke-dasharray:40 314}
-  50%{stroke-dasharray:180 314}
-  100%{transform:rotate(360deg);stroke-dasharray:40 314}
-}
-@keyframes ringFadeOut{
-  to{opacity:0;transform:scale(1.15)}
-}
-.loader-center .blob{
-  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  opacity:0;transform:scale(.4);
-  animation:blobIn .55s cubic-bezier(.34,1.5,.64,1) 1.75s forwards;
-}
-.loader-center .blob svg{
-  width:78%;height:78%;display:block;
-  filter:drop-shadow(0 8px 22px rgba(37,99,235,.35));
-  animation:blobSpin 3.5s linear 2.3s infinite;
-}
-@keyframes blobIn{
-  0%{opacity:0;transform:scale(.4) rotate(-40deg)}
-  100%{opacity:1;transform:scale(1) rotate(0deg)}
-}
+.loader-center .ring-fg{fill:none;stroke:#2563EB;stroke-width:12;stroke-linecap:round;stroke-dasharray:80 314;transform-origin:60px 60px;animation:ringSpin 1.3s linear infinite}
+@keyframes ringSpin{0%{transform:rotate(0deg);stroke-dasharray:40 314}50%{stroke-dasharray:180 314}100%{transform:rotate(360deg);stroke-dasharray:40 314}}
+@keyframes ringFadeOut{to{opacity:0;transform:scale(1.12)}}
+.loader-center .blob{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.4);animation:blobIn .5s cubic-bezier(.34,1.5,.64,1) 1.5s forwards}
+.loader-center .blob svg{width:78%;height:78%;display:block;filter:drop-shadow(0 8px 22px rgba(37,99,235,.35));animation:blobSpin 3s linear 2s infinite}
+@keyframes blobIn{0%{opacity:0;transform:scale(.4) rotate(-40deg)}100%{opacity:1;transform:scale(1) rotate(0deg)}}
 @keyframes blobSpin{to{transform:rotate(360deg)}}
 
-/* --- Линия: волна → полоса → исчезает --- */
-.loader-line{
-  position:relative;
-  width:min(420px,78vw);
-  height:12px;
-  border-radius:999px;
-  background:#DBEAFE;
-  margin-top:34px;
-  overflow:hidden;
-  opacity:0;
-  animation:lineFadeIn .2s ease forwards,
-            lineFadeOut .4s ease 1.9s forwards;
-}
+.loader-line{position:relative;width:min(420px,78vw);height:22px;margin-top:34px;opacity:0;animation:lineFadeIn .15s ease forwards,lineFadeOut .4s ease 1.9s forwards;overflow:visible}
 @keyframes lineFadeIn{to{opacity:1}}
 @keyframes lineFadeOut{to{opacity:0}}
-
-.loader-wave-fill{
-  position:absolute;left:0;top:0;bottom:0;width:0;
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='24' viewBox='0 0 60 24'><path d='M 0 12 Q 15 2, 30 12 T 60 12' fill='none' stroke='%232563EB' stroke-width='10' stroke-linecap='round'/></svg>");
-  background-repeat:repeat-x;
-  background-size:60px 100%;
-  background-position:0 center;
-  border-radius:999px;
-  animation:waveGrow 1s cubic-bezier(.4,.1,.2,1) forwards,
-            waveFadeOut .35s ease .95s forwards;
+.loader-line svg{display:block;width:100%;height:100%;overflow:visible}
+.loader-line .wave-path{
+  fill:none;stroke:#2563EB;stroke-width:9;
+  stroke-linecap:round;stroke-linejoin:round;
+  clip-path:inset(0 100% 0 0);
+  animation:waveReveal .6s cubic-bezier(.4,.1,.2,1) forwards;
 }
-@keyframes waveGrow{from{width:0}to{width:100%}}
-@keyframes waveFadeOut{to{opacity:0}}
-
-.loader-bar-fill{
-  position:absolute;left:0;top:0;bottom:0;width:100%;
-  background:linear-gradient(90deg,#60A5FA,#2563EB);
-  border-radius:999px;
-  opacity:0;
-  transform-origin:left center;
-  animation:barFadeIn .3s ease .95s forwards,
-            barShrink .55s cubic-bezier(.4,.1,.2,1) 1.35s forwards;
-}
-@keyframes barFadeIn{to{opacity:1}}
-@keyframes barShrink{
-  0%{transform:scaleX(1);opacity:1}
-  100%{transform:scaleX(0);opacity:1}
-}
-
-.loader-dot{
-  position:absolute;right:8px;top:50%;transform:translateY(-50%);
-  width:8px;height:8px;border-radius:50%;background:#2563EB;
-  animation:dotPulse 1.4s ease-in-out infinite,
-            dotFade .3s ease 1.9s forwards;
-}
+@keyframes waveReveal{to{clip-path:inset(0 0 0 0)}}
+.loader-line .dot{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:#2563EB;animation:dotPulse 1.4s ease-in-out infinite,dotFade .3s ease 1.9s forwards}
 @keyframes dotPulse{0%,100%{opacity:.4;transform:translateY(-50%) scale(.8)}50%{opacity:1;transform:translateY(-50%) scale(1.3)}}
 @keyframes dotFade{to{opacity:0}}
 
-@media (max-width:520px){
-  .loader-center{width:90px;height:90px}
-  .loader-line{margin-top:24px}
-}
+@media (max-width:520px){.loader-center{width:90px;height:90px}.loader-line{margin-top:24px;height:18px}}
 
-/* ============================================================
-   AUTH
-   ============================================================ */
+/* ============ AUTH ============ */
 #authView{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:var(--section)}
 .card{width:100%;max-width:400px;background:#fff;border:1px solid var(--border);border-radius:var(--rc);padding:28px 28px 26px;box-shadow:var(--shadow);animation:zoom .35s ease both}
 @keyframes zoom{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
@@ -151,9 +80,7 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
 .btn-ghost:hover{background:var(--section);box-shadow:none}
 .err{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA;border-radius:var(--ri);padding:11px 14px;font-size:13px;margin-bottom:14px;line-height:1.45}
 
-/* ============================================================
-   APP
-   ============================================================ */
+/* ============ APP ============ */
 #appView{position:fixed;inset:0;z-index:10;background:var(--section)}
 .app-layout{display:flex;gap:var(--gap);padding:var(--gap);height:100%;overflow:hidden}
 .sidebar{flex-shrink:0;width:var(--sb-mini);background:#fff;border:1px solid var(--border);border-radius:24px;box-shadow:var(--shadow);padding:20px 14px;display:flex;flex-direction:column;overflow:hidden;transition:width .4s cubic-bezier(.4,.1,.2,1);z-index:30}
@@ -342,15 +269,23 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
     </div>
     <div class="blob">
       <svg viewBox="0 0 100 100">
-        <polygon points="50,8 90,38 74,84 26,84 10,38"
-          fill="#2563EB" stroke="#2563EB" stroke-width="16" stroke-linejoin="round"/>
+        <polygon points="50,8 90,38 74,84 26,84 10,38" fill="#2563EB" stroke="#2563EB" stroke-width="16" stroke-linejoin="round"/>
       </svg>
     </div>
   </div>
   <div class="loader-line">
-    <div class="loader-wave-fill"></div>
-    <div class="loader-bar-fill"></div>
-    <div class="loader-dot"></div>
+    <svg viewBox="0 0 420 22" preserveAspectRatio="none">
+      <path class="wave-path"
+        d="M 6 11 Q 16 1, 26 11 Q 36 21, 46 11 Q 56 1, 66 11 Q 76 21, 86 11 Q 96 1, 106 11 Q 116 21, 126 11 Q 136 1, 146 11 Q 156 21, 166 11 Q 176 1, 186 11 Q 196 21, 206 11 Q 216 1, 226 11 Q 236 21, 246 11 Q 256 1, 266 11 Q 276 21, 286 11 Q 296 1, 306 11 Q 316 21, 326 11 Q 336 1, 346 11 Q 356 21, 366 11 Q 376 1, 386 11 Q 396 21, 406 11">
+        <animate attributeName="d"
+          begin="1s" dur="0.6s" fill="freeze"
+          calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1"
+          values="
+            M 6 11 Q 16 1, 26 11 Q 36 21, 46 11 Q 56 1, 66 11 Q 76 21, 86 11 Q 96 1, 106 11 Q 116 21, 126 11 Q 136 1, 146 11 Q 156 21, 166 11 Q 176 1, 186 11 Q 196 21, 206 11 Q 216 1, 226 11 Q 236 21, 246 11 Q 256 1, 266 11 Q 276 21, 286 11 Q 296 1, 306 11 Q 316 21, 326 11 Q 336 1, 346 11 Q 356 21, 366 11 Q 376 1, 386 11 Q 396 21, 406 11;
+            M 6 11 Q 16 11, 26 11 Q 36 11, 46 11 Q 56 11, 66 11 Q 76 11, 86 11 Q 96 11, 106 11 Q 116 11, 126 11 Q 136 11, 146 11 Q 156 11, 166 11 Q 176 11, 186 11 Q 196 11, 206 11 Q 216 11, 226 11 Q 236 11, 246 11 Q 256 11, 266 11 Q 276 11, 286 11 Q 296 11, 306 11 Q 316 11, 326 11 Q 336 11, 346 11 Q 356 11, 366 11 Q 376 11, 386 11 Q 396 11, 406 11"/>
+      </path>
+    </svg>
+    <div class="dot"></div>
   </div>
 </div>
 
@@ -496,27 +431,32 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbzzQR5ER-IR-44nE7AcnNkK
 const CREATOR_EMAIL = 'maksimsuhomlinov37@gmail.com';
 const SESSION_KEY = 'nc_session';
 const SESSION_MS = 30*24*60*60*1000;
-const LOADER_TOTAL_MS = 2400;   // полная анимация загрузки
+const LOADER_TOTAL_MS = 2500;
 const LOADER_MAX_MS = 8000;
 
-const $  = id => document.getElementById(id);
+const $ = id => document.getElementById(id);
 const $$ = sel => document.querySelectorAll(sel);
-
 const ROLES = {'Ученик':'student','Модератор':'moderator','Учитель':'teacher','Директор':'director','Администратор':'admin','Создатель':'creator'};
 const EDITOR_ROLES = ['Учитель','Директор','Администратор','Создатель'];
 
 let currentPage='home', selectedDate=initialDate(), animating=false;
 let cacheLessons=[], cacheHwStatuses={}, editingId=null, jsonpCounter=0;
-
 const prefetched = { scheduleByDate:{}, hwStatuses:null, users:null };
 
-/* ---------- LOADER ---------- */
 function showLoader(){
-  const l=$('loader'); if(!l) return;
+  const l = $('loader'); if(!l) return;
   l.classList.remove('hidden','fade-out');
-  // принудительно перезапускаем CSS-анимации: удаляем и добавляем заново
-  const clone = l.cloneNode(true);
-  l.parentNode.replaceChild(clone, l);
+  // Перезапускаем CSS-анимации без клонирования (чтобы SVG <animate> не сбивался)
+  l.querySelectorAll('.ring, .ring-fg, .blob, .loader-line, .wave-path, .dot').forEach(el => {
+    el.style.animation = 'none';
+    void el.offsetWidth;
+    el.style.animation = '';
+  });
+  // Перезапускаем SVG SMIL-анимацию пути
+  const anim = l.querySelector('.wave-path animate');
+  if(anim && anim.beginElement){
+    try { anim.beginElement(); } catch(e){}
+  }
 }
 function hideLoader(){
   const l=$('loader'); if(!l) return;
@@ -535,14 +475,8 @@ async function withLoader(promise){
   } finally { hideLoader(); }
 }
 
-/* ---------- SESSION ---------- */
 function saveSession(u){ try{ localStorage.setItem(SESSION_KEY, JSON.stringify({user:u, loginAt:Date.now(), expiresAt:Date.now()+SESSION_MS})); }catch(e){} }
-function getSession(){
-  try{ const raw=localStorage.getItem(SESSION_KEY); if(!raw) return null;
-    const d=JSON.parse(raw); if(!d||!d.expiresAt) return null;
-    if(Date.now()>=d.expiresAt){ localStorage.removeItem(SESSION_KEY); return null; } return d;
-  }catch(e){ return null; }
-}
+function getSession(){ try{ const raw=localStorage.getItem(SESSION_KEY); if(!raw) return null; const d=JSON.parse(raw); if(!d||!d.expiresAt) return null; if(Date.now()>=d.expiresAt){ localStorage.removeItem(SESSION_KEY); return null; } return d; }catch(e){ return null; } }
 function clearSession(){ try{ localStorage.removeItem(SESSION_KEY); }catch(e){} }
 function getCurrentUser(){ const s=getSession(); return s&&s.user?s.user:null; }
 function userRole(){ const u=getCurrentUser(); let r=u&&u.role?u.role:'Ученик'; if(!ROLES[r]) r='Ученик'; return r; }
@@ -550,7 +484,6 @@ function isCreator(){ const u=getCurrentUser(); if(!u) return false; return Stri
 function canEditSchedule(){ return EDITOR_ROLES.indexOf(userRole())!==-1; }
 function isAdmin(){ const r=userRole(); return r==='Администратор'||r==='Создатель'; }
 
-/* ---------- JSONP ---------- */
 function jsonp(params, timeout){
   return new Promise((resolve,reject)=>{
     const cbName='nc_cb_'+(++jsonpCounter)+'_'+Date.now();
@@ -566,38 +499,20 @@ function jsonp(params, timeout){
   });
 }
 
-/* ---------- ПРЕДЗАГРУЗКА ---------- */
 async function prefetchAll(user){
   if(!user||!user.email) return;
   const mon = mondayOf(new Date(selectedDate+'T00:00:00'));
   const dates=[];
   for(let i=0;i<5;i++){ const d=new Date(mon); d.setDate(mon.getDate()+i); dates.push(isoOfDate(d)); }
-
-  const jobs = dates.map(date =>
-    jsonp({action:'get_sched', requester:user.email, date}, 12000)
-      .then(res=>{ if(res&&res.status==='ok') prefetched.scheduleByDate[date]=res.lessons||[]; })
-      .catch(()=>{})
-  );
-  jobs.push(
-    jsonp({action:'hw_status', requester:user.email}, 10000)
-      .then(hr=>{ if(hr&&hr.status==='ok') prefetched.hwStatuses=hr.statuses||{}; })
-      .catch(()=>{})
-  );
-  if(isAdmin()){
-    jobs.push(
-      jsonp({action:'users_list', requester:user.email}, 10000)
-        .then(ur=>{ if(ur&&ur.status==='ok') prefetched.users=ur.users||[]; })
-        .catch(()=>{})
-    );
-  }
+  const jobs = dates.map(date => jsonp({action:'get_sched', requester:user.email, date}, 12000).then(res=>{ if(res&&res.status==='ok') prefetched.scheduleByDate[date]=res.lessons||[]; }).catch(()=>{}));
+  jobs.push(jsonp({action:'hw_status', requester:user.email}, 10000).then(hr=>{ if(hr&&hr.status==='ok') prefetched.hwStatuses=hr.statuses||{}; }).catch(()=>{}));
+  if(isAdmin()) jobs.push(jsonp({action:'users_list', requester:user.email}, 10000).then(ur=>{ if(ur&&ur.status==='ok') prefetched.users=ur.users||[]; }).catch(()=>{}));
   await Promise.all(jobs);
 }
 
-/* ---------- ДАТЫ ---------- */
 const MONTHS_NOM=['ЯНВАРЬ','ФЕВРАЛЬ','МАРТ','АПРЕЛЬ','МАЙ','ИЮНЬ','ИЮЛЬ','АВГУСТ','СЕНТЯБРЬ','ОКТЯБРЬ','НОЯБРЬ','ДЕКАБРЬ'];
 const MONTHS_GEN=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
 const WEEK_FULL=['ПОНЕДЕЛЬНИК','ВТОРНИК','СРЕДА','ЧЕТВЕРГ','ПЯТНИЦА'];
-
 function isoOfDate(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function todayISO(){ return isoOfDate(new Date()); }
 function mondayOf(d){ const x=new Date(d); x.setHours(0,0,0,0); const day=x.getDay(); const diff=(day===0?-6:1-day); x.setDate(x.getDate()+diff); return x; }
@@ -612,16 +527,8 @@ function dowIdx(iso){ const d=new Date(iso+'T00:00:00'); const day=d.getDay(); r
 function formatRuDate(iso){ const d=new Date(iso+'T00:00:00'); return d.getDate()+' '+MONTHS_GEN[d.getMonth()]+' '+d.getFullYear(); }
 function esc(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
-/* ---------- AUTH UI ---------- */
 function fitFormHeight(){ const pane=document.querySelector('.slide-pane[data-pane="'+$('track').dataset.active+'"]'); if(pane) $('formsWrap').style.height=pane.scrollHeight+'px'; }
-function switchTab(w){
-  hideErr(); const l=w==='login';
-  $('tabLogin').classList.toggle('active', l);
-  $('tabReg').classList.toggle('active', !l);
-  $('tabs').dataset.active=l?'login':'reg';
-  $('track').dataset.active=l?'login':'reg';
-  fitFormHeight();
-}
+function switchTab(w){ hideErr(); const l=w==='login'; $('tabLogin').classList.toggle('active', l); $('tabReg').classList.toggle('active', !l); $('tabs').dataset.active=l?'login':'reg'; $('track').dataset.active=l?'login':'reg'; fitFormHeight(); }
 function showErr(m){ $('errBox').textContent=m; $('errBox').classList.remove('hidden'); fitFormHeight(); }
 function hideErr(){ $('errBox').classList.add('hidden'); }
 function markEmpty(arr){ let any=false; arr.forEach(i=>{ if(!i.value.trim()){ i.classList.remove('error'); void i.offsetWidth; i.classList.add('error'); any=true; } }); return any; }
@@ -676,7 +583,6 @@ async function enterApp(){
   requestAnimationFrame(moveIndicator);
 }
 
-/* ---------- APP UI ---------- */
 function applyUserToUI(){
   const u=getCurrentUser(); let name='Пользователь', role='Ученик';
   if(u){ if(u.name&&u.name.trim()) name=u.name.trim(); else if(u.email) name=u.email.split('@')[0]; role=userRole(); }
@@ -708,7 +614,6 @@ function moveIndicator(){
 }
 window.addEventListener('resize', ()=>setTimeout(moveIndicator,50));
 
-/* ---------- РЕНДЕРЫ ---------- */
 function homeContentHTML(){
   return `<div class="banner"><span class="msr">home</span><div class="banner-title">Главная</div></div>
     <div class="empty-state" style="padding:48px 24px">
@@ -721,12 +626,7 @@ function scheduleContentHTML(lessons){
   let list;
   if(!lessons || !lessons.length){
     const canEdit=canEditSchedule();
-    list=`<div class="empty-state">
-      <span class="msr">event_busy</span>
-      <h3>Уроков на этот день нет</h3>
-      <p>${canEdit?'Нажмите кнопку, чтобы добавить урок':'Расписание появится позже'}</p>
-      ${canEdit?`<button class="empty-add-btn" onclick="openModal(null)"><span class="msr">add</span> Добавить урок</button>`:''}
-    </div>`;
+    list=`<div class="empty-state"><span class="msr">event_busy</span><h3>Уроков на этот день нет</h3><p>${canEdit?'Нажмите кнопку, чтобы добавить урок':'Расписание появится позже'}</p>${canEdit?`<button class="empty-add-btn" onclick="openModal(null)"><span class="msr">add</span> Добавить урок</button>`:''}</div>`;
   } else {
     list='<div class="lessons-list">'+lessons.map(l=>lessonRowHTML(l,'schedule')).join('')+'</div>';
   }
@@ -736,11 +636,7 @@ function homeworkContentHTML(lessons, hwStatuses){
   const withHw=(lessons||[]).filter(l=>l.homework&&l.homework.trim());
   let list;
   if(!withHw.length){
-    list=`<div class="empty-state">
-      <span class="msr">menu_book</span>
-      <h3>Домашних заданий нет</h3>
-      <p>Задания появятся, как только их добавят в расписании</p>
-    </div>`;
+    list=`<div class="empty-state"><span class="msr">menu_book</span><h3>Домашних заданий нет</h3><p>Задания появятся, как только их добавят в расписании</p></div>`;
   } else {
     list='<div class="lessons-list">'+withHw.map(l=>lessonRowHTML(l,'homework',hwStatuses)).join('')+'</div>';
   }
@@ -762,8 +658,7 @@ function lessonRowHTML(l, mode, hwStatuses){
   }
   const hwIcon = l.homework ? `<div style="margin-top:8px;font-size:12.5px;color:#1E293B;display:flex;align-items:center;gap:6px"><span class="msr" style="font-size:16px;color:#2563EB">book</span>${esc(l.homework)}</div>` : '';
   const editBtns=(canEditSchedule()&&mode==='schedule')
-    ? `<button class="btn-icon" onclick="editLesson('${l.id}')"><span class="msr">edit</span></button>
-       <button class="btn-icon danger" onclick="deleteLesson('${l.id}')"><span class="msr">delete</span></button>`
+    ? `<button class="btn-icon" onclick="editLesson('${l.id}')"><span class="msr">edit</span></button><button class="btn-icon danger" onclick="deleteLesson('${l.id}')"><span class="msr">delete</span></button>`
     : `<button class="btn-icon" onclick="openView('${l.id}','${mode}')"><span class="msr">visibility</span></button>`;
   return `<div class="lesson-row ${cls.join(' ')}">
     <div class="lesson-num">${esc(l.lessonNum||'—')}</div>
@@ -785,16 +680,12 @@ function weekPanelHTML(){
     days.push(`<button class="wp-day ${isActive?'active':''} ${isToday?'today':''}" data-day="${i}"><span class="wp-day-name">${WEEK_FULL[i]}</span></button>`);
   }
   const mobileTab=`<div class="wp-mobile"><div class="wp-mobile-tab"><span class="wp-mobile-name">${WEEK_FULL[activeIdx]}</span></div></div>`;
-  return `<div class="week-wrap"><div class="week-panel">
-    <div class="wp-head">
-      <button class="wp-arrow" id="wpPrev"><span class="msr">chevron_left</span></button>
-      <div class="wp-title" id="wpTitle"><span class="msr">calendar_month</span><span>${monthLabel}</span></div>
-      <button class="wp-today-btn" id="wpToday">Сегодня</button>
-      <button class="wp-arrow" id="wpNext"><span class="msr">chevron_right</span></button>
-    </div>
-    <div class="wp-days">${days.join('')}</div>
-    ${mobileTab}
-  </div></div>`;
+  return `<div class="week-wrap"><div class="week-panel"><div class="wp-head">
+    <button class="wp-arrow" id="wpPrev"><span class="msr">chevron_left</span></button>
+    <div class="wp-title" id="wpTitle"><span class="msr">calendar_month</span><span>${monthLabel}</span></div>
+    <button class="wp-today-btn" id="wpToday">Сегодня</button>
+    <button class="wp-arrow" id="wpNext"><span class="msr">chevron_right</span></button>
+  </div><div class="wp-days">${days.join('')}</div>${mobileTab}</div></div>`;
 }
 function bindWeekPanel(){
   const prev=$('wpPrev'), next=$('wpNext'), today=$('wpToday'), title=$('wpTitle');
@@ -810,11 +701,7 @@ function usersContentHTML(){
 }
 function diaryContentHTML(){
   return `<div class="banner"><span class="msr">auto_stories</span><div class="banner-title">Дневник</div></div>
-  <div class="empty-state">
-    <span class="msr">construction</span>
-    <h3>В разработке</h3>
-    <p>Раздел «Дневник» появится в ближайшее время</p>
-  </div>`;
+  <div class="empty-state"><span class="msr">construction</span><h3>В разработке</h3><p>Раздел «Дневник» появится в ближайшее время</p></div>`;
 }
 function usersListHTML(users){
   if(!users||!users.length) return `<div class="empty-state"><span class="msr">group_off</span><h3>Пользователей нет</h3></div>`;
@@ -823,19 +710,11 @@ function usersListHTML(users){
     const role=ROLES[u.role]?u.role:'Ученик';
     const isSelf=String(u.email).toLowerCase()===String(getCurrentUser().email).toLowerCase();
     const options=Object.keys(ROLES).map(r=>`<option value="${r}" ${r===role?'selected':''}>${r}</option>`).join('');
-    return `<div class="user-row">
-      <div class="u-ava">${esc(letter)}</div>
-      <div class="u-info">
-        <div class="u-name">${esc(u.name||'—')}</div>
-        <div class="u-email">${esc(u.email||'')}</div>
-      </div>
-      <div class="u-role"><select data-email="${esc(u.email)}" ${isSelf?'disabled':''}>${options}</select></div>
-    </div>`;
+    return `<div class="user-row"><div class="u-ava">${esc(letter)}</div><div class="u-info"><div class="u-name">${esc(u.name||'—')}</div><div class="u-email">${esc(u.email||'')}</div></div><div class="u-role"><select data-email="${esc(u.email)}" ${isSelf?'disabled':''}>${options}</select></div></div>`;
   }).join('')+'</div>';
 }
 
 const TITLES={home:'Главная',schedule:'Расписание',homework:'Домашние задания',diary:'Дневник',users:'Управление'};
-
 function buildPane(key){
   const pane=document.createElement('div');
   pane.className='page-pane'; pane.dataset.page=key;
@@ -854,7 +733,6 @@ function renderPage(key){
   $$('.mb-item').forEach(b=>b.classList.toggle('active', b.dataset.page===key));
   moveIndicator();
   $('topbarTitle').textContent=TITLES[key]||'Главная';
-
   if(!viewport.firstChild){
     viewport.appendChild(buildPane(key));
     if(key==='schedule'||key==='homework') bindWeekPanel();
@@ -876,38 +754,28 @@ async function loadPageData(key){
     if(prefetched.scheduleByDate[selectedDate] !== undefined){
       cacheLessons = prefetched.scheduleByDate[selectedDate];
       if(key==='homework' && prefetched.hwStatuses) cacheHwStatuses = prefetched.hwStatuses;
-      refreshCurrentPage();
-      return;
+      refreshCurrentPage(); return;
     }
     try{
       const res=await jsonp({action:'get_sched', requester:user.email, date:selectedDate});
       if(res&&res.status==='ok'){
         cacheLessons=res.lessons||[];
-        prefetched.scheduleByDate[selectedDate] = cacheLessons;
+        prefetched.scheduleByDate[selectedDate]=cacheLessons;
         if(key==='homework'){
-          if(prefetched.hwStatuses){
-            cacheHwStatuses = prefetched.hwStatuses;
-          } else {
-            const hr=await jsonp({action:'hw_status', requester:user.email});
-            if(hr&&hr.status==='ok'){ cacheHwStatuses=hr.statuses||{}; prefetched.hwStatuses=cacheHwStatuses; }
-          }
+          if(prefetched.hwStatuses){ cacheHwStatuses=prefetched.hwStatuses; }
+          else { const hr=await jsonp({action:'hw_status', requester:user.email}); if(hr&&hr.status==='ok'){ cacheHwStatuses=hr.statuses||{}; prefetched.hwStatuses=cacheHwStatuses; } }
         }
       }
       refreshCurrentPage();
     }catch(e){ showToast(e.message); refreshCurrentPage(); }
   }
   if(key==='users'){
-    if(prefetched.users){
-      const box=$('usersList'); if(!box) return;
-      box.outerHTML=usersListHTML(prefetched.users);
-      bindUsersSelects();
-      return;
-    }
+    if(prefetched.users){ const box=$('usersList'); if(!box) return; box.outerHTML=usersListHTML(prefetched.users); bindUsersSelects(); return; }
     try{
       const res=await jsonp({action:'users_list', requester:user.email});
       const box=$('usersList'); if(!box) return;
       if(!res||res.status!=='ok'){ box.innerHTML=`<div class="empty-state"><span class="msr">lock</span><h3>Нет доступа</h3><p>${esc((res&&res.message)||'')}</p></div>`; return; }
-      prefetched.users = res.users||[];
+      prefetched.users=res.users||[];
       box.outerHTML=usersListHTML(res.users);
       bindUsersSelects();
     }catch(e){ showToast(e.message); }
@@ -917,14 +785,11 @@ function bindUsersSelects(){
   const user=getCurrentUser();
   document.querySelectorAll('.u-role select').forEach(sel=>{
     sel.onchange=async()=>{
-      const email=sel.dataset.email; const role=sel.value;
+      const email=sel.dataset.email, role=sel.value;
       try{
         const r=await jsonp({action:'set_role', requester:user.email, email, role});
         if(!r||r.status!=='ok') showToast((r&&r.message)||'Ошибка');
-        else {
-          showToast('Роль обновлена');
-          if(prefetched.users){ const pu=prefetched.users.find(u=>u.email===email); if(pu) pu.role=role; }
-        }
+        else { showToast('Роль обновлена'); if(prefetched.users){ const pu=prefetched.users.find(u=>u.email===email); if(pu) pu.role=role; } }
       }catch(e){ showToast(e.message); }
     };
   });
@@ -936,7 +801,6 @@ function refreshCurrentPage(){
   if(currentPage==='schedule'||currentPage==='homework') bindWeekPanel();
 }
 
-/* ---------- SIDE PANEL ---------- */
 window.openView = function(id){
   const l=cacheLessons.find(x=>String(x.id)===String(id)); if(!l) return;
   $('spTitle').textContent=l.subject||'—';
@@ -961,7 +825,6 @@ $('spClose').onclick=closePanel;
 $('sidePanelBackdrop').onclick=closePanel;
 function closePanel(){ $('sidePanel').classList.remove('open'); $('sidePanelBackdrop').classList.remove('open'); }
 
-/* ---------- MODAL ---------- */
 window.openModal = function(lesson){
   if(!canEditSchedule()){ showToast('Нет прав'); return; }
   editingId=lesson?lesson.id:null;
@@ -986,16 +849,7 @@ $('topbarAddBtn').onclick=()=>openModal(null);
 
 $('modalSave').onclick=async()=>{
   const user=getCurrentUser(); if(!user) return;
-  const payload={
-    action:'save_sched', requester:user.email, role:userRole(), id:editingId||'',
-    date:$('mDate').value, lessonNum:$('mLessonNum').value,
-    time:$('mTime').value.trim(), subject:$('mSubject').value.trim(),
-    teacher:$('mTeacher').value.trim(), room:$('mRoom').value.trim(),
-    homework:$('mHomework').value.trim(),
-    sor:$('mSor').checked?'true':'false',
-    soch:$('mSoch').checked?'true':'false',
-    cancelled:$('mCancelled').checked?'true':'false'
-  };
+  const payload={action:'save_sched', requester:user.email, role:userRole(), id:editingId||'', date:$('mDate').value, lessonNum:$('mLessonNum').value, time:$('mTime').value.trim(), subject:$('mSubject').value.trim(), teacher:$('mTeacher').value.trim(), room:$('mRoom').value.trim(), homework:$('mHomework').value.trim(), sor:$('mSor').checked?'true':'false', soch:$('mSoch').checked?'true':'false', cancelled:$('mCancelled').checked?'true':'false'};
   if(!payload.date||!payload.subject){ showToast('Заполните дату и предмет'); return; }
   $('modalSave').disabled=true;
   try{
@@ -1034,23 +888,15 @@ document.addEventListener('click',(e)=>{
   const mbb=e.target.closest('.mb-item');
   if(mbb&&mbb.dataset.page){ renderPage(mbb.dataset.page); return; }
 });
-$$('[data-logout]').forEach(b=>b.onclick=()=>{
-  showLoader();
-  clearSession();
-  setTimeout(()=>location.reload(), LOADER_TOTAL_MS);
-});
+$$('[data-logout]').forEach(b=>b.onclick=()=>{ showLoader(); clearSession(); setTimeout(()=>location.reload(), LOADER_TOTAL_MS); });
 
-/* ---------- INIT ---------- */
+/* INIT — загрузка показывается ВСЕГДА: при входе, регистрации, перезагрузке */
 (async function init(){
   requestAnimationFrame(fitFormHeight);
-  const s=getSession();
+  const s = getSession();
   if(s && s.user){
-    try{
-      await withLoader(Promise.all([
-        jsonp({action:'ping'},8000).catch(()=>{}),
-        prefetchAll(s.user)
-      ]));
-    }catch(e){ hideLoader(); }
+    try{ await withLoader(Promise.all([jsonp({action:'ping'},8000).catch(()=>{}), prefetchAll(s.user)])); }
+    catch(e){ hideLoader(); }
     $('authView').classList.add('hidden');
     $('appView').classList.remove('hidden');
     applyUserToUI(); addCreatorMenu();
