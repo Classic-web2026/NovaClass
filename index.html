@@ -253,6 +253,41 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* ============ CUSTOM SELECT ============ */
+.cs-wrap{position:relative;width:100%}
+.cs-input{width:100%;padding:13px 44px 13px 16px;border:1px solid var(--border);border-radius:var(--ri);background:#fff;color:var(--text);font-family:inherit;font-size:14px;outline:none;cursor:pointer;text-align:left;transition:border-color .2s ease,box-shadow .2s ease}
+.cs-input:hover{border-color:#CBD5E1}
+.cs-input:focus,.cs-wrap.open .cs-input{border-color:var(--accent);box-shadow:0 0 0 4px rgba(37,99,235,.12)}
+.cs-input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animation:shake .5s cubic-bezier(.36,.07,.19,.97) both}
+.cs-input.placeholder{color:#94A3B8}
+.cs-arrow{position:absolute;right:14px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--muted);transition:transform .25s ease}
+.cs-wrap.open .cs-arrow{transform:translateY(-50%) rotate(180deg);color:var(--accent)}
+.cs-arrow .msr{font-size:20px}
+.cs-panel{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:0 20px 40px -16px rgba(15,23,42,.25);z-index:200;max-height:320px;overflow:hidden;display:none;flex-direction:column;animation:csIn .18s ease both}
+@keyframes csIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.cs-wrap.open .cs-panel{display:flex}
+.cs-search{padding:8px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;background:#fff}
+.cs-search .msr{font-size:18px;color:var(--muted)}
+.cs-search input{border:none;outline:none;padding:8px 4px;font-size:13.5px;flex:1;box-shadow:none!important}
+.cs-list{overflow-y:auto;padding:6px;flex:1;scrollbar-width:thin;max-height:240px}
+.cs-list::-webkit-scrollbar{width:6px}
+.cs-list::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:3px}
+.cs-option{padding:11px 14px;font-size:14px;color:var(--text);border-radius:10px;cursor:pointer;line-height:1.35;transition:background .15s ease;display:flex;align-items:center;gap:8px}
+.cs-option .cs-opt-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.cs-option:hover,.cs-option.hl{background:#EFF6FF;color:var(--accent)}
+.cs-option.selected{background:var(--accent);color:#fff;font-weight:600}
+.cs-option .cs-del{width:24px;height:24px;border-radius:8px;border:none;background:transparent;color:currentColor;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;opacity:.5;flex-shrink:0}
+.cs-option .cs-del:hover{opacity:1;background:rgba(220,38,38,.15);color:#DC2626}
+.cs-option.selected .cs-del:hover{background:rgba(255,255,255,.25);color:#fff}
+.cs-option .cs-del .msr{font-size:18px}
+.cs-add{padding:11px 14px;font-size:13.5px;color:var(--accent);border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:8px;font-weight:700;border:1.5px dashed rgba(37,99,235,.4);margin:6px;background:#F0F7FF}
+.cs-add:hover{background:#DBEAFE}
+.cs-add .msr{font-size:20px}
+.cs-add b{font-weight:700}
+.cs-empty{padding:16px;text-align:center;color:var(--muted);font-size:13px}
+.cs-panel.up{top:auto;bottom:calc(100% + 6px);animation:csInUp .18s ease both}
+@keyframes csInUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
@@ -420,13 +455,58 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
       <div class="modal-body">
         <div class="grid-2">
           <div class="field"><label>Дата *</label><input type="date" id="mDate"></div>
-          <div class="field"><label>Номер урока</label><input type="number" id="mLessonNum" placeholder="1" min="1"></div>
+          <div class="field"><label>Номер урока</label>
+            <div class="cs-wrap" id="csLessonNum" data-kind="lessonNum" data-value="">
+              <button type="button" class="cs-input placeholder" data-cs-toggle>Выберите номер</button>
+              <span class="cs-arrow"><span class="msr">expand_more</span></span>
+              <div class="cs-panel">
+                <div class="cs-search"><span class="msr">search</span><input type="text" data-cs-search placeholder="Поиск или ввод..."></div>
+                <div class="cs-list" data-cs-list></div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="field"><label>Время *</label><input type="text" id="mTime" placeholder="08:00 – 08:45"></div>
-        <div class="field"><label>Название предмета *</label><input type="text" id="mSubject" placeholder="Математика"></div>
+        <div class="field"><label>Время *</label>
+          <div class="cs-wrap" id="csTime" data-kind="time" data-value="">
+            <button type="button" class="cs-input placeholder" data-cs-toggle>Выберите время</button>
+            <span class="cs-arrow"><span class="msr">expand_more</span></span>
+            <div class="cs-panel">
+              <div class="cs-search"><span class="msr">search</span><input type="text" data-cs-search placeholder="Поиск или ввод..."></div>
+              <div class="cs-list" data-cs-list></div>
+            </div>
+          </div>
+        </div>
+        <div class="field"><label>Название предмета *</label>
+          <div class="cs-wrap" id="csSubject" data-kind="subject" data-value="">
+            <button type="button" class="cs-input placeholder" data-cs-toggle>Выберите предмет</button>
+            <span class="cs-arrow"><span class="msr">expand_more</span></span>
+            <div class="cs-panel">
+              <div class="cs-search"><span class="msr">search</span><input type="text" data-cs-search placeholder="Поиск или ввод..."></div>
+              <div class="cs-list" data-cs-list></div>
+            </div>
+          </div>
+        </div>
         <div class="grid-2">
-          <div class="field"><label>Учитель *</label><input type="text" id="mTeacher" placeholder="Иванова А.П."></div>
-          <div class="field"><label>Кабинет *</label><input type="text" id="mRoom" placeholder="каб. 204"></div>
+          <div class="field"><label>Учитель *</label>
+            <div class="cs-wrap" id="csTeacher" data-kind="teacher" data-value="">
+              <button type="button" class="cs-input placeholder" data-cs-toggle>Выберите учителя</button>
+              <span class="cs-arrow"><span class="msr">expand_more</span></span>
+              <div class="cs-panel">
+                <div class="cs-search"><span class="msr">search</span><input type="text" data-cs-search placeholder="Поиск или ввод..."></div>
+                <div class="cs-list" data-cs-list></div>
+              </div>
+            </div>
+          </div>
+          <div class="field"><label>Кабинет *</label>
+            <div class="cs-wrap" id="csRoom" data-kind="room" data-value="">
+              <button type="button" class="cs-input placeholder" data-cs-toggle>Выберите кабинет</button>
+              <span class="cs-arrow"><span class="msr">expand_more</span></span>
+              <div class="cs-panel">
+                <div class="cs-search"><span class="msr">search</span><input type="text" data-cs-search placeholder="Поиск или ввод..."></div>
+                <div class="cs-list" data-cs-list></div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="field"><label>Домашнее задание</label><textarea id="mHomework" placeholder="Выучить параграф 12..."></textarea></div>
         <label class="check-field sor"><input type="checkbox" id="mSor"><span class="check-text"><span>СОР</span><div class="check-hint">Суммативное за раздел</div></span></label>
@@ -453,154 +533,320 @@ const $$ = sel => document.querySelectorAll(sel);
 const ROLES = {'Ученик':'student','Модератор':'moderator','Учитель':'teacher','Директор':'director','Администратор':'admin','Создатель':'creator'};
 const EDITOR_ROLES = ['Учитель','Директор','Администратор','Создатель'];
 
-let currentPage='home', selectedDate=initialDate(), animating=false;
-let cacheLessons=[], cacheHwStatuses={}, editingId=null, jsonpCounter=0;
-const prefetched = { scheduleByDate:{}, hwStatuses:null, users:null };
-
 /* =========================================================
-   CACHE
+   БАЗОВЫЕ СПРАВОЧНИКИ
    ========================================================= */
-function getCache(){
+const REF_LESSON_NUMS = ['1','2','3','4','5','6','7'];
+const REF_TIMES = [
+  '12:55 - 13:35','13:40 - 14:20','14:30 - 15:10','15:25 - 16:05',
+  '16:15 - 16:55','17:00 - 17:40','17:45 - 18:25'
+];
+const REF_SUBJECTS = [
+  'Классный час','Казахский язык','Математика','Русский язык','История Казахстана',
+  'Физическая культура','Иностранный язык (Английский язык)','Русская литература',
+  'Художественный труд','Естествознание','Всемирная история','Музыка',
+  'Информация и Искусственный интеллект'
+];
+const REF_TEACHERS = [
+  'Күлжиһан Ибтанқыз','Жулдыз Сейдоловна','Елизавета Юрьевна','Камшат Айсиновна',
+  'Александра Сергеевна','Лаура Жамбоуловна','Лидия Васильевна','Гульмира Жумагалеевна',
+  'Игорь Вячеславович'
+];
+const REF_ROOMS = [
+  '308 - Кабинет английского языка','305 - Кабинет математики','214 - Кабинет истории',
+  '215 - СпортЗал','307 - Кабинет НВиТП','207 - Кабинет географии'
+];
+
+/* =========================================================
+   ПОЛЬЗОВАТЕЛЬСКАЯ ПАМЯТЬ ВВЕДЁННЫХ ЗНАЧЕНИЙ
+   ========================================================= */
+const CUSTOM_REFS_KEY = 'nc_custom_refs_v1';
+
+function getCustomRefs(){
   try{
-    const raw = localStorage.getItem(CACHE_KEY);
-    if(!raw) return { schedules:{}, hwStatuses:{}, users:[], ts:0 };
-    const c = JSON.parse(raw);
-    if(!c.schedules) c.schedules = {};
-    if(!c.hwStatuses) c.hwStatuses = {};
-    if(!c.users) c.users = [];
-    return c;
-  }catch(e){ return { schedules:{}, hwStatuses:{}, users:[], ts:0 }; }
+    const raw = localStorage.getItem(CUSTOM_REFS_KEY);
+    if(!raw) return { lessonNum:[], time:[], subject:[], teacher:[], room:[] };
+    const o = JSON.parse(raw);
+    return {
+      lessonNum: Array.isArray(o.lessonNum) ? o.lessonNum : [],
+      time:      Array.isArray(o.time)      ? o.time      : [],
+      subject:   Array.isArray(o.subject)   ? o.subject   : [],
+      teacher:   Array.isArray(o.teacher)   ? o.teacher   : [],
+      room:      Array.isArray(o.room)      ? o.room      : []
+    };
+  }catch(e){ return { lessonNum:[], time:[], subject:[], teacher:[], room:[] }; }
 }
-function saveCache(c){
-  try{ localStorage.setItem(CACHE_KEY, JSON.stringify(c)); }catch(e){}
+function saveCustomRefs(o){ try{ localStorage.setItem(CUSTOM_REFS_KEY, JSON.stringify(o)); }catch(e){} }
+
+function normKey(s){ return String(s||'').trim().toLowerCase(); }
+function contains(list, v){ const k = normKey(v); return list.some(x => normKey(x) === k); }
+
+function mergeRefs(base, custom){
+  const seen = new Set();
+  const out = [];
+  (base||[]).forEach(v=>{
+    const k = normKey(v); if(!k || seen.has(k)) return;
+    seen.add(k); out.push(v);
+  });
+  (custom||[]).forEach(v=>{
+    const k = normKey(v); if(!k || seen.has(k)) return;
+    seen.add(k); out.push(v);
+  });
+  return out;
 }
-function updateCacheFromPrefetched(){
-  const c = getCache();
-  c.schedules = prefetched.scheduleByDate;
-  c.hwStatuses = prefetched.hwStatuses || {};
-  c.users = prefetched.users || [];
-  c.ts = Date.now();
-  saveCache(c);
+
+function rememberValue(kind, value){
+  const v = String(value||'').trim();
+  if(!v) return;
+  const refs = getCustomRefs();
+  if(!refs[kind]) refs[kind] = [];
+  if(contains(refs[kind], v)) return;
+  // Не добавляем если значение уже есть в базовом списке (не дублируем)
+  const baseMap = { lessonNum:REF_LESSON_NUMS, time:REF_TIMES, subject:REF_SUBJECTS, teacher:REF_TEACHERS, room:REF_ROOMS };
+  if(baseMap[kind] && contains(baseMap[kind], v)) return;
+  refs[kind].push(v);
+  saveCustomRefs(refs);
 }
-function clearCache(){
-  try{ localStorage.removeItem(CACHE_KEY); }catch(e){}
+
+function forgetValue(kind, value){
+  const refs = getCustomRefs();
+  if(!refs[kind]) return;
+  refs[kind] = refs[kind].filter(x => normKey(x) !== normKey(value));
+  saveCustomRefs(refs);
 }
-function hydrateFromCache(){
-  const c = getCache();
-  Object.assign(prefetched.scheduleByDate, c.schedules || {});
-  prefetched.hwStatuses = c.hwStatuses || {};
-  prefetched.users = c.users || [];
+
+function isCustomValue(kind, value){
+  const baseMap = { lessonNum:REF_LESSON_NUMS, time:REF_TIMES, subject:REF_SUBJECTS, teacher:REF_TEACHERS, room:REF_ROOMS };
+  const base = baseMap[kind] || [];
+  return !contains(base, value);
 }
 
 /* =========================================================
-   LOADER — плавный, 4.4 сек
+   CUSTOM SELECT
+   ========================================================= */
+const CustomSelect = (function(){
+  function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  function init(wrap, options, opts){
+    opts = opts || {};
+    const kind = wrap.dataset.kind || '';
+    const toggle = wrap.querySelector('[data-cs-toggle]');
+    const search = wrap.querySelector('[data-cs-search]');
+    const list = wrap.querySelector('[data-cs-list]');
+    const panel = wrap.querySelector('.cs-panel');
+    let allOptions = (options||[]).slice();
+    let filtered = allOptions.slice();
+    let hlIndex = -1;
+
+    function isCustom(v){
+      return kind ? isCustomValue(kind, v) : false;
+    }
+
+    function renderList(){
+      const cur = wrap.dataset.value || '';
+      const q = search ? search.value.trim() : '';
+      let html = '';
+
+      // Строка "Добавить «...»"
+      if(q && !filtered.some(v => normKey(v) === normKey(q))){
+        html += `<div class="cs-add" data-cs-add="1"><span class="msr">add_circle</span>Добавить «<b>${esc(q)}</b>»</div>`;
+      }
+
+      if(!filtered.length && !q){
+        html += '<div class="cs-empty">Ничего не найдено</div>';
+      } else {
+        html += filtered.map((v,i)=>{
+          const custom = isCustom(v);
+          return `<div class="cs-option ${v===cur?'selected':''} ${i===hlIndex?'hl':''}" data-val="${esc(v)}">
+            <span class="cs-opt-label">${esc(v)}</span>
+            ${custom ? `<button class="cs-del" data-cs-del="1" title="Удалить из моих"><span class="msr">delete</span></button>` : ''}
+          </div>`;
+        }).join('');
+      }
+      list.innerHTML = html;
+    }
+
+    function open(){
+      document.querySelectorAll('.cs-wrap.open').forEach(w=>{ if(w!==wrap) close(w); });
+      wrap.classList.add('open');
+      const rect = wrap.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      panel.classList.toggle('up', spaceBelow < 320 && rect.top > 320);
+      if(search){ search.value=''; filtered = allOptions.slice(); hlIndex=-1; renderList(); setTimeout(()=>search.focus(), 30); }
+    }
+    function close(w){ (w||wrap).classList.remove('open'); }
+
+    toggle.addEventListener('click', e=>{ e.stopPropagation(); wrap.classList.contains('open') ? close() : open(); });
+
+    if(search){
+      search.addEventListener('input', ()=>{
+        const q = search.value.trim().toLowerCase();
+        filtered = !q ? allOptions.slice() : allOptions.filter(v => v.toLowerCase().includes(q));
+        hlIndex = -1;
+        renderList();
+      });
+      search.addEventListener('keydown', e=>{
+        if(e.key==='ArrowDown'){ e.preventDefault(); hlIndex = Math.min(hlIndex+1, filtered.length-1); renderList(); scrollHl(); }
+        else if(e.key==='ArrowUp'){ e.preventDefault(); hlIndex = Math.max(hlIndex-1, 0); renderList(); scrollHl(); }
+        else if(e.key==='Enter'){
+          e.preventDefault();
+          const q = search.value.trim();
+          if(hlIndex>=0 && filtered[hlIndex]) setValue(filtered[hlIndex]);
+          else if(filtered.length) setValue(filtered[0]);
+          else if(q) addAndSelect(q);
+        }
+        else if(e.key==='Escape'){ close(); }
+      });
+    }
+    function scrollHl(){ const el = list.querySelector('.cs-option.hl'); if(el) el.scrollIntoView({block:'nearest'}); }
+
+    list.addEventListener('click', e=>{
+      const delBtn = e.target.closest('[data-cs-del]');
+      if(delBtn){
+        e.stopPropagation();
+        const opt = delBtn.closest('.cs-option');
+        const v = opt.dataset.val;
+        if(!confirm('Удалить «'+v+'» из моих значений?')) return;
+        forgetValue(kind, v);
+        allOptions = allOptions.filter(x => normKey(x) !== normKey(v));
+        filtered = filtered.filter(x => normKey(x) !== normKey(v));
+        renderList();
+        showToast('Удалено из моих');
+        return;
+      }
+      const addBtn = e.target.closest('[data-cs-add]');
+      if(addBtn){
+        e.stopPropagation();
+        const q = search.value.trim();
+        if(q) addAndSelect(q);
+        return;
+      }
+      const opt = e.target.closest('.cs-option');
+      if(!opt) return;
+      setValue(opt.dataset.val);
+    });
+
+    function addAndSelect(v){
+      rememberValue(kind, v);
+      if(!allOptions.some(x => normKey(x) === normKey(v))) allOptions.push(v);
+      filtered = allOptions.slice();
+      setValue(v);
+    }
+
+    function setValue(v){
+      wrap.dataset.value = v;
+      toggle.textContent = v;
+      toggle.classList.remove('placeholder','error');
+      wrap.dispatchEvent(new CustomEvent('cs-change', {detail:v}));
+      close();
+    }
+    function setSilent(v){
+      wrap.dataset.value = v || '';
+      if(v){ toggle.textContent = v; toggle.classList.remove('placeholder'); }
+      else { toggle.textContent = opts.placeholder || 'Выберите'; toggle.classList.add('placeholder'); }
+    }
+    function markError(){
+      toggle.classList.remove('error'); void toggle.offsetWidth; toggle.classList.add('error');
+    }
+    function setOptions(newOptions){
+      allOptions = (newOptions||[]).slice();
+      const q = search ? search.value.trim().toLowerCase() : '';
+      filtered = !q ? allOptions.slice() : allOptions.filter(v => v.toLowerCase().includes(q));
+      hlIndex = -1;
+      renderList();
+    }
+    function refresh(){ setOptions(allOptions); }
+
+    document.addEventListener('click', e=>{ if(!wrap.contains(e.target)) close(); });
+
+    renderList();
+    wrap._cs = {
+      setValue, setSilent, markError, open, close, setOptions, refresh,
+      get value(){ return wrap.dataset.value; },
+      get options(){ return allOptions.slice(); }
+    };
+  }
+  return { init };
+})();
+
+function rebuildSelectFromMemory(id){
+  const w = $(id); if(!w || !w._cs) return;
+  const kind = w.dataset.kind;
+  const baseMap = { lessonNum:REF_LESSON_NUMS, time:REF_TIMES, subject:REF_SUBJECTS, teacher:REF_TEACHERS, room:REF_ROOMS };
+  const refs = getCustomRefs();
+  const merged = mergeRefs(baseMap[kind], refs[kind]);
+  w._cs.setOptions(merged);
+}
+
+function initAllSelects(){
+  const refs = getCustomRefs();
+  CustomSelect.init($('csLessonNum'), mergeRefs(REF_LESSON_NUMS, refs.lessonNum), {placeholder:'Выберите номер'});
+  CustomSelect.init($('csTime'),      mergeRefs(REF_TIMES,      refs.time),      {placeholder:'Выберите время'});
+  CustomSelect.init($('csSubject'),   mergeRefs(REF_SUBJECTS,   refs.subject),   {placeholder:'Выберите предмет'});
+  CustomSelect.init($('csTeacher'),   mergeRefs(REF_TEACHERS,   refs.teacher),   {placeholder:'Выберите учителя'});
+  CustomSelect.init($('csRoom'),      mergeRefs(REF_ROOMS,      refs.room),      {placeholder:'Выберите кабинет'});
+}
+function setSelectValue(id, v){ const w=$(id); if(w && w._cs) w._cs.setSilent(v); }
+function getSelectValue(id){ const w=$(id); return w ? (w.dataset.value || '') : ''; }
+
+/* =========================================================
+   LOADER
    ========================================================= */
 const NovaLoader = (function(){
-  const T1 = 1400;   // круг: градиент растёт
-  const T2 = 350;    // круг → синий
-  const T3 = 180;    // пауза
-  const T4 = 1400;   // полоса: градиент растёт
-  const T5 = 350;    // полоса → синяя
-  const T6 = 700;    // текст
-  const T7 = 900;    // держим
-  const TOTAL = T1+T2+T3+T4+T5+T6+T7;  // ≈ 5280 ms
-
-  const CIRC = 452.39;
-  const BLEN = 404;
-
-  let raf=null, t0=0, running=false;
-  // easeInOutCubic — плавный старт и финиш
+  const T1=1400,T2=350,T3=180,T4=1400,T5=350,T6=700,T7=900;
+  const TOTAL=T1+T2+T3+T4+T5+T6+T7;
+  const CIRC=452.39, BLEN=404;
+  let raf=null,t0=0,running=false;
   const ease = t => t<.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2;
-
   function frame(now){
     if(!running) return;
     const t = now - t0;
-
-    const ringGray = $('ringGray');
-    const ringGrad = $('ringGrad');
-    const ringBlue = $('ringBlue');
-    const barGray  = $('barGray');
-    const barGrad  = $('barGrad');
-    const barBlue  = $('barBlue');
-    const welcome  = $('welcomeText');
-    if(!ringGray||!ringGrad||!barGray||!barGrad) return;
-
-    if(t < T1){
-      const p = ease(t / T1);
-      ringGray.setAttribute('stroke-dasharray', CIRC + ' ' + CIRC);
-      ringGray.style.opacity = '1';
-      ringGrad.setAttribute('stroke-dasharray', (CIRC*p) + ' ' + CIRC);
-      ringGrad.style.opacity = '1';
-      ringBlue.style.opacity = '0';
-      barGray.setAttribute('stroke-dasharray', BLEN + ' ' + BLEN);
-      barGray.style.opacity = '1';
-      barGrad.setAttribute('stroke-dasharray', '0 ' + BLEN);
-      barBlue.style.opacity = '0';
-      if(welcome) welcome.classList.remove('show');
-    }
-    else if(t < T1+T2){
-      const p = (t-T1)/T2;
-      ringGray.style.opacity = '0';
-      ringGrad.setAttribute('stroke-dasharray', CIRC + ' ' + CIRC);
-      ringBlue.setAttribute('stroke-dasharray', CIRC + ' ' + CIRC);
-      ringGrad.style.opacity = (1-p)+'';
-      ringBlue.style.opacity = p+'';
-    }
-    else if(t < T1+T2+T3){
-      ringGrad.style.opacity = '0';
-      ringBlue.style.opacity = '1';
-    }
-    else if(t < T1+T2+T3+T4){
-      const p = ease((t-T1-T2-T3)/T4);
-      barGray.setAttribute('stroke-dasharray', BLEN + ' ' + BLEN);
-      barGray.style.opacity = '1';
-      barGrad.setAttribute('stroke-dasharray', (BLEN*p) + ' ' + BLEN);
-      barGrad.style.opacity = '1';
-      barBlue.style.opacity = '0';
-    }
-    else if(t < T1+T2+T3+T4+T5){
-      const p = (t-T1-T2-T3-T4)/T5;
-      barGray.style.opacity = '0';
-      barGrad.setAttribute('stroke-dasharray', BLEN + ' ' + BLEN);
-      barBlue.setAttribute('stroke-dasharray', BLEN + ' ' + BLEN);
-      barGrad.style.opacity = (1-p)+'';
-      barBlue.style.opacity = p+'';
-    }
-    else if(t < TOTAL - T7){
-      barGrad.style.opacity = '0';
-      barBlue.style.opacity = '1';
-      if(welcome) welcome.classList.add('show');
-    }
-    else if(t < TOTAL){
-      /* держим */
-    }
-    else {
-      running=false;
-      return;
-    }
+    const rg=$('ringGray'), rgr=$('ringGrad'), rb=$('ringBlue');
+    const bg=$('barGray'), bgr=$('barGrad'), bb=$('barBlue');
+    const w=$('welcomeText');
+    if(!rg||!rgr||!bg||!bgr) return;
+    if(t<T1){
+      const p=ease(t/T1);
+      rg.setAttribute('stroke-dasharray',CIRC+' '+CIRC); rg.style.opacity='1';
+      rgr.setAttribute('stroke-dasharray',(CIRC*p)+' '+CIRC); rgr.style.opacity='1';
+      rb.style.opacity='0';
+      bg.setAttribute('stroke-dasharray',BLEN+' '+BLEN); bg.style.opacity='1';
+      bgr.setAttribute('stroke-dasharray','0 '+BLEN); bb.style.opacity='0';
+      if(w) w.classList.remove('show');
+    } else if(t<T1+T2){
+      const p=(t-T1)/T2;
+      rg.style.opacity='0';
+      rgr.setAttribute('stroke-dasharray',CIRC+' '+CIRC);
+      rb.setAttribute('stroke-dasharray',CIRC+' '+CIRC);
+      rgr.style.opacity=(1-p)+'';
+      rb.style.opacity=p+'';
+    } else if(t<T1+T2+T3){
+      rgr.style.opacity='0'; rb.style.opacity='1';
+    } else if(t<T1+T2+T3+T4){
+      const p=ease((t-T1-T2-T3)/T4);
+      bg.setAttribute('stroke-dasharray',BLEN+' '+BLEN); bg.style.opacity='1';
+      bgr.setAttribute('stroke-dasharray',(BLEN*p)+' '+BLEN); bgr.style.opacity='1';
+      bb.style.opacity='0';
+    } else if(t<T1+T2+T3+T4+T5){
+      const p=(t-T1-T2-T3-T4)/T5;
+      bg.style.opacity='0';
+      bgr.setAttribute('stroke-dasharray',BLEN+' '+BLEN);
+      bb.setAttribute('stroke-dasharray',BLEN+' '+BLEN);
+      bgr.style.opacity=(1-p)+'';
+      bb.style.opacity=p+'';
+    } else if(t<TOTAL-T7){
+      bgr.style.opacity='0'; bb.style.opacity='1';
+      if(w) w.classList.add('show');
+    } else if(t<TOTAL){}
+    else { running=false; return; }
     raf=requestAnimationFrame(frame);
   }
-
-  function start(){
-    running=true;
-    t0=performance.now();
-    raf=requestAnimationFrame(frame);
-  }
+  function start(){ running=true; t0=performance.now(); raf=requestAnimationFrame(frame); }
   function stop(){ running=false; if(raf) cancelAnimationFrame(raf); }
   return { start, stop, DURATION: TOTAL };
 })();
-
-function showLoader(){
-  const l=$('loader'); if(!l) return;
-  l.classList.remove('hidden','fade-out');
-  NovaLoader.start();
-}
-function hideLoader(){
-  const l=$('loader'); if(!l) return;
-  NovaLoader.stop();
-  l.classList.add('fade-out');
-  setTimeout(()=>{ l.classList.add('hidden'); l.classList.remove('fade-out'); }, 550);
-}
+function showLoader(){ const l=$('loader'); if(!l) return; l.classList.remove('hidden','fade-out'); NovaLoader.start(); }
+function hideLoader(){ const l=$('loader'); if(!l) return; NovaLoader.stop(); l.classList.add('fade-out'); setTimeout(()=>{ l.classList.add('hidden'); l.classList.remove('fade-out'); }, 550); }
 
 /* =========================================================
    SESSION
@@ -631,18 +877,54 @@ function jsonp(params, timeout){
     to=setTimeout(()=>{ if(finished) return; finished=true; cleanup(); reject(new Error('Превышено время ожидания')); }, timeout||20000);
   });
 }
+let jsonpCounter = 0;
+
+/* =========================================================
+   CACHE
+   ========================================================= */
+function getCache(){
+  try{
+    const raw = localStorage.getItem(CACHE_KEY);
+    if(!raw) return { schedules:{}, hwStatuses:{}, users:[], ts:0 };
+    const c = JSON.parse(raw);
+    if(!c.schedules) c.schedules = {};
+    if(!c.hwStatuses) c.hwStatuses = {};
+    if(!c.users) c.users = [];
+    return c;
+  }catch(e){ return { schedules:{}, hwStatuses:{}, users:[], ts:0 }; }
+}
+function saveCache(c){ try{ localStorage.setItem(CACHE_KEY, JSON.stringify(c)); }catch(e){} }
+function updateCacheFromPrefetched(){
+  const c = getCache();
+  c.schedules = prefetched.scheduleByDate;
+  c.hwStatuses = prefetched.hwStatuses || {};
+  c.users = prefetched.users || [];
+  c.ts = Date.now();
+  saveCache(c);
+}
+function clearCache(){ try{ localStorage.removeItem(CACHE_KEY); }catch(e){} }
+function hydrateFromCache(){
+  const c = getCache();
+  Object.assign(prefetched.scheduleByDate, c.schedules || {});
+  prefetched.hwStatuses = c.hwStatuses || {};
+  prefetched.users = c.users || [];
+}
+
+let currentPage='home', selectedDate=initialDate(), animating=false;
+let cacheLessons=[], cacheHwStatuses={}, editingId=null;
+const prefetched = { scheduleByDate:{}, hwStatuses:null, users:null };
 
 /* =========================================================
    ДАТЫ
    ========================================================= */
 function normDate(v){
   if(!v) return '';
-  const s = String(v).trim();
-  let m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  const s=String(v).trim();
+  let m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);
   if(m) return m[1]+'-'+m[2]+'-'+m[3];
-  m = s.match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})/);
+  m=s.match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})/);
   if(m) return m[3]+'-'+String(m[2]).padStart(2,'0')+'-'+String(m[1]).padStart(2,'0');
-  const d = new Date(s);
+  const d=new Date(s);
   if(!isNaN(d.getTime())) return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
   return s.slice(0,10);
 }
@@ -690,8 +972,8 @@ async function prefetchAll(user){
    AUTH UI
    ========================================================= */
 function fitFormHeight(){ const pane=document.querySelector('.slide-pane[data-pane="'+$('track').dataset.active+'"]'); if(pane) $('formsWrap').style.height=pane.scrollHeight+'px'; }
-function switchTab(w){ hideErr(); const l=w==='login'; $('tabLogin').classList.toggle('active', l); $('tabReg').classList.toggle('active', !l); $('tabs').dataset.active=l?'login':'reg'; $('track').dataset.active=l?'login':'reg'; fitFormHeight(); }
-function showErr(m){ const box=$('errBox'); box.textContent=m; box.classList.remove('hidden'); fitFormHeight(); }
+function switchTab(w){ hideErr(); const l=w==='login'; $('tabLogin').classList.toggle('active',l); $('tabReg').classList.toggle('active',!l); $('tabs').dataset.active=l?'login':'reg'; $('track').dataset.active=l?'login':'reg'; fitFormHeight(); }
+function showErr(m){ const b=$('errBox'); b.textContent=m; b.classList.remove('hidden'); fitFormHeight(); }
 function hideErr(){ $('errBox').classList.add('hidden'); }
 function markEmpty(arr){ let any=false; arr.forEach(i=>{ if(!i.value.trim()){ i.classList.remove('error'); void i.offsetWidth; i.classList.add('error'); any=true; } }); return any; }
 
@@ -727,15 +1009,11 @@ async function doLogin(){
     if(!u.role||!ROLES[u.role]) u.role='Ученик';
     if(String(u.email||'').toLowerCase()===CREATOR_EMAIL.toLowerCase()) u.role='Создатель';
     saveSession(u);
-    // подгружаем кэш
     hydrateFromCache();
     if(prefetched.scheduleByDate[selectedDate]) cacheLessons = prefetched.scheduleByDate[selectedDate];
-    // минимально держим лоадер
-    const elapsed = performance.now();
-    await new Promise(r=>setTimeout(r, Math.max(0, 3200 - 0)));
+    await new Promise(r=>setTimeout(r, 3200));
     hideLoader();
     await enterApp();
-    // фоновая синхронизация
     prefetchAll(u).then(()=>{
       if(prefetched.scheduleByDate[selectedDate]) cacheLessons = prefetched.scheduleByDate[selectedDate];
       if(currentPage==='schedule'||currentPage==='homework') refreshCurrentPage();
@@ -954,12 +1232,10 @@ function renderPage(key){
 async function loadPageData(key){
   const user=getCurrentUser(); if(!user) return;
   if(key==='schedule'||key==='homework'){
-    // 1. Мгновенно из кэша
     if(prefetched.scheduleByDate[selectedDate] !== undefined){
       cacheLessons = prefetched.scheduleByDate[selectedDate];
       if(key==='homework' && prefetched.hwStatuses) cacheHwStatuses = prefetched.hwStatuses;
       refreshCurrentPage();
-      // фоном — обновляем
       jsonp({action:'get_sched', requester:user.email, date:selectedDate}, 12000)
         .then(res=>{
           if(res && res.status==='ok'){
@@ -972,7 +1248,6 @@ async function loadPageData(key){
         }).catch(()=>{});
       return;
     }
-    // 2. Нет кэша — грузим
     try{
       const res=await jsonp({action:'get_sched', requester:user.email, date:selectedDate});
       if(res&&res.status==='ok'){
@@ -1055,11 +1330,11 @@ window.openModal = function(lesson){
   editingId=lesson?lesson.id:null;
   $('modalTitle').textContent=lesson?'Редактировать урок':'Новый урок';
   $('mDate').value=lesson?normDate(lesson.date):selectedDate;
-  $('mLessonNum').value=lesson?lesson.lessonNum:'';
-  $('mTime').value=lesson?lesson.time:'';
-  $('mSubject').value=lesson?lesson.subject:'';
-  $('mTeacher').value=lesson?lesson.teacher:'';
-  $('mRoom').value=lesson?lesson.room:'';
+  setSelectValue('csLessonNum', lesson?String(lesson.lessonNum||''):'');
+  setSelectValue('csTime', lesson?lesson.time:'');
+  setSelectValue('csSubject', lesson?lesson.subject:'');
+  setSelectValue('csTeacher', lesson?lesson.teacher:'');
+  setSelectValue('csRoom', lesson?lesson.room:'');
   $('mHomework').value=lesson?lesson.homework:'';
   $('mSor').checked=lesson?!!lesson.sor:false;
   $('mSoch').checked=lesson?!!lesson.soch:false;
@@ -1072,22 +1347,40 @@ $('modalCancel').onclick=closeModal;
 $('modalBackdrop').onclick=e=>{ if(e.target===$('modalBackdrop')) closeModal(); };
 $('topbarAddBtn').onclick=()=>openModal(null);
 
-/* ---------- ОПТИМИСТИЧНОЕ СОХРАНЕНИЕ ---------- */
+/* ---------- СОХРАНЕНИЕ ---------- */
 $('modalSave').onclick=()=>{
   const user=getCurrentUser(); if(!user) return;
   const dateVal = $('mDate').value;
-  const subjectVal = $('mSubject').value.trim();
-  if(!dateVal||!subjectVal){ showToast('Заполните дату и предмет'); return; }
+  const subjectVal = getSelectValue('csSubject');
+  const timeVal = getSelectValue('csTime');
+  const teacherVal = getSelectValue('csTeacher');
+  const roomVal = getSelectValue('csRoom');
+  const numVal = getSelectValue('csLessonNum');
+
+  let bad=false;
+  if(!dateVal){ $('mDate').classList.remove('error'); void $('mDate').offsetWidth; $('mDate').classList.add('error'); bad=true; }
+  if(!subjectVal){ $('csSubject')._cs.markError(); bad=true; }
+  if(!timeVal){ $('csTime')._cs.markError(); bad=true; }
+  if(!teacherVal){ $('csTeacher')._cs.markError(); bad=true; }
+  if(!roomVal){ $('csRoom')._cs.markError(); bad=true; }
+  if(bad){ showToast('Заполните обязательные поля'); return; }
+
+  // Запоминаем введённые значения
+  if(numVal)     rememberValue('lessonNum', numVal);
+  if(timeVal)    rememberValue('time', timeVal);
+  if(subjectVal) rememberValue('subject', subjectVal);
+  if(teacherVal) rememberValue('teacher', teacherVal);
+  if(roomVal)    rememberValue('room', roomVal);
 
   const payload={
     action:'save_sched', requester:user.email, role:userRole(),
     id:editingId||'',
     date:dateVal,
-    lessonNum:$('mLessonNum').value,
-    time:$('mTime').value.trim(),
+    lessonNum:numVal,
+    time:timeVal,
     subject:subjectVal,
-    teacher:$('mTeacher').value.trim(),
-    room:$('mRoom').value.trim(),
+    teacher:teacherVal,
+    room:roomVal,
     homework:$('mHomework').value.trim(),
     sor:$('mSor').checked?'true':'false',
     soch:$('mSoch').checked?'true':'false',
@@ -1097,32 +1390,20 @@ $('modalSave').onclick=()=>{
   const dateKey = normDate(payload.date);
   const localId = editingId || ('tmp_'+Date.now()+'_'+Math.random().toString(36).slice(2,7));
   const localLesson = {
-    id: localId,
-    date: payload.date,
-    lessonNum: payload.lessonNum,
-    time: payload.time,
-    subject: payload.subject,
-    teacher: payload.teacher,
-    room: payload.room,
-    homework: payload.homework,
-    sor: payload.sor==='true',
-    soch: payload.soch==='true',
-    cancelled: payload.cancelled==='true'
+    id: localId, date: payload.date, lessonNum: payload.lessonNum,
+    time: payload.time, subject: payload.subject, teacher: payload.teacher,
+    room: payload.room, homework: payload.homework,
+    sor: payload.sor==='true', soch: payload.soch==='true', cancelled: payload.cancelled==='true'
   };
 
-  // Сохраняем старое состояние для отката
   const oldList = prefetched.scheduleByDate[dateKey] ? JSON.parse(JSON.stringify(prefetched.scheduleByDate[dateKey])) : null;
 
-  // Локально применяем
   if(prefetched.scheduleByDate[dateKey]){
     let arr = prefetched.scheduleByDate[dateKey].slice();
     if(editingId){
       const i = arr.findIndex(x=>String(x.id)===String(editingId));
-      if(i>=0) arr[i] = localLesson;
-      else arr.push(localLesson);
-    } else {
-      arr.push(localLesson);
-    }
+      if(i>=0) arr[i] = localLesson; else arr.push(localLesson);
+    } else arr.push(localLesson);
     arr.sort((a,b)=>(parseInt(a.lessonNum)||0)-(parseInt(b.lessonNum)||0));
     prefetched.scheduleByDate[dateKey] = arr;
   } else {
@@ -1134,15 +1415,19 @@ $('modalSave').onclick=()=>{
   if(dateKey===selectedDate) cacheLessons = prefetched.scheduleByDate[dateKey];
   if(currentPage==='schedule'||currentPage==='homework') refreshCurrentPage();
 
-  // Мгновенно закрываем модалку и показываем тост
+  // Обновляем все dropdown'ы (новые значения сразу появятся)
+  rebuildSelectFromMemory('csLessonNum');
+  rebuildSelectFromMemory('csTime');
+  rebuildSelectFromMemory('csSubject');
+  rebuildSelectFromMemory('csTeacher');
+  rebuildSelectFromMemory('csRoom');
+
   closeModal();
   showToast('Сохранено');
 
-  // Фоном отправляем в GAS
   jsonp(payload).then(res=>{
     if(!res||res.status!=='ok'){
       showToast((res&&res.message)||'Не сохранилось — повторите');
-      // откат
       if(oldList!==null) prefetched.scheduleByDate[dateKey]=oldList;
       else delete prefetched.scheduleByDate[dateKey];
       updateCacheFromPrefetched();
@@ -1150,7 +1435,6 @@ $('modalSave').onclick=()=>{
       if(currentPage==='schedule'||currentPage==='homework') refreshCurrentPage();
       return;
     }
-    // Обновляем id
     if(res.id && !editingId && prefetched.scheduleByDate[dateKey]){
       const arr = prefetched.scheduleByDate[dateKey];
       const i = arr.findIndex(x=>String(x.id)===String(localId));
@@ -1169,13 +1453,11 @@ $('modalSave').onclick=()=>{
 
 window.editLesson=function(id){ const l=cacheLessons.find(x=>String(x.id)===String(id)); if(l) openModal(l); };
 
-/* ---------- ОПТИМИСТИЧНОЕ УДАЛЕНИЕ ---------- */
 window.deleteLesson=function(id){
   if(!confirm('Удалить урок?')) return;
   const user=getCurrentUser();
   const dateKey = selectedDate;
   const oldList = prefetched.scheduleByDate[dateKey] ? JSON.parse(JSON.stringify(prefetched.scheduleByDate[dateKey])) : null;
-  const removed = (prefetched.scheduleByDate[dateKey]||[]).find(x=>String(x.id)===String(id));
   if(prefetched.scheduleByDate[dateKey]){
     prefetched.scheduleByDate[dateKey] = prefetched.scheduleByDate[dateKey].filter(x=>String(x.id)!==String(id));
     cacheLessons = prefetched.scheduleByDate[dateKey];
@@ -1218,23 +1500,19 @@ $$('[data-logout]').forEach(b=>b.onclick=()=>{ showLoader(); clearSession(); set
    ========================================================= */
 (async function init(){
   requestAnimationFrame(fitFormHeight);
+  initAllSelects();
   const s = getSession();
   if(s && s.user){
     hydrateFromCache();
     if(prefetched.scheduleByDate[selectedDate]) cacheLessons = prefetched.scheduleByDate[selectedDate];
-
     showLoader();
-    // держим лоадер ~3.2 сек, потом показываем приложение с кэшем
     await new Promise(r=>setTimeout(r, 3200));
     hideLoader();
-
     $('authView').classList.add('hidden');
     $('appView').classList.remove('hidden');
     applyUserToUI(); addCreatorMenu();
     renderPage('home');
     requestAnimationFrame(moveIndicator);
-
-    // Фоном — свежие данные
     prefetchAll(s.user).then(()=>{
       if(prefetched.scheduleByDate[selectedDate]) cacheLessons = prefetched.scheduleByDate[selectedDate];
       if(currentPage==='schedule'||currentPage==='homework') refreshCurrentPage();
