@@ -14,32 +14,31 @@ body{font-family:'Comfortaa',sans-serif;background:var(--section);color:var(--te
 .hidden{display:none!important}
 .msr{font-family:'Material Symbols Rounded';font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;font-size:26px;display:inline-flex;align-items:center;justify-content:center;color:currentColor;line-height:1;user-select:none;flex-shrink:0}
 
-/* LOADER */
-#loader{position:fixed;inset:0;z-index:9999;background:#EFF6FF;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s ease}
+/* ============ LOADER ============ */
+#loader{position:fixed;inset:0;z-index:9999;background:#FFFFFF;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .55s cubic-bezier(.4,0,.2,1)}
 #loader.fade-out{opacity:0;pointer-events:none}
-.loader-center{position:relative;width:120px;height:120px}
-.loader-center .ring{position:absolute;inset:0;animation:ringFadeOut .45s ease 1.5s forwards}
-.loader-center .ring svg{width:100%;height:100%;display:block}
-.loader-center .ring-bg{fill:none;stroke:#DBEAFE;stroke-width:12}
-.loader-center .ring-fg{fill:none;stroke:#2563EB;stroke-width:12;stroke-linecap:round;stroke-dasharray:80 314;transform-origin:60px 60px;animation:ringSpin 1.3s linear infinite}
-@keyframes ringSpin{0%{transform:rotate(0deg);stroke-dasharray:40 314}50%{stroke-dasharray:180 314}100%{transform:rotate(360deg);stroke-dasharray:40 314}}
-@keyframes ringFadeOut{to{opacity:0;transform:scale(1.12)}}
-.loader-center .blob{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.4);animation:blobIn .5s cubic-bezier(.34,1.5,.64,1) 1.5s forwards}
-.loader-center .blob svg{width:78%;height:78%;display:block;filter:drop-shadow(0 8px 22px rgba(37,99,235,.35));animation:blobSpin 3s linear 2s infinite}
-@keyframes blobIn{0%{opacity:0;transform:scale(.4) rotate(-40deg)}100%{opacity:1;transform:scale(1) rotate(0deg)}}
-@keyframes blobSpin{to{transform:rotate(360deg)}}
-.loader-line{position:relative;width:min(420px,78vw);height:22px;margin-top:34px;opacity:0;animation:lineFadeIn .15s ease forwards,lineFadeOut .4s ease 1.9s forwards;overflow:visible}
-@keyframes lineFadeIn{to{opacity:1}}
-@keyframes lineFadeOut{to{opacity:0}}
-.loader-line svg{display:block;width:100%;height:100%;overflow:visible}
-.loader-line .wave-path{fill:none;stroke:#2563EB;stroke-width:9;stroke-linecap:round;stroke-linejoin:round;clip-path:inset(0 100% 0 0);animation:waveReveal .6s cubic-bezier(.4,.1,.2,1) forwards}
-@keyframes waveReveal{to{clip-path:inset(0 0 0 0)}}
-.loader-line .dot{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:#2563EB;animation:dotPulse 1.4s ease-in-out infinite,dotFade .3s ease 1.9s forwards}
-@keyframes dotPulse{0%,100%{opacity:.4;transform:translateY(-50%) scale(.8)}50%{opacity:1;transform:translateY(-50%) scale(1.3)}}
-@keyframes dotFade{to{opacity:0}}
-@media (max-width:520px){.loader-center{width:90px;height:90px}.loader-line{margin-top:24px;height:18px}}
+.nova-stage{position:relative;width:180px;height:180px}
+.nova-ring{width:100%;height:100%;display:block}
+.nova-ring circle{fill:none;stroke-width:12;stroke-linecap:round}
+#ringGray{stroke:#E8ECF2}
+#ringGrad{stroke:url(#gradArc)}
+#ringBlue{stroke:#2563EB;opacity:0}
+.nova-bar{margin-top:42px;width:min(420px,80vw);height:14px;display:block}
+.nova-bar line{stroke-width:10;stroke-linecap:round}
+#barGray{stroke:#E8ECF2}
+#barGrad{stroke:url(#gradBar)}
+#barBlue{stroke:#2563EB;opacity:0}
+.nova-welcome{margin-top:36px;font-size:20px;font-weight:700;color:#2563EB;letter-spacing:.4px;opacity:0;transform:translateY(8px);transition:opacity .5s cubic-bezier(.4,0,.2,1),transform .5s cubic-bezier(.4,0,.2,1)}
+.nova-welcome.show{opacity:1;transform:translateY(0)}
+@media (max-width:520px){
+  .nova-stage{width:140px;height:140px}
+  .nova-ring circle{stroke-width:10}
+  .nova-bar{margin-top:32px;height:12px}
+  .nova-bar line{stroke-width:8}
+  .nova-welcome{font-size:17px;margin-top:28px}
+}
 
-/* AUTH */
+/* ============ AUTH ============ */
 #authView{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:var(--section)}
 .card{width:100%;max-width:400px;background:#fff;border:1px solid var(--border);border-radius:var(--rc);padding:28px 28px 26px;box-shadow:var(--shadow);animation:zoom .35s ease both}
 @keyframes zoom{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
@@ -66,20 +65,19 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
 @keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-6px)}40%,60%{transform:translateX(6px)}}
 .pass-wrap{position:relative}
 .pass-wrap input{padding-right:48px}
-.pass-toggle{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:none;background:transparent;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;border-radius:10px;transition:background .2s ease,color .2s ease;padding:0}
+.pass-toggle{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:none;background:transparent;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;border-radius:10px;padding:0}
 .pass-toggle:hover{background:var(--section);color:var(--accent)}
-.pass-toggle:active{transform:translateY(-50%) scale(.9)}
 .pass-toggle .msr{font-size:22px}
-.btn{width:100%;padding:13px;border:none;border-radius:var(--ri);background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;transition:background .2s ease,transform .15s ease,box-shadow .2s ease;display:inline-flex;align-items:center;justify-content:center;gap:8px}
-.btn:hover{background:var(--accent-h);box-shadow:var(--shadow-hover)}
+.btn{width:100%;padding:13px;border:none;border-radius:var(--ri);background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;transition:background .2s ease,transform .15s ease;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn:hover{background:var(--accent-h)}
 .btn:active{transform:scale(.97)}
 .btn:disabled{opacity:.75;cursor:wait}
 .btn-ghost{background:#fff;color:var(--text);border:1px solid var(--border)}
-.btn-ghost:hover{background:var(--section);box-shadow:none}
+.btn-ghost:hover{background:var(--section)}
 .err{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA;border-radius:var(--ri);padding:11px 14px;font-size:13px;margin-bottom:14px;line-height:1.45}
 .err code{background:rgba(153,27,27,.1);padding:1px 5px;border-radius:4px;font-size:12px}
 
-/* APP */
+/* ============ APP ============ */
 #appView{position:fixed;inset:0;z-index:10;background:var(--section)}
 .app-layout{display:flex;gap:var(--gap);padding:var(--gap);height:100%;overflow:hidden}
 .sidebar{flex-shrink:0;width:var(--sb-mini);background:#fff;border:1px solid var(--border);border-radius:24px;box-shadow:var(--shadow);padding:20px 14px;display:flex;flex-direction:column;overflow:hidden;transition:width .4s cubic-bezier(.4,.1,.2,1);z-index:30}
@@ -94,7 +92,7 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
 .menu-indicator.ready{opacity:1}
 .menu-item{position:relative;z-index:1;display:flex;align-items:center;gap:18px;padding:14px 16px;border-radius:16px;border:none;background:transparent;color:var(--text);font-family:inherit;font-size:14.5px;font-weight:500;cursor:pointer;text-align:left;transition:color .35s ease;white-space:nowrap;min-height:56px;overflow:hidden}
 .menu-item:hover{background:var(--section)}
-.menu-item.active{color:#fff;font-weight:700;background:transparent}
+.menu-item.active{color:#fff;font-weight:700}
 .menu-item.active .msr{color:#fff}
 .menu-item .menu-label{opacity:0;transform:translateX(-10px);transition:opacity .25s ease .05s,transform .3s ease .05s}
 .sidebar:hover .menu-item .menu-label,.sidebar.open .menu-item .menu-label{opacity:1;transform:translateX(0)}
@@ -122,11 +120,14 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
 .topbar-logout:hover{background:#FEF2F2;color:#DC2626}
 .topbar-logout .msr{font-size:22px}
 .pages-viewport{flex:1;min-height:0;position:relative;overflow:hidden;border-radius:24px}
+.pages-viewport::before,.pages-viewport::after{content:'';position:absolute;left:0;right:0;height:28px;pointer-events:none;z-index:5}
+.pages-viewport::before{top:0;background:linear-gradient(to bottom,#fff 0%,#fff 30%,rgba(255,255,255,0) 100%)}
+.pages-viewport::after{bottom:0;background:linear-gradient(to top,#fff 0%,#fff 30%,rgba(255,255,255,0) 100%)}
 .page-pane{position:absolute;inset:0;background:#fff;border:1px solid var(--border);border-radius:24px;box-shadow:var(--shadow);padding:clamp(20px,2.5vw,32px);overflow:auto;animation:paneIn .35s cubic-bezier(.34,1.2,.64,1) both}
 @keyframes paneIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .banner{width:100%;border-radius:16px;background:linear-gradient(135deg,#3B82F6 0%,#2563EB 100%);color:#fff;padding:22px 28px;display:flex;align-items:center;gap:12px;box-shadow:0 10px 22px -10px rgba(37,99,235,.6);margin-bottom:22px;min-height:76px}
 .banner .msr{font-size:26px;color:#fff}
-.banner-title{font-size:clamp(15px,1.5vw,17px);font-weight:700;letter-spacing:.3px}
+.banner-title{font-size:clamp(15px,1.5vw,17px);font-weight:700}
 .role-badge{display:inline-block;padding:3px 10px;font-size:10px;font-weight:700;border-radius:999px;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap}
 .role-badge.student{background:rgba(37,99,235,.12);color:#2563EB}
 .role-badge.creator{background:linear-gradient(135deg,#0F172A,#334155);color:#fff}
@@ -141,14 +142,13 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
 .wp-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px 8px}
 .wp-title{color:#fff;font-size:14px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;flex:1;text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;user-select:none}
 .wp-title .msr{font-size:18px;opacity:.85;color:#fff}
-.wp-today-btn{color:#fff;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:10px;padding:5px 12px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.3px;text-transform:uppercase;transition:background .2s ease}
+.wp-today-btn{color:#fff;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:10px;padding:5px 12px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;text-transform:uppercase}
 .wp-today-btn:hover{background:rgba(255,255,255,.25)}
-.wp-arrow{flex-shrink:0;width:40px;height:40px;border-radius:12px;border:none;background:rgba(255,255,255,.1);color:#fff;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s ease,transform .15s ease}
+.wp-arrow{flex-shrink:0;width:40px;height:40px;border-radius:12px;border:none;background:rgba(255,255,255,.1);color:#fff;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
 .wp-arrow:hover{background:rgba(255,255,255,.22)}
-.wp-arrow:active{transform:scale(.94)}
 .wp-arrow .msr{font-size:22px;color:#fff}
 .wp-days{display:grid;grid-template-columns:repeat(5,1fr);padding:4px 12px 0 12px;gap:4px}
-.wp-day{min-height:60px;border:none;background:transparent;color:#fff;font-family:inherit;cursor:pointer;border-radius:14px 14px 0 0;padding:10px 4px;display:flex;align-items:center;justify-content:center;text-align:center;align-self:flex-end;transition:background .25s ease,color .25s ease}
+.wp-day{min-height:60px;border:none;background:transparent;color:#fff;font-family:inherit;cursor:pointer;border-radius:14px 14px 0 0;padding:10px 4px;display:flex;align-items:center;justify-content:center;text-align:center;align-self:flex-end}
 .wp-day:hover{background:rgba(255,255,255,.14)}
 .wp-day.active{background:#fff;color:var(--accent)}
 .wp-day-name{font-size:11.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
@@ -159,7 +159,7 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
 @media (max-width:820px){.wp-days{display:none}.wp-mobile{display:block}}
 .lessons-list{display:flex;flex-direction:column;gap:12px;margin-top:16px}
 .lesson-row{display:flex;align-items:center;gap:16px;background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:18px 20px;transition:border-color .2s ease,box-shadow .2s ease,transform .15s ease;position:relative;animation:rowIn .35s cubic-bezier(.34,1.2,.64,1) both}
-.lesson-row:hover{border-color:rgba(37,99,235,.35);box-shadow:var(--shadow-hover);transform:translateY(-1px)}
+.lesson-row:hover{border-color:rgba(37,99,235,.35);transform:translateY(-1px)}
 .lesson-row.cancelled{border-color:#FECACA;background:#FEF2F2;opacity:.92}
 .lesson-num{flex-shrink:0;width:60px;height:60px;border-radius:16px;background:rgba(37,99,235,.08);border:2px solid var(--accent);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:22px}
 .lesson-info{flex:1;min-width:0}
@@ -168,24 +168,22 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
 .lesson-meta .meta-item{display:inline-flex;align-items:center;gap:5px}
 .lesson-meta .meta-item .msr{font-size:16px;color:var(--muted)}
 .lesson-action{flex-shrink:0;display:flex;gap:8px;align-items:center}
-.btn-icon{width:40px;height:40px;border-radius:12px;border:1px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:background .2s ease,color .2s ease,transform .15s ease,border-color .2s ease,box-shadow .2s ease}
-.btn-icon:hover{background:var(--section);color:var(--accent);transform:translateY(-1px)}
-.btn-icon:active{transform:scale(.94)}
+.btn-icon{width:40px;height:40px;border-radius:12px;border:1px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.btn-icon:hover{background:var(--section);color:var(--accent)}
 .btn-icon.danger:hover{background:#FEF2F2;color:#DC2626}
 .btn-icon.primary{color:var(--accent);border-color:rgba(37,99,235,.3)}
-.btn-icon.primary:hover{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 6px 14px -6px rgba(37,99,235,.55)}
+.btn-icon.primary:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
 .btn-icon .msr{font-size:20px}
-.empty-state{padding:60px 24px;text-align:center;color:var(--muted);background:#fff;border:1px solid var(--border);border-radius:16px;display:flex;flex-direction:column;align-items:center;gap:14px;animation:paneIn .35s ease both}
+.empty-state{padding:60px 24px;text-align:center;color:var(--muted);background:#fff;border:1px solid var(--border);border-radius:16px;display:flex;flex-direction:column;align-items:center;gap:14px}
 .empty-state .msr{font-size:54px;color:#CBD5E1;display:block}
 .empty-state h3{font-size:15px;font-weight:700;color:var(--brand);margin-bottom:2px}
 .empty-state p{font-size:13px;max-width:340px;margin:0 auto}
-.empty-add-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:14px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;box-shadow:0 8px 18px -8px rgba(37,99,235,.6);transition:background .2s ease,transform .15s ease}
+.empty-add-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:14px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer}
 .empty-add-btn:hover{background:var(--accent-h)}
-.empty-add-btn:active{transform:scale(.97)}
 .empty-add-btn .msr{font-size:22px;color:#fff}
 .users-list{display:flex;flex-direction:column;gap:10px;margin-top:16px}
-.user-row{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px 16px;transition:background .2s ease,transform .15s ease;animation:rowIn .35s ease both}
-.user-row:hover{background:var(--section);transform:translateY(-1px)}
+.user-row{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px 16px}
+.user-row:hover{background:var(--section)}
 .u-ava{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0}
 .u-info{flex:1;min-width:0}
 .u-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -198,9 +196,8 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
 .side-panel.open{transform:translateX(0)}
 .sp-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding-bottom:18px;border-bottom:1px solid var(--border);margin-bottom:20px}
 .sp-title{font-size:18px;font-weight:700;color:var(--brand);line-height:1.25}
-.sp-close{width:38px;height:38px;border-radius:12px;border:1px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s ease,transform .15s ease}
+.sp-close{width:38px;height:38px;border-radius:12px;border:1px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
 .sp-close:hover{background:var(--section);color:var(--text)}
-.sp-close:active{transform:scale(.94)}
 .sp-close .msr{font-size:22px}
 .sp-body{flex:1;overflow-y:auto;padding-right:4px}
 .sp-section{margin-bottom:20px}
@@ -208,12 +205,11 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
 .sp-value{font-size:14.5px;color:var(--text);line-height:1.5;white-space:pre-wrap}
 .modal-backdrop{position:fixed;inset:0;z-index:100;background:rgba(15,23,42,.55);display:none;align-items:center;justify-content:center;padding:16px;opacity:0;transition:opacity .25s ease;backdrop-filter:blur(4px)}
 .modal-backdrop.show{display:flex;opacity:1}
-.modal{width:100%;max-width:540px;background:#fff;border-radius:22px;box-shadow:0 24px 60px -16px rgba(15,23,42,.35);max-height:92vh;overflow-y:auto;animation:zoom .35s cubic-bezier(.34,1.4,.64,1) both}
+.modal{width:100%;max-width:540px;background:#fff;border-radius:22px;box-shadow:0 24px 60px -16px rgba(15,23,42,.35);max-height:92vh;overflow-y:auto}
 .modal-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:22px 26px 18px;border-bottom:1px solid var(--border)}
 .modal-title{font-size:17px;font-weight:700;color:var(--brand)}
-.modal-close{width:38px;height:38px;border-radius:12px;border:1px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:background .2s ease,transform .15s ease}
+.modal-close{width:38px;height:38px;border-radius:12px;border:1px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
 .modal-close:hover{background:var(--section);color:var(--text)}
-.modal-close:active{transform:scale(.94)}
 .modal-close .msr{font-size:22px}
 .modal-body{padding:22px 26px}
 .modal-body .field{margin-bottom:16px}
@@ -222,7 +218,7 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
 .modal-body textarea{min-height:100px;resize:vertical;font-family:inherit;line-height:1.5}
 .modal-foot{display:flex;gap:10px;padding:18px 26px 24px;border-top:1px solid var(--border)}
 .modal-foot .btn{margin-top:0;flex:1}
-.check-field{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1.5px dashed var(--border);border-radius:14px;background:var(--section);cursor:pointer;font-size:13.5px;font-weight:600;transition:border-color .2s ease,background .2s ease;user-select:none;margin-bottom:10px}
+.check-field{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1.5px dashed var(--border);border-radius:14px;background:var(--section);cursor:pointer;font-size:13.5px;font-weight:600;margin-bottom:10px}
 .check-field:hover{border-color:var(--accent)}
 .check-field input[type=checkbox]{width:22px;height:22px;margin:0;flex-shrink:0;accent-color:var(--accent);cursor:pointer;padding:0;border-radius:6px}
 .check-field .check-text{flex:1;min-width:0}
@@ -234,13 +230,13 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
 .check-field.soch:hover{border-color:#1E88E5}
 .check-field.soch input[type=checkbox]{accent-color:#1E88E5}
 .mobile-bottom{position:fixed;left:10px;right:10px;bottom:10px;height:68px;background:#fff;border:1px solid var(--border);border-radius:22px;box-shadow:0 -6px 24px -8px rgba(15,23,42,.15);display:none;align-items:center;padding:6px 8px;gap:4px;z-index:45}
-.mb-item{flex:1;height:56px;border:none;background:transparent;border-radius:16px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:background .25s ease,color .25s ease,transform .15s ease}
-.mb-item:active{transform:scale(.94)}
+.mb-item{flex:1;height:56px;border:none;background:transparent;border-radius:16px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:background .25s ease,color .25s ease}
 .mb-item .msr{font-size:26px}
 .mb-item.active{background:linear-gradient(135deg,#3B82F6 0%,#2563EB 100%);color:#fff}
 @media (max-width:640px){
   .sidebar{display:none}
   .mobile-bottom{display:flex}
+  .app-layout{padding:10px 10px 88px;gap:10px}
   .topbar{border-radius:18px;padding:10px 14px;gap:10px;min-height:60px}
   .topbar-title{font-size:15px}
   .topbar-chip .user-name{display:none}
@@ -261,34 +257,36 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
 </head>
 <body>
 
+<!-- ============ LOADER ============ -->
 <div id="loader">
-  <div class="loader-center">
-    <div class="ring">
-      <svg viewBox="0 0 120 120">
-        <circle class="ring-bg" cx="60" cy="60" r="50"/>
-        <circle class="ring-fg" cx="60" cy="60" r="50"/>
-      </svg>
-    </div>
-    <div class="blob">
-      <svg viewBox="0 0 100 100">
-        <polygon points="50,8 90,38 74,84 26,84 10,38" fill="#2563EB" stroke="#2563EB" stroke-width="16" stroke-linejoin="round"/>
-      </svg>
-    </div>
-  </div>
-  <div class="loader-line">
-    <svg viewBox="0 0 420 22" preserveAspectRatio="none">
-      <path class="wave-path"
-        d="M 6 11 Q 16 1, 26 11 Q 36 21, 46 11 Q 56 1, 66 11 Q 76 21, 86 11 Q 96 1, 106 11 Q 116 21, 126 11 Q 136 1, 146 11 Q 156 21, 166 11 Q 176 1, 186 11 Q 196 21, 206 11 Q 216 1, 226 11 Q 236 21, 246 11 Q 256 1, 266 11 Q 276 21, 286 11 Q 296 1, 306 11 Q 316 21, 326 11 Q 336 1, 346 11 Q 356 21, 366 11 Q 376 1, 386 11 Q 396 21, 406 11">
-        <animate attributeName="d" begin="1s" dur="0.6s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1"
-          values="
-            M 6 11 Q 16 1, 26 11 Q 36 21, 46 11 Q 56 1, 66 11 Q 76 21, 86 11 Q 96 1, 106 11 Q 116 21, 126 11 Q 136 1, 146 11 Q 156 21, 166 11 Q 176 1, 186 11 Q 196 21, 206 11 Q 216 1, 226 11 Q 236 21, 246 11 Q 256 1, 266 11 Q 276 21, 286 11 Q 296 1, 306 11 Q 316 21, 326 11 Q 336 1, 346 11 Q 356 21, 366 11 Q 376 1, 386 11 Q 396 21, 406 11;
-            M 6 11 Q 16 11, 26 11 Q 36 11, 46 11 Q 56 11, 66 11 Q 76 11, 86 11 Q 96 11, 106 11 Q 116 11, 126 11 Q 136 11, 146 11 Q 156 11, 166 11 Q 176 11, 186 11 Q 196 11, 206 11 Q 216 11, 226 11 Q 236 11, 246 11 Q 256 11, 266 11 Q 276 11, 286 11 Q 296 11, 306 11 Q 316 11, 326 11 Q 336 11, 346 11 Q 356 11, 366 11 Q 376 11, 386 11 Q 396 11, 406 11"/>
-      </path>
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <linearGradient id="gradArc" gradientUnits="userSpaceOnUse" x1="18" y1="18" x2="162" y2="162">
+        <stop offset="0%" stop-color="#93C5FD"/>
+        <stop offset="100%" stop-color="#1E40AF"/>
+      </linearGradient>
+      <linearGradient id="gradBar" gradientUnits="userSpaceOnUse" x1="8" y1="7" x2="412" y2="7">
+        <stop offset="0%" stop-color="#93C5FD"/>
+        <stop offset="100%" stop-color="#1E40AF"/>
+      </linearGradient>
+    </defs>
+  </svg>
+  <div class="nova-stage">
+    <svg class="nova-ring" viewBox="0 0 180 180">
+      <circle id="ringGray" cx="90" cy="90" r="72" stroke-dasharray="452.39 452.39" transform="rotate(-90 90 90)"/>
+      <circle id="ringGrad" cx="90" cy="90" r="72" stroke-dasharray="0 452.39" transform="rotate(-90 90 90)"/>
+      <circle id="ringBlue" cx="90" cy="90" r="72" stroke-dasharray="452.39 452.39" transform="rotate(-90 90 90)"/>
     </svg>
-    <div class="dot"></div>
   </div>
+  <svg class="nova-bar" viewBox="0 0 420 14" preserveAspectRatio="none">
+    <line id="barGray" x1="8" y1="7" x2="412" y2="7" stroke-dasharray="404 404"/>
+    <line id="barGrad" x1="8" y1="7" x2="412" y2="7" stroke-dasharray="0 404"/>
+    <line id="barBlue" x1="8" y1="7" x2="412" y2="7" stroke-dasharray="404 404"/>
+  </svg>
+  <div class="nova-welcome" id="welcomeText">Добро пожаловать</div>
 </div>
 
+<!-- ============ AUTH ============ -->
 <div id="authView" class="hidden">
   <div class="card">
     <div class="logo">
@@ -319,7 +317,7 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
             <label>Пароль</label>
             <div class="pass-wrap">
               <input id="loginPass" type="password" placeholder="Введите пароль" autocomplete="current-password">
-              <button type="button" class="pass-toggle" data-target="loginPass" title="Показать пароль"><span class="msr">visibility</span></button>
+              <button type="button" class="pass-toggle" data-target="loginPass"><span class="msr">visibility</span></button>
             </div>
           </div>
           <button class="btn" id="loginBtn"><span class="msr">login</span> Войти</button>
@@ -331,14 +329,14 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
             <label>Пароль</label>
             <div class="pass-wrap">
               <input id="regPass" type="password" placeholder="Минимум 6 символов" autocomplete="new-password">
-              <button type="button" class="pass-toggle" data-target="regPass" title="Показать пароль"><span class="msr">visibility</span></button>
+              <button type="button" class="pass-toggle" data-target="regPass"><span class="msr">visibility</span></button>
             </div>
           </div>
           <div class="field">
             <label>Повтор пароля</label>
             <div class="pass-wrap">
               <input id="regPass2" type="password" placeholder="Повторите пароль" autocomplete="new-password">
-              <button type="button" class="pass-toggle" data-target="regPass2" title="Показать пароль"><span class="msr">visibility</span></button>
+              <button type="button" class="pass-toggle" data-target="regPass2"><span class="msr">visibility</span></button>
             </div>
           </div>
           <button class="btn" id="regBtn"><span class="msr">person_add</span> Создать аккаунт</button>
@@ -348,6 +346,7 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
   </div>
 </div>
 
+<!-- ============ APP ============ -->
 <div id="appView" class="hidden">
   <div class="app-layout">
     <aside class="sidebar" id="sidebar">
@@ -443,15 +442,11 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
 </div>
 
 <script>
-/* =========================================================
-   NovaClass — чистый фронтенд
-   ========================================================= */
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzzQR5ER-IR-44nE7AcnNkK8RcYNvYmGvTrOfFXuDKfHhkLxa17AHoAUgH730VKQNHW/exec';
 const CREATOR_EMAIL = 'maksimsuhomlinov37@gmail.com';
 const SESSION_KEY = 'nc_session';
+const CACHE_KEY = 'nc_cache_v2';
 const SESSION_MS = 30*24*60*60*1000;
-const LOADER_TOTAL_MS = 2600;
-const LOADER_MAX_MS  = 9000;
 
 const $ = id => document.getElementById(id);
 const $$ = sel => document.querySelectorAll(sel);
@@ -462,36 +457,154 @@ let currentPage='home', selectedDate=initialDate(), animating=false;
 let cacheLessons=[], cacheHwStatuses={}, editingId=null, jsonpCounter=0;
 const prefetched = { scheduleByDate:{}, hwStatuses:null, users:null };
 
-/* ---------- LOADER ---------- */
+/* =========================================================
+   CACHE
+   ========================================================= */
+function getCache(){
+  try{
+    const raw = localStorage.getItem(CACHE_KEY);
+    if(!raw) return { schedules:{}, hwStatuses:{}, users:[], ts:0 };
+    const c = JSON.parse(raw);
+    if(!c.schedules) c.schedules = {};
+    if(!c.hwStatuses) c.hwStatuses = {};
+    if(!c.users) c.users = [];
+    return c;
+  }catch(e){ return { schedules:{}, hwStatuses:{}, users:[], ts:0 }; }
+}
+function saveCache(c){
+  try{ localStorage.setItem(CACHE_KEY, JSON.stringify(c)); }catch(e){}
+}
+function updateCacheFromPrefetched(){
+  const c = getCache();
+  c.schedules = prefetched.scheduleByDate;
+  c.hwStatuses = prefetched.hwStatuses || {};
+  c.users = prefetched.users || [];
+  c.ts = Date.now();
+  saveCache(c);
+}
+function clearCache(){
+  try{ localStorage.removeItem(CACHE_KEY); }catch(e){}
+}
+function hydrateFromCache(){
+  const c = getCache();
+  Object.assign(prefetched.scheduleByDate, c.schedules || {});
+  prefetched.hwStatuses = c.hwStatuses || {};
+  prefetched.users = c.users || [];
+}
+
+/* =========================================================
+   LOADER — плавный, 4.4 сек
+   ========================================================= */
+const NovaLoader = (function(){
+  const T1 = 1400;   // круг: градиент растёт
+  const T2 = 350;    // круг → синий
+  const T3 = 180;    // пауза
+  const T4 = 1400;   // полоса: градиент растёт
+  const T5 = 350;    // полоса → синяя
+  const T6 = 700;    // текст
+  const T7 = 900;    // держим
+  const TOTAL = T1+T2+T3+T4+T5+T6+T7;  // ≈ 5280 ms
+
+  const CIRC = 452.39;
+  const BLEN = 404;
+
+  let raf=null, t0=0, running=false;
+  // easeInOutCubic — плавный старт и финиш
+  const ease = t => t<.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2;
+
+  function frame(now){
+    if(!running) return;
+    const t = now - t0;
+
+    const ringGray = $('ringGray');
+    const ringGrad = $('ringGrad');
+    const ringBlue = $('ringBlue');
+    const barGray  = $('barGray');
+    const barGrad  = $('barGrad');
+    const barBlue  = $('barBlue');
+    const welcome  = $('welcomeText');
+    if(!ringGray||!ringGrad||!barGray||!barGrad) return;
+
+    if(t < T1){
+      const p = ease(t / T1);
+      ringGray.setAttribute('stroke-dasharray', CIRC + ' ' + CIRC);
+      ringGray.style.opacity = '1';
+      ringGrad.setAttribute('stroke-dasharray', (CIRC*p) + ' ' + CIRC);
+      ringGrad.style.opacity = '1';
+      ringBlue.style.opacity = '0';
+      barGray.setAttribute('stroke-dasharray', BLEN + ' ' + BLEN);
+      barGray.style.opacity = '1';
+      barGrad.setAttribute('stroke-dasharray', '0 ' + BLEN);
+      barBlue.style.opacity = '0';
+      if(welcome) welcome.classList.remove('show');
+    }
+    else if(t < T1+T2){
+      const p = (t-T1)/T2;
+      ringGray.style.opacity = '0';
+      ringGrad.setAttribute('stroke-dasharray', CIRC + ' ' + CIRC);
+      ringBlue.setAttribute('stroke-dasharray', CIRC + ' ' + CIRC);
+      ringGrad.style.opacity = (1-p)+'';
+      ringBlue.style.opacity = p+'';
+    }
+    else if(t < T1+T2+T3){
+      ringGrad.style.opacity = '0';
+      ringBlue.style.opacity = '1';
+    }
+    else if(t < T1+T2+T3+T4){
+      const p = ease((t-T1-T2-T3)/T4);
+      barGray.setAttribute('stroke-dasharray', BLEN + ' ' + BLEN);
+      barGray.style.opacity = '1';
+      barGrad.setAttribute('stroke-dasharray', (BLEN*p) + ' ' + BLEN);
+      barGrad.style.opacity = '1';
+      barBlue.style.opacity = '0';
+    }
+    else if(t < T1+T2+T3+T4+T5){
+      const p = (t-T1-T2-T3-T4)/T5;
+      barGray.style.opacity = '0';
+      barGrad.setAttribute('stroke-dasharray', BLEN + ' ' + BLEN);
+      barBlue.setAttribute('stroke-dasharray', BLEN + ' ' + BLEN);
+      barGrad.style.opacity = (1-p)+'';
+      barBlue.style.opacity = p+'';
+    }
+    else if(t < TOTAL - T7){
+      barGrad.style.opacity = '0';
+      barBlue.style.opacity = '1';
+      if(welcome) welcome.classList.add('show');
+    }
+    else if(t < TOTAL){
+      /* держим */
+    }
+    else {
+      running=false;
+      return;
+    }
+    raf=requestAnimationFrame(frame);
+  }
+
+  function start(){
+    running=true;
+    t0=performance.now();
+    raf=requestAnimationFrame(frame);
+  }
+  function stop(){ running=false; if(raf) cancelAnimationFrame(raf); }
+  return { start, stop, DURATION: TOTAL };
+})();
+
 function showLoader(){
-  const l = $('loader'); if(!l) return;
+  const l=$('loader'); if(!l) return;
   l.classList.remove('hidden','fade-out');
-  l.querySelectorAll('.ring, .ring-fg, .blob, .loader-line, .wave-path, .dot').forEach(el => {
-    el.style.animation = 'none';
-    void el.offsetWidth;
-    el.style.animation = '';
-  });
-  const anim = l.querySelector('.wave-path animate');
-  if(anim && anim.beginElement){ try { anim.beginElement(); } catch(e){} }
+  NovaLoader.start();
 }
 function hideLoader(){
   const l=$('loader'); if(!l) return;
+  NovaLoader.stop();
   l.classList.add('fade-out');
-  setTimeout(()=>{ l.classList.add('hidden'); l.classList.remove('fade-out'); }, 500);
-}
-async function withLoader(promise){
-  showLoader();
-  const started = Date.now();
-  const timeout = new Promise(r=>setTimeout(r, LOADER_MAX_MS));
-  try{
-    const result = await Promise.race([promise, timeout]);
-    const elapsed = Date.now() - started;
-    if(elapsed < LOADER_TOTAL_MS) await new Promise(r=>setTimeout(r, LOADER_TOTAL_MS - elapsed));
-    return result;
-  } finally { hideLoader(); }
+  setTimeout(()=>{ l.classList.add('hidden'); l.classList.remove('fade-out'); }, 550);
 }
 
-/* ---------- SESSION ---------- */
+/* =========================================================
+   SESSION
+   ========================================================= */
 function saveSession(u){ try{ localStorage.setItem(SESSION_KEY, JSON.stringify({user:u, loginAt:Date.now(), expiresAt:Date.now()+SESSION_MS})); }catch(e){} }
 function getSession(){ try{ const raw=localStorage.getItem(SESSION_KEY); if(!raw) return null; const d=JSON.parse(raw); if(!d||!d.expiresAt) return null; if(Date.now()>=d.expiresAt){ localStorage.removeItem(SESSION_KEY); return null; } return d; }catch(e){ return null; } }
 function clearSession(){ try{ localStorage.removeItem(SESSION_KEY); }catch(e){} }
@@ -501,23 +614,27 @@ function isCreator(){ const u=getCurrentUser(); if(!u) return false; return Stri
 function canEditSchedule(){ return EDITOR_ROLES.indexOf(userRole())!==-1; }
 function isAdmin(){ const r=userRole(); return r==='Администратор'||r==='Создатель'; }
 
-/* ---------- JSONP ---------- */
+/* =========================================================
+   JSONP
+   ========================================================= */
 function jsonp(params, timeout){
   return new Promise((resolve,reject)=>{
     const cbName='nc_cb_'+(++jsonpCounter)+'_'+Date.now();
     let finished=false, script, to;
     const cleanup=()=>{ try{ delete window[cbName]; }catch(e){} if(script&&script.parentNode) script.parentNode.removeChild(script); clearTimeout(to); };
-    window[cbName]=function(data){ if(finished) return; finished=true; cleanup(); console.log('[GAS]', params.action, data); resolve(data); };
+    window[cbName]=function(data){ if(finished) return; finished=true; cleanup(); resolve(data); };
     const qs=new URLSearchParams(Object.assign({}, params, {callback:cbName})).toString();
     script=document.createElement('script');
     script.src=GAS_URL+'?'+qs+'&_='+Date.now();
-    script.onerror=function(){ if(finished) return; finished=true; cleanup(); console.error('[GAS ERROR]', params.action); reject(new Error('Нет связи с сервером')); };
+    script.onerror=function(){ if(finished) return; finished=true; cleanup(); reject(new Error('Нет связи с сервером')); };
     document.head.appendChild(script);
     to=setTimeout(()=>{ if(finished) return; finished=true; cleanup(); reject(new Error('Превышено время ожидания')); }, timeout||20000);
   });
 }
 
-/* ---------- ДАТЫ ---------- */
+/* =========================================================
+   ДАТЫ
+   ========================================================= */
 function normDate(v){
   if(!v) return '';
   const s = String(v).trim();
@@ -548,56 +665,44 @@ const MONTHS_NOM=['ЯНВАРЬ','ФЕВРАЛЬ','МАРТ','АПРЕЛЬ','М�
 const MONTHS_GEN=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
 const WEEK_FULL=['ПОНЕДЕЛЬНИК','ВТОРНИК','СРЕДА','ЧЕТВЕРГ','ПЯТНИЦА'];
 
-/* ---------- ПРЕДЗАГРУЗКА (без get_week — только get_sched, который точно есть) ---------- */
+/* =========================================================
+   ПРЕДЗАГРУЗКА
+   ========================================================= */
 async function prefetchAll(user){
   if(!user||!user.email) return;
   const mon = mondayOf(new Date(selectedDate+'T00:00:00'));
   const dates=[];
   for(let i=0;i<5;i++){ const d=new Date(mon); d.setDate(mon.getDate()+i); dates.push(isoOfDate(d)); }
-
   const jobs = dates.map(date =>
     jsonp({action:'get_sched', requester:user.email, date}, 12000)
       .then(res => { if(res && res.status==='ok') prefetched.scheduleByDate[date] = filterByDate(res.lessons, date); })
       .catch(()=>{})
   );
-  jobs.push(
-    jsonp({action:'hw_status', requester:user.email}, 10000)
-      .then(hr => { if(hr && hr.status==='ok') prefetched.hwStatuses = hr.statuses || {}; })
-      .catch(()=>{})
-  );
+  jobs.push(jsonp({action:'hw_status', requester:user.email}, 10000).then(hr => { if(hr && hr.status==='ok') prefetched.hwStatuses = hr.statuses || {}; }).catch(()=>{}));
   if(isAdmin()){
-    jobs.push(
-      jsonp({action:'users_list', requester:user.email}, 10000)
-        .then(ur => { if(ur && ur.status==='ok') prefetched.users = ur.users || []; })
-        .catch(()=>{})
-    );
+    jobs.push(jsonp({action:'users_list', requester:user.email}, 10000).then(ur => { if(ur && ur.status==='ok') prefetched.users = ur.users || []; }).catch(()=>{}));
   }
   await Promise.all(jobs);
+  updateCacheFromPrefetched();
 }
 
-/* ---------- AUTH UI ---------- */
+/* =========================================================
+   AUTH UI
+   ========================================================= */
 function fitFormHeight(){ const pane=document.querySelector('.slide-pane[data-pane="'+$('track').dataset.active+'"]'); if(pane) $('formsWrap').style.height=pane.scrollHeight+'px'; }
 function switchTab(w){ hideErr(); const l=w==='login'; $('tabLogin').classList.toggle('active', l); $('tabReg').classList.toggle('active', !l); $('tabs').dataset.active=l?'login':'reg'; $('track').dataset.active=l?'login':'reg'; fitFormHeight(); }
-function showErr(m, debug){ 
-  const box = $('errBox');
-  box.innerHTML = esc(m) + (debug ? '<br><br><small style="opacity:.7;font-size:11px">Технически: <code>'+esc(debug)+'</code></small>' : '');
-  box.classList.remove('hidden'); 
-  fitFormHeight(); 
-}
+function showErr(m){ const box=$('errBox'); box.textContent=m; box.classList.remove('hidden'); fitFormHeight(); }
 function hideErr(){ $('errBox').classList.add('hidden'); }
 function markEmpty(arr){ let any=false; arr.forEach(i=>{ if(!i.value.trim()){ i.classList.remove('error'); void i.offsetWidth; i.classList.add('error'); any=true; } }); return any; }
 
 document.querySelectorAll('.pass-toggle').forEach(btn => {
   btn.addEventListener('click', () => {
-    const inp = document.getElementById(btn.dataset.target);
-    if(!inp) return;
+    const inp = document.getElementById(btn.dataset.target); if(!inp) return;
     const show = inp.type === 'password';
     inp.type = show ? 'text' : 'password';
     btn.querySelector('.msr').textContent = show ? 'visibility_off' : 'visibility';
-    btn.title = show ? 'Скрыть пароль' : 'Показать пароль';
   });
 });
-
 $('tabLogin').onclick=()=>switchTab('login');
 $('tabReg').onclick=()=>switchTab('reg');
 document.querySelectorAll('input').forEach(i=>i.addEventListener('input',()=>i.classList.remove('error')));
@@ -612,32 +717,31 @@ async function doLogin(){
   $('loginBtn').disabled=true;
   const email = $('loginEmail').value.trim().toLowerCase();
   const pass  = $('loginPass').value;
-  console.log('[LOGIN] пробую', email, '/', pass.length, 'символов');
-
   try{
-    const res = await withLoader((async()=>{
-      const r = await jsonp({action:'login', email, pass});
-      return r;
-    })());
-    if(!res){
-      showErr('Пустой ответ от сервера', 'res=null'); return;
-    }
-    if(res.status !== 'ok'){
-      showErr(res.message || 'Ошибка входа', res.message || '');
-      return;
-    }
+    showLoader();
+    const res = await jsonp({action:'login', email, pass});
+    if(!res){ hideLoader(); showErr('Пустой ответ'); return; }
+    if(res.status !== 'ok'){ hideLoader(); showErr(res.message||'Ошибка входа'); return; }
     const u=res.user||{};
     if(!u.name) u.name=u.email?u.email.split('@')[0]:'Пользователь';
     if(!u.role||!ROLES[u.role]) u.role='Ученик';
     if(String(u.email||'').toLowerCase()===CREATOR_EMAIL.toLowerCase()) u.role='Создатель';
     saveSession(u);
+    // подгружаем кэш
+    hydrateFromCache();
+    if(prefetched.scheduleByDate[selectedDate]) cacheLessons = prefetched.scheduleByDate[selectedDate];
+    // минимально держим лоадер
+    const elapsed = performance.now();
+    await new Promise(r=>setTimeout(r, Math.max(0, 3200 - 0)));
+    hideLoader();
     await enterApp();
-    // фоновая предзагрузка
-    prefetchAll(u).then(()=>{ if(currentPage==='schedule'||currentPage==='homework') loadPageData(currentPage); });
-  }catch(e){
-    showErr('Ошибка связи: '+e.message, e.message);
-    console.error(e);
-  } finally{ $('loginBtn').disabled=false; }
+    // фоновая синхронизация
+    prefetchAll(u).then(()=>{
+      if(prefetched.scheduleByDate[selectedDate]) cacheLessons = prefetched.scheduleByDate[selectedDate];
+      if(currentPage==='schedule'||currentPage==='homework') refreshCurrentPage();
+    });
+  }catch(e){ hideLoader(); showErr('Ошибка связи: '+e.message); }
+  finally{ $('loginBtn').disabled=false; }
 }
 async function doRegister(){
   hideErr();
@@ -648,19 +752,22 @@ async function doRegister(){
   $('regBtn').disabled=true;
   const email = $('regEmail').value.trim().toLowerCase();
   const name  = $('regName').value.trim();
-  console.log('[REG]', email);
   try{
-    const res=await withLoader(jsonp({action:'register', email, pass:p1, name}));
-    if(!res){ showErr('Пустой ответ от сервера'); return; }
-    if(res.status!=='ok'){ showErr(res.message || 'Ошибка регистрации', res.message||''); return; }
+    showLoader();
+    const res=await jsonp({action:'register', email, pass:p1, name});
+    if(!res){ hideLoader(); showErr('Пустой ответ'); return; }
+    if(res.status!=='ok'){ hideLoader(); showErr(res.message||'Ошибка регистрации'); return; }
     const u=res.user||{};
     if(!u.name) u.name=name;
     if(!u.role||!ROLES[u.role]) u.role='Ученик';
     if(String(u.email||'').toLowerCase()===CREATOR_EMAIL.toLowerCase()) u.role='Создатель';
     saveSession(u);
+    clearCache();
+    await new Promise(r=>setTimeout(r, 3200));
+    hideLoader();
     await enterApp();
-    prefetchAll(u).then(()=>{ if(currentPage==='schedule'||currentPage==='homework') loadPageData(currentPage); });
-  }catch(e){ showErr('Ошибка связи: '+e.message, e.message); console.error(e); }
+    prefetchAll(u).then(()=>{ if(currentPage==='schedule'||currentPage==='homework') refreshCurrentPage(); });
+  }catch(e){ hideLoader(); showErr('Ошибка связи: '+e.message); }
   finally{ $('regBtn').disabled=false; }
 }
 async function enterApp(){
@@ -670,7 +777,9 @@ async function enterApp(){
   requestAnimationFrame(moveIndicator);
 }
 
-/* ---------- APP UI ---------- */
+/* =========================================================
+   APP UI
+   ========================================================= */
 function applyUserToUI(){
   const u=getCurrentUser(); let name='Пользователь', role='Ученик';
   if(u){ if(u.name&&u.name.trim()) name=u.name.trim(); else if(u.email) name=u.email.split('@')[0]; role=userRole(); }
@@ -702,7 +811,9 @@ function moveIndicator(){
 }
 window.addEventListener('resize', ()=>setTimeout(moveIndicator,50));
 
-/* ---------- HTML-РЕНДЕРЫ ---------- */
+/* =========================================================
+   HTML-РЕНДЕРЫ
+   ========================================================= */
 function homeContentHTML(){
   return `<div class="banner"><span class="msr">home</span><div class="banner-title">Главная</div></div>
     <div class="empty-state" style="padding:48px 24px">
@@ -803,7 +914,9 @@ function usersListHTML(users){
   }).join('')+'</div>';
 }
 
-/* ---------- РЕНДЕР СТРАНИЦ ---------- */
+/* =========================================================
+   РЕНДЕР СТРАНИЦ
+   ========================================================= */
 const TITLES={home:'Главная',schedule:'Расписание',homework:'Домашние задания',diary:'Дневник',users:'Управление'};
 function buildPane(key){
   const pane=document.createElement('div');
@@ -841,11 +954,25 @@ function renderPage(key){
 async function loadPageData(key){
   const user=getCurrentUser(); if(!user) return;
   if(key==='schedule'||key==='homework'){
+    // 1. Мгновенно из кэша
     if(prefetched.scheduleByDate[selectedDate] !== undefined){
       cacheLessons = prefetched.scheduleByDate[selectedDate];
       if(key==='homework' && prefetched.hwStatuses) cacheHwStatuses = prefetched.hwStatuses;
-      refreshCurrentPage(); return;
+      refreshCurrentPage();
+      // фоном — обновляем
+      jsonp({action:'get_sched', requester:user.email, date:selectedDate}, 12000)
+        .then(res=>{
+          if(res && res.status==='ok'){
+            const fresh = filterByDate(res.lessons, selectedDate);
+            prefetched.scheduleByDate[selectedDate]=fresh;
+            cacheLessons=fresh;
+            updateCacheFromPrefetched();
+            if(currentPage==='schedule'||currentPage==='homework') refreshCurrentPage();
+          }
+        }).catch(()=>{});
+      return;
     }
+    // 2. Нет кэша — грузим
     try{
       const res=await jsonp({action:'get_sched', requester:user.email, date:selectedDate});
       if(res&&res.status==='ok'){
@@ -855,17 +982,19 @@ async function loadPageData(key){
           if(prefetched.hwStatuses){ cacheHwStatuses=prefetched.hwStatuses; }
           else { const hr=await jsonp({action:'hw_status', requester:user.email}); if(hr&&hr.status==='ok'){ cacheHwStatuses=hr.statuses||{}; prefetched.hwStatuses=cacheHwStatuses; } }
         }
+        updateCacheFromPrefetched();
       }
       refreshCurrentPage();
     }catch(e){ showToast(e.message); refreshCurrentPage(); }
   }
   if(key==='users'){
-    if(prefetched.users){ const box=$('usersList'); if(!box) return; box.outerHTML=usersListHTML(prefetched.users); bindUsersSelects(); return; }
+    if(prefetched.users && prefetched.users.length){ const box=$('usersList'); if(!box) return; box.outerHTML=usersListHTML(prefetched.users); bindUsersSelects(); }
     try{
       const res=await jsonp({action:'users_list', requester:user.email});
       const box=$('usersList'); if(!box) return;
-      if(!res||res.status!=='ok'){ box.innerHTML=`<div class="empty-state"><span class="msr">lock</span><h3>Нет доступа</h3><p>${esc((res&&res.message)||'')}</p></div>`; return; }
+      if(!res||res.status!=='ok'){ if(!prefetched.users.length) box.innerHTML=`<div class="empty-state"><span class="msr">lock</span><h3>Нет доступа</h3></div>`; return; }
       prefetched.users=res.users||[];
+      updateCacheFromPrefetched();
       box.outerHTML=usersListHTML(res.users);
       bindUsersSelects();
     }catch(e){ showToast(e.message); }
@@ -879,7 +1008,7 @@ function bindUsersSelects(){
       try{
         const r=await jsonp({action:'set_role', requester:user.email, email, role});
         if(!r||r.status!=='ok') showToast((r&&r.message)||'Ошибка');
-        else { showToast('Роль обновлена'); if(prefetched.users){ const pu=prefetched.users.find(u=>u.email===email); if(pu) pu.role=role; } }
+        else { showToast('Роль обновлена'); if(prefetched.users){ const pu=prefetched.users.find(u=>u.email===email); if(pu) pu.role=role; updateCacheFromPrefetched(); } }
       }catch(e){ showToast(e.message); }
     };
   });
@@ -891,7 +1020,9 @@ function refreshCurrentPage(){
   if(currentPage==='schedule'||currentPage==='homework') bindWeekPanel();
 }
 
-/* ---------- SIDE PANEL ---------- */
+/* =========================================================
+   SIDE PANEL
+   ========================================================= */
 window.openView = function(id){
   const l=cacheLessons.find(x=>String(x.id)===String(id)); if(!l) return;
   $('spTitle').textContent=l.subject||'—';
@@ -916,7 +1047,9 @@ $('spClose').onclick=closePanel;
 $('sidePanelBackdrop').onclick=closePanel;
 function closePanel(){ $('sidePanel').classList.remove('open'); $('sidePanelBackdrop').classList.remove('open'); }
 
-/* ---------- MODAL ---------- */
+/* =========================================================
+   MODAL
+   ========================================================= */
 window.openModal = function(lesson){
   if(!canEditSchedule()){ showToast('Нет прав'); return; }
   editingId=lesson?lesson.id:null;
@@ -939,40 +1072,130 @@ $('modalCancel').onclick=closeModal;
 $('modalBackdrop').onclick=e=>{ if(e.target===$('modalBackdrop')) closeModal(); };
 $('topbarAddBtn').onclick=()=>openModal(null);
 
-$('modalSave').onclick=async()=>{
+/* ---------- ОПТИМИСТИЧНОЕ СОХРАНЕНИЕ ---------- */
+$('modalSave').onclick=()=>{
   const user=getCurrentUser(); if(!user) return;
-  const payload={action:'save_sched', requester:user.email, role:userRole(), id:editingId||'', date:$('mDate').value, lessonNum:$('mLessonNum').value, time:$('mTime').value.trim(), subject:$('mSubject').value.trim(), teacher:$('mTeacher').value.trim(), room:$('mRoom').value.trim(), homework:$('mHomework').value.trim(), sor:$('mSor').checked?'true':'false', soch:$('mSoch').checked?'true':'false', cancelled:$('mCancelled').checked?'true':'false'};
-  if(!payload.date||!payload.subject){ showToast('Заполните дату и предмет'); return; }
-  const btn = $('modalSave');
-  const original = btn.innerHTML;
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin"></span> Сохранение…';
-  try{
-    const res=await jsonp(payload);
-    if(!res||res.status!=='ok'){ showToast((res&&res.message)||'Ошибка'); btn.disabled=false; btn.innerHTML=original; return; }
-    showToast('Сохранено');
-    if(payload.date!==selectedDate) selectedDate=payload.date;
-    delete prefetched.scheduleByDate[normDate(payload.date)];
-    btn.innerHTML = '<span class="msr">check</span> Готово';
-    await new Promise(r=>setTimeout(r, 400));
-    closeModal();
-    btn.disabled=false;
-    btn.innerHTML=original;
-    await loadPageData(currentPage);
-  }catch(e){ showToast(e.message); btn.disabled=false; btn.innerHTML=original; }
+  const dateVal = $('mDate').value;
+  const subjectVal = $('mSubject').value.trim();
+  if(!dateVal||!subjectVal){ showToast('Заполните дату и предмет'); return; }
+
+  const payload={
+    action:'save_sched', requester:user.email, role:userRole(),
+    id:editingId||'',
+    date:dateVal,
+    lessonNum:$('mLessonNum').value,
+    time:$('mTime').value.trim(),
+    subject:subjectVal,
+    teacher:$('mTeacher').value.trim(),
+    room:$('mRoom').value.trim(),
+    homework:$('mHomework').value.trim(),
+    sor:$('mSor').checked?'true':'false',
+    soch:$('mSoch').checked?'true':'false',
+    cancelled:$('mCancelled').checked?'true':'false'
+  };
+
+  const dateKey = normDate(payload.date);
+  const localId = editingId || ('tmp_'+Date.now()+'_'+Math.random().toString(36).slice(2,7));
+  const localLesson = {
+    id: localId,
+    date: payload.date,
+    lessonNum: payload.lessonNum,
+    time: payload.time,
+    subject: payload.subject,
+    teacher: payload.teacher,
+    room: payload.room,
+    homework: payload.homework,
+    sor: payload.sor==='true',
+    soch: payload.soch==='true',
+    cancelled: payload.cancelled==='true'
+  };
+
+  // Сохраняем старое состояние для отката
+  const oldList = prefetched.scheduleByDate[dateKey] ? JSON.parse(JSON.stringify(prefetched.scheduleByDate[dateKey])) : null;
+
+  // Локально применяем
+  if(prefetched.scheduleByDate[dateKey]){
+    let arr = prefetched.scheduleByDate[dateKey].slice();
+    if(editingId){
+      const i = arr.findIndex(x=>String(x.id)===String(editingId));
+      if(i>=0) arr[i] = localLesson;
+      else arr.push(localLesson);
+    } else {
+      arr.push(localLesson);
+    }
+    arr.sort((a,b)=>(parseInt(a.lessonNum)||0)-(parseInt(b.lessonNum)||0));
+    prefetched.scheduleByDate[dateKey] = arr;
+  } else {
+    prefetched.scheduleByDate[dateKey] = [localLesson];
+  }
+  updateCacheFromPrefetched();
+
+  if(payload.date!==selectedDate) selectedDate = payload.date;
+  if(dateKey===selectedDate) cacheLessons = prefetched.scheduleByDate[dateKey];
+  if(currentPage==='schedule'||currentPage==='homework') refreshCurrentPage();
+
+  // Мгновенно закрываем модалку и показываем тост
+  closeModal();
+  showToast('Сохранено');
+
+  // Фоном отправляем в GAS
+  jsonp(payload).then(res=>{
+    if(!res||res.status!=='ok'){
+      showToast((res&&res.message)||'Не сохранилось — повторите');
+      // откат
+      if(oldList!==null) prefetched.scheduleByDate[dateKey]=oldList;
+      else delete prefetched.scheduleByDate[dateKey];
+      updateCacheFromPrefetched();
+      if(dateKey===selectedDate) cacheLessons = prefetched.scheduleByDate[dateKey]||[];
+      if(currentPage==='schedule'||currentPage==='homework') refreshCurrentPage();
+      return;
+    }
+    // Обновляем id
+    if(res.id && !editingId && prefetched.scheduleByDate[dateKey]){
+      const arr = prefetched.scheduleByDate[dateKey];
+      const i = arr.findIndex(x=>String(x.id)===String(localId));
+      if(i>=0) arr[i].id = res.id;
+      updateCacheFromPrefetched();
+    }
+  }).catch(()=>{
+    showToast('Не сохранилось — повторите');
+    if(oldList!==null) prefetched.scheduleByDate[dateKey]=oldList;
+    else delete prefetched.scheduleByDate[dateKey];
+    updateCacheFromPrefetched();
+    if(dateKey===selectedDate) cacheLessons = prefetched.scheduleByDate[dateKey]||[];
+    if(currentPage==='schedule'||currentPage==='homework') refreshCurrentPage();
+  });
 };
 
 window.editLesson=function(id){ const l=cacheLessons.find(x=>String(x.id)===String(id)); if(l) openModal(l); };
-window.deleteLesson=async function(id){
+
+/* ---------- ОПТИМИСТИЧНОЕ УДАЛЕНИЕ ---------- */
+window.deleteLesson=function(id){
   if(!confirm('Удалить урок?')) return;
   const user=getCurrentUser();
-  try{
-    const res=await jsonp({action:'del_sched', requester:user.email, role:userRole(), id});
-    if(!res||res.status!=='ok'){ showToast((res&&res.message)||'Ошибка'); return; }
-    showToast('Удалено');
-    delete prefetched.scheduleByDate[selectedDate];
-    await loadPageData(currentPage);
-  }catch(e){ showToast(e.message); }
+  const dateKey = selectedDate;
+  const oldList = prefetched.scheduleByDate[dateKey] ? JSON.parse(JSON.stringify(prefetched.scheduleByDate[dateKey])) : null;
+  const removed = (prefetched.scheduleByDate[dateKey]||[]).find(x=>String(x.id)===String(id));
+  if(prefetched.scheduleByDate[dateKey]){
+    prefetched.scheduleByDate[dateKey] = prefetched.scheduleByDate[dateKey].filter(x=>String(x.id)!==String(id));
+    cacheLessons = prefetched.scheduleByDate[dateKey];
+    updateCacheFromPrefetched();
+    refreshCurrentPage();
+  }
+  showToast('Удалено');
+  jsonp({action:'del_sched', requester:user.email, role:userRole(), id}).then(res=>{
+    if(!res||res.status!=='ok'){
+      showToast((res&&res.message)||'Не удалилось — повторите');
+      if(oldList!==null){ prefetched.scheduleByDate[dateKey]=oldList; cacheLessons=oldList; }
+      updateCacheFromPrefetched();
+      refreshCurrentPage();
+    }
+  }).catch(()=>{
+    showToast('Не удалилось — повторите');
+    if(oldList!==null){ prefetched.scheduleByDate[dateKey]=oldList; cacheLessons=oldList; }
+    updateCacheFromPrefetched();
+    refreshCurrentPage();
+  });
 };
 
 function showToast(m){
@@ -988,21 +1211,38 @@ document.addEventListener('click',(e)=>{
   const mbb=e.target.closest('.mb-item');
   if(mbb&&mbb.dataset.page){ renderPage(mbb.dataset.page); return; }
 });
-$$('[data-logout]').forEach(b=>b.onclick=()=>{ showLoader(); clearSession(); setTimeout(()=>location.reload(), LOADER_TOTAL_MS); });
+$$('[data-logout]').forEach(b=>b.onclick=()=>{ showLoader(); clearSession(); setTimeout(()=>location.reload(), 3000); });
 
-/* ---------- INIT ---------- */
+/* =========================================================
+   INIT
+   ========================================================= */
 (async function init(){
   requestAnimationFrame(fitFormHeight);
   const s = getSession();
   if(s && s.user){
-    try{ await withLoader(Promise.all([jsonp({action:'ping'},8000).catch(()=>{}), prefetchAll(s.user)])); }
-    catch(e){ hideLoader(); }
+    hydrateFromCache();
+    if(prefetched.scheduleByDate[selectedDate]) cacheLessons = prefetched.scheduleByDate[selectedDate];
+
+    showLoader();
+    // держим лоадер ~3.2 сек, потом показываем приложение с кэшем
+    await new Promise(r=>setTimeout(r, 3200));
+    hideLoader();
+
     $('authView').classList.add('hidden');
     $('appView').classList.remove('hidden');
     applyUserToUI(); addCreatorMenu();
-    requestAnimationFrame(()=>{ renderPage('home'); requestAnimationFrame(moveIndicator); });
+    renderPage('home');
+    requestAnimationFrame(moveIndicator);
+
+    // Фоном — свежие данные
+    prefetchAll(s.user).then(()=>{
+      if(prefetched.scheduleByDate[selectedDate]) cacheLessons = prefetched.scheduleByDate[selectedDate];
+      if(currentPage==='schedule'||currentPage==='homework') refreshCurrentPage();
+    }).catch(()=>{});
   } else {
-    await withLoader(Promise.resolve());
+    showLoader();
+    await new Promise(r=>setTimeout(r, 3200));
+    hideLoader();
     $('authView').classList.remove('hidden');
   }
 })();
