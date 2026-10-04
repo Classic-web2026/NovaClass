@@ -33,6 +33,16 @@ body{font-family:'Comfortaa',sans-serif;background:var(--section);color:var(--te
 .hidden{display:none!important}
 .msr{font-family:'Material Symbols Rounded';font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;font-size:26px;display:inline-flex;align-items:center;justify-content:center;color:currentColor;line-height:1;user-select:none;flex-shrink:0}
 
+.role-badge{display:inline-block;padding:3px 10px;border-radius:8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;line-height:1.4}
+.role-badge.student  {background:rgba(37,99,235,.12);color:#2563EB}
+.role-badge.moderator{background:rgba(234,88,12,.15);color:#EA580C}
+.role-badge.teacher  {background:rgba(22,163,74,.15);color:#16A34A}
+.role-badge.director {background:rgba(168,85,247,.15);color:#A855F7}
+.role-badge.admin    {background:rgba(220,38,38,.15);color:#DC2626}
+.role-badge.creator  {background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff}
+.sor-badge{display:inline-block;padding:3px 9px;margin-left:8px;border-radius:8px;font-size:10px;font-weight:700;background:rgba(31,158,168,.15);color:#1F9EA8;letter-spacing:.4px}
+.soch-badge{display:inline-block;padding:3px 9px;margin-left:8px;border-radius:8px;font-size:10px;font-weight:700;background:rgba(30,136,229,.15);color:#1E88E5;letter-spacing:.4px}
+
 #loader{position:fixed;inset:0;z-index:9999;background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .55s var(--ease-smooth)}
 #loader.fade-out{opacity:0;pointer-events:none}
 .nova-stage{position:relative;width:180px;height:180px}
@@ -208,6 +218,8 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
 .btn-icon{width:40px;height:40px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:transform .25s var(--ease-spring)}
 .btn-icon:hover{background:var(--section);color:var(--accent);transform:scale(1.1)}
 .btn-icon.danger:hover{background:#FEF2F2;color:#DC2626}
+.btn-icon.success{color:#16A34A;border-color:#86EFAC}
+.btn-icon.success:hover{background:#F0FDF4}
 .btn-icon .msr{font-size:20px}
 .empty-state{padding:60px 24px;text-align:center;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:16px;display:flex;flex-direction:column;align-items:center;gap:14px}
 .empty-state .msr{font-size:54px;color:#CBD5E1}
@@ -374,7 +386,6 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.14);animat
 .check-field.soch input[type=checkbox]{accent-color:#1E88E5}
 .modal-backdrop.mini .modal{max-width:440px}
 
-/* ============ DATE PICKER ============ */
 .dp-hint{font-size:11.5px;color:var(--muted);margin-top:6px;display:flex;align-items:center;gap:6px}
 .dp-hint .msr{font-size:16px}
 .dp-input-wrap{position:relative}
@@ -671,7 +682,6 @@ html[data-theme="dark"] .dp-dates-grid::-webkit-scrollbar-thumb{background:#3341
     <button class="ctx-item danger" data-ctx="delete"><span class="msr">delete</span> Удалить</button>
   </div>
 
-  <!-- DATE PICKER MODAL -->
   <div class="modal-backdrop mini" id="datePickerModal">
     <div class="modal">
       <div class="modal-head">
@@ -769,7 +779,7 @@ html[data-theme="dark"] .dp-dates-grid::-webkit-scrollbar-thumb{background:#3341
         <div class="acc-avatar-wrap">
           <label class="acc-avatar" for="accAvatarInput"><div class="acc-avatar-img" id="accAvatarImg" data-user-ava>П</div><div class="acc-avatar-overlay"><span class="msr">photo_camera</span></div></label>
           <input type="file" id="accAvatarInput" accept="image/*" hidden>
-          <div class="acc-avatar-hint">Нажмите чтобы изменить · до 200 МБ</div>
+          <div class="acc-avatar-hint">Нажмите чтобы изменить</div>
         </div>
         <div class="field"><label>Имя и фамилия</label><input type="text" id="accName" disabled></div>
         <div class="field"><label>Email</label><input type="text" id="accEmail" disabled></div>
@@ -848,8 +858,8 @@ const THEME_KEY = 'nc_theme';
 const LANG_KEY = 'nc_lang';
 const AVATAR_KEY = 'nc_avatar';
 const CUSTOM_REFS_KEY = 'nc_custom_refs_v1';
-const GRADES_KEY = 'nc_grades_v2';
-const TABLE_KEY = 'nc_grades_table_v2';
+const GRADES_KEY = 'nc_grades_v3';
+const TABLE_KEY = 'nc_grades_table_v3';
 
 const $ = id => document.getElementById(id);
 const $$ = sel => document.querySelectorAll(sel);
@@ -867,17 +877,14 @@ const REF_SUBJECTS = ['Классный час','Казахский язык','�
 const REF_TEACHERS = ['Күлжиһан Ибтанқыз','Жулдыз Сейдоловна','Елизавета Юрьевна','Камшат Айсиновна','Александра Сергеевна','Лаура Жамбоуловна','Лидия Васильевна','Гульмира Жумагалеевна','Игорь Вячеславович'];
 const REF_ROOMS = ['308 - Кабинет английского языка','305 - Кабинет математики','214 - Кабинет истории','215 - СпортЗал','307 - Кабинет НВиТП','207 - Кабинет географии'];
 
+/* =========================================================
+   ОЦЕНКИ (локально + на сервере)
+   ========================================================= */
 function loadGrades(){ try{ const raw = localStorage.getItem(GRADES_KEY); return raw ? JSON.parse(raw) : {}; }catch(e){ return {}; } }
 function saveGrades(g){ try{ localStorage.setItem(GRADES_KEY, JSON.stringify(g)); }catch(e){} }
 let gradesStore = loadGrades();
-function gradeKey(dateIso, lessonId, email){ return dateIso + '::' + lessonId + '::' + (email || ''); }
+function gradeKey(dateIso, lessonId, email){ return dateIso + '::' + String(lessonId) + '::' + (email || '').toLowerCase(); }
 function getGrade(dateIso, lessonId, email){ return gradesStore[gradeKey(dateIso, lessonId, email)] || null; }
-function setGrade(dateIso, lessonId, email, entry){
-  const k = gradeKey(dateIso, lessonId, email);
-  if(!entry || (entry.status === 'ЕСТЬ' && (entry.grade === null || entry.grade === undefined))) delete gradesStore[k];
-  else gradesStore[k] = entry;
-  saveGrades(gradesStore);
-}
 function gradeColorClass(g){
   if(!g) return '';
   const n = parseInt(g,10);
@@ -888,6 +895,9 @@ function gradeColorClass(g){
   return '';
 }
 
+/* =========================================================
+   СЕССИЯ
+   ========================================================= */
 function saveSession(u){ try{ localStorage.setItem(SESSION_KEY, JSON.stringify({user:u, expiresAt:Date.now()+SESSION_MS})); }catch(e){} }
 function getSession(){ try{ const raw=localStorage.getItem(SESSION_KEY); if(!raw) return null; const d=JSON.parse(raw); if(!d||!d.expiresAt) return null; if(Date.now()>=d.expiresAt){ localStorage.removeItem(SESSION_KEY); return null; } return d; }catch(e){ return null; } }
 function clearSession(){ try{ localStorage.removeItem(SESSION_KEY); }catch(e){} }
@@ -899,6 +909,9 @@ function isAdmin(){ const r=userRole(); return r==='Администратор'|
 function canGrade(){ return canEditSchedule(); }
 function canManageUsers(){ return isAdmin(); }
 
+/* =========================================================
+   JSONP
+   ========================================================= */
 let jsonpCounter = 0;
 function jsonp(params, timeout){
   return new Promise((resolve,reject)=>{
@@ -914,6 +927,9 @@ function jsonp(params, timeout){
   });
 }
 
+/* =========================================================
+   ДАТЫ
+   ========================================================= */
 function normDate(v){
   if(!v) return ''; const s=String(v).trim();
   let m=s.match(/^(\d{4})-(\d{2})-(\d{2})/); if(m) return m[1]+'-'+m[2]+'-'+m[3];
@@ -935,7 +951,6 @@ function dowIdx(iso){ const d=new Date(iso+'T00:00:00'); const day=d.getDay(); r
 function formatRuDate(iso){ const d=new Date(iso+'T00:00:00'); return d.getDate()+' '+MONTHS_GEN[d.getMonth()]+' '+d.getFullYear()+' год'; }
 function esc(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function filterByDate(lessons, date){ return (lessons||[]).filter(l => normDate(l.date) === date); }
-
 function getLast5SchoolDays(){
   const arr = [];
   const d = new Date();
@@ -948,6 +963,9 @@ function getLast5SchoolDays(){
   return arr;
 }
 
+/* =========================================================
+   СОСТОЯНИЕ
+   ========================================================= */
 let currentPage='home', selectedDate=initialDate(), animating=false;
 let cacheLessons=[], cacheHwStatuses={}, editingId=null;
 let currentTableDate = null;
@@ -955,26 +973,68 @@ const prefetched = { scheduleByDate:{}, hwStatuses:null, users:null };
 const inflight = new Map();
 const PAGE_ORDER = {home:0, schedule:1, homework:2, diary:3, users:4};
 
-function loadTableCfg(){ try{ const raw = localStorage.getItem(TABLE_KEY); return raw ? JSON.parse(raw) : { students:null, columns:null }; }catch(e){ return { students:null, columns:null }; } }
+/* =========================================================
+   СИНХРОНИЗАЦИЯ ОЦЕНОК
+   ========================================================= */
+async function pushGradeToServer(dateIso, lessonId, email, entry){
+  const u = getCurrentUser(); if(!u) return;
+  try{
+    await jsonp({
+      action:'grades_set', requester:u.email, date:dateIso,
+      lessonId:String(lessonId), email:email,
+      status: entry ? entry.status : 'ЕСТЬ',
+      grade: (entry && entry.grade != null) ? entry.grade : ''
+    }, 12000);
+  }catch(e){ console.warn('grades_set failed:', e); }
+}
+async function pullGradesFromServer(user){
+  try{
+    const res = await jsonp({action:'grades_get', requester:user.email}, 15000);
+    if(!res || res.status !== 'ok' || !Array.isArray(res.grades)) return;
+    gradesStore = {};
+    res.grades.forEach(g => {
+      gradesStore[gradeKey(g.date, g.lessonId, g.email)] = { status:g.status, grade:g.grade };
+    });
+    saveGrades(gradesStore);
+  }catch(e){ console.warn('grades_get failed:', e); }
+}
+function setGrade(dateIso, lessonId, email, entry){
+  const k = gradeKey(dateIso, lessonId, email);
+  if(!entry || (entry.status === 'ЕСТЬ' && (entry.grade === null || entry.grade === undefined))) delete gradesStore[k];
+  else gradesStore[k] = entry;
+  saveGrades(gradesStore);
+  pushGradeToServer(dateIso, lessonId, email, entry);
+}
+
+/* =========================================================
+   ТАБЛИЦА
+   ========================================================= */
+function loadTableCfg(){ try{ const raw = localStorage.getItem(TABLE_KEY); return raw ? JSON.parse(raw) : { students:[], columns:[] }; }catch(e){ return { students:[], columns:[] }; } }
 function saveTableCfg(cfg){ try{ localStorage.setItem(TABLE_KEY, JSON.stringify(cfg)); }catch(e){} }
 function getTableCfg(){
   const cfg = loadTableCfg();
-  if(!cfg.students || !cfg.students.length){
-    const users = (prefetched.users && prefetched.users.length) ? prefetched.users : [];
-    cfg.students = users.filter(u => String(u.role||'').trim() === 'Ученик').map(u => ({ email:u.email, name:u.name||u.email }));
-    if(!cfg.students.length){
-      const me = getCurrentUser();
-      if(me) cfg.students = [{ email: me.email, name: me.name || me.email }];
-    }
+  if(!cfg.students) cfg.students = [];
+  if(!cfg.columns)  cfg.columns  = [];
+  const users = (prefetched.users && prefetched.users.length) ? prefetched.users : [];
+  if(users.length){
+    const known = new Set(cfg.students.map(s => String(s.email).toLowerCase()));
+    users.filter(u => String(u.role||'').trim() === 'Ученик').forEach(u => {
+      const em = String(u.email).toLowerCase();
+      if(!known.has(em)){ cfg.students.push({ email:u.email, name:u.name || u.email }); known.add(em); }
+    });
     saveTableCfg(cfg);
   }
-  if(!cfg.columns || !cfg.columns.length){
-    cfg.columns = getLast5SchoolDays();
-    saveTableCfg(cfg);
+  if(!cfg.students.length){
+    const me = getCurrentUser();
+    if(me) cfg.students = [{ email: me.email, name: me.name || me.email }];
   }
+  if(!cfg.columns.length) cfg.columns = getLast5SchoolDays();
   return cfg;
 }
 
+/* =========================================================
+   ТЕМА / ЯЗЫК
+   ========================================================= */
 const I18N = (function(){
   function current(){ try{ return localStorage.getItem(LANG_KEY) || 'ru'; }catch(e){ return 'ru'; } }
   function apply(){ document.documentElement.lang = current(); document.querySelectorAll('.lang-card').forEach(c => c.classList.toggle('active', c.dataset.lang === current())); }
@@ -989,6 +1049,9 @@ const Theme = (function(){
   return { apply, current, init };
 })();
 
+/* =========================================================
+   СПРАВОЧНИКИ
+   ========================================================= */
 function getCustomRefs(){ try{ const raw=localStorage.getItem(CUSTOM_REFS_KEY); if(!raw) return {lessonNum:[],time:[],subject:[],teacher:[],room:[]}; const o=JSON.parse(raw); return {lessonNum:o.lessonNum||[],time:o.time||[],subject:o.subject||[],teacher:o.teacher||[],room:o.room||[]}; }catch(e){ return {lessonNum:[],time:[],subject:[],teacher:[],room:[]}; } }
 function saveCustomRefs(o){ try{ localStorage.setItem(CUSTOM_REFS_KEY, JSON.stringify(o)); }catch(e){} }
 function normKey(s){ return String(s||'').trim().toLowerCase(); }
@@ -1044,6 +1107,9 @@ function initAllSelects(){
 function setSelectValue(id, v){ const w=$(id); if(w&&w._cs) w._cs.setSilent(v); }
 function getSelectValue(id){ const w=$(id); return w ? (w.dataset.value||'') : ''; }
 
+/* =========================================================
+   ЛОАДЕР
+   ========================================================= */
 const NovaLoader = (function(){
   const T1=1400,T2=350,T3=180,T4=1400,T5=350,T6=700,T7=900;
   const TOTAL=T1+T2+T3+T4+T5+T6+T7, CIRC=452.39, BLEN=404;
@@ -1071,6 +1137,9 @@ const NovaLoader = (function(){
 function showLoader(){ const l=$('loader'); if(!l) return; l.classList.remove('hidden','fade-out'); NovaLoader.start(); }
 function hideLoader(){ const l=$('loader'); if(!l) return; NovaLoader.stop(); l.classList.add('fade-out'); setTimeout(()=>{ l.classList.add('hidden'); l.classList.remove('fade-out'); }, 550); }
 
+/* =========================================================
+   ЗАГРУЗКА
+   ========================================================= */
 async function fetchSched(date, user){
   if(prefetched.scheduleByDate[date] !== undefined) return prefetched.scheduleByDate[date];
   if(inflight.has(date)) return inflight.get(date);
@@ -1081,6 +1150,7 @@ async function fetchSched(date, user){
         prefetched.scheduleByDate[date] = lessons;
         return lessons;
       }
+      prefetched.scheduleByDate[date] = [];
       return [];
     }).finally(() => inflight.delete(date));
   inflight.set(date, p);
@@ -1098,11 +1168,14 @@ async function prefetchAll(user){
   if(!prefetched.users || !prefetched.users.length){
     jobs.push(jsonp({action:'users_list', requester:user.email}, 10000).then(ur => { if(ur&&ur.status==='ok') prefetched.users = ur.users||[]; }).catch(()=>{}));
   }
+  jobs.push(pullGradesFromServer(user).catch(()=>{}));
   await Promise.all(jobs);
 }
 
+/* =========================================================
+   АККАУНТ
+   ========================================================= */
 const Account = (function(){
-  const MAX_AVATAR = 200 * 1024 * 1024;
   function loadAvatar(){ try{ return localStorage.getItem(AVATAR_KEY) || ''; }catch(e){ return ''; } }
   function saveAvatar(u){ try{ localStorage.setItem(AVATAR_KEY, u); }catch(e){} }
   function applyAvatar(){
@@ -1115,7 +1188,6 @@ const Account = (function(){
   }
   function handleFile(input){
     const file = input.files && input.files[0]; if(!file) return;
-    if(file.size > MAX_AVATAR){ showToast('Файл больше 200 МБ'); input.value=''; return; }
     const reader = new FileReader();
     reader.onload = e => { saveAvatar(e.target.result); applyAvatar(); showToast('Фото обновлено'); };
     reader.readAsDataURL(file); input.value='';
@@ -1131,8 +1203,7 @@ const Account = (function(){
     const u = getCurrentUser(); if(!u) return;
     const name = ($('accName') && $('accName').value.trim()) || u.name;
     const email = ($('accEmail') && $('accEmail').value.trim()) || u.email;
-    const pass = ($('accPass') && !$('accPass').disabled) ? $('accPass').value : '';
-    u.name = name; u.email = email; if(pass) u.pass = pass;
+    u.name = name; u.email = email;
     saveSession(u);
     applyUserToUI(); fillFields(); showToast('Профиль обновлён'); closeModals();
   }
@@ -1146,13 +1217,16 @@ const Account = (function(){
     ['accAvatarInput','accAvatarInput2'].forEach(id => { const inp=$(id); if(inp) inp.onchange = () => handleFile(inp); });
     const cn = $('accChangeName'); if(cn) cn.onclick = () => { const i=$('accName'); i.disabled=!i.disabled; if(!i.disabled) i.focus(); };
     const ce = $('accChangeEmail'); if(ce) ce.onclick = () => { const i=$('accEmail'); i.disabled=!i.disabled; if(!i.disabled) i.focus(); };
-    const cp = $('accChangePass'); if(cp) cp.onclick = () => { const i=$('accPass'); if(i.disabled){ i.disabled=false; i.value=''; i.type='password'; i.focus(); } else { i.disabled=true; i.type='text'; i.value='••••••••'; } };
+    const cp = $('accChangePass'); if(cp) cp.onclick = () => { showToast('Смена пароля через администратора'); };
     const sv = $('accSave'); if(sv) sv.onclick = saveProfile;
     fillFields();
   }
   return { init, applyAvatar, fillFields, closeModals, loadAvatar };
 })();
 
+/* =========================================================
+   МЕНЮ ЮЗЕРА
+   ========================================================= */
 const UserMenu = (function(){
   function open(){ $('userDropdown').classList.add('open'); }
   function close(){ $('userDropdown').classList.remove('open'); }
@@ -1198,6 +1272,9 @@ const UserMenu = (function(){
   return { init, close };
 })();
 
+/* =========================================================
+   АВТОРИЗАЦИЯ
+   ========================================================= */
 function fitFormHeight(){ const p=document.querySelector('.slide-pane[data-pane="'+$('track').dataset.active+'"]'); if(p) $('formsWrap').style.height=p.scrollHeight+'px'; }
 function switchTab(w){ hideErr(); const l=w==='login'; $('tabLogin').classList.toggle('active',l); $('tabReg').classList.toggle('active',!l); $('tabs').dataset.active=l?'login':'reg'; $('track').dataset.active=l?'login':'reg'; fitFormHeight(); }
 function showErr(m){ const b=$('errBox'); b.textContent=m; b.classList.remove('hidden'); fitFormHeight(); }
@@ -1232,7 +1309,7 @@ async function doLogin(){
     if(String(u.email||'').toLowerCase()===CREATOR_EMAIL.toLowerCase()) u.role='Создатель';
     u.pass = pass;
     saveSession(u);
-    await new Promise(r=>setTimeout(r, 3000));
+    await new Promise(r=>setTimeout(r, 2500));
     hideLoader();
     await enterApp();
     prefetchAll(u).then(()=>{ if(['schedule','homework','diary','users'].includes(currentPage)) refreshCurrentPage(); });
@@ -1258,7 +1335,7 @@ async function doRegister(){
     if(String(u.email||'').toLowerCase()===CREATOR_EMAIL.toLowerCase()) u.role='Создатель';
     u.pass = p1;
     saveSession(u);
-    await new Promise(r=>setTimeout(r, 3000));
+    await new Promise(r=>setTimeout(r, 2500));
     hideLoader();
     await enterApp();
     prefetchAll(u);
@@ -1271,7 +1348,6 @@ async function enterApp(){
   applyUserToUI(); addCreatorMenu(); renderPage('home');
   requestAnimationFrame(()=>{ $('appView').classList.add('ready'); moveIndicator(); });
 }
-
 function applyUserToUI(){
   const u = getCurrentUser(); let name='Пользователь', role='Ученик';
   if(u){ if(u.name&&u.name.trim()) name=u.name.trim(); else if(u.email) name=u.email.split('@')[0]; role=userRole(); }
@@ -1308,6 +1384,9 @@ function moveIndicator(){
 }
 window.addEventListener('resize', ()=>setTimeout(moveIndicator,50));
 
+/* =========================================================
+   РЕНДЕР
+   ========================================================= */
 const TITLES = {home:'Главная', schedule:'Расписание', homework:'Домашние задания', diary:'Дневник', users:'Управление'};
 function buildPane(key, slideDir){
   const pane = document.createElement('div');
@@ -1382,10 +1461,19 @@ async function loadPageData(key){
       const res = await jsonp({action:'users_list', requester:user.email});
       if(res && res.status==='ok') prefetched.users = res.users||[];
     }catch(e){}
+    if(currentTableDate && prefetched.scheduleByDate[currentTableDate] === undefined){
+      try{ await fetchSched(currentTableDate, user); }catch(e){}
+    }
+    if(!prefetched.hwStatuses){
+      try{ const hr = await jsonp({action:'hw_status', requester:user.email}, 8000); if(hr&&hr.status==='ok') prefetched.hwStatuses = hr.statuses||{}; }catch(e){}
+    }
     if(currentPage===key) refreshCurrentPage();
   }
 }
 
+/* =========================================================
+   КОНТЕНТ
+   ========================================================= */
 function homeContentHTML(){
   return `<div class="banner"><span class="msr">home</span><div class="banner-title">Главная</div></div>
     <div class="empty-state" style="padding:48px 24px">
@@ -1394,7 +1482,6 @@ function homeContentHTML(){
       <p>Выберите раздел в меню слева, чтобы начать работу</p>
     </div>`;
 }
-
 function scheduleContentHTML(lessons){
   let list;
   if(!lessons || !lessons.length){
@@ -1421,7 +1508,7 @@ function lessonRowHTML(l, mode, hwStatuses, i){
   const badges = [];
   if(l.sor) badges.push(`<span class="sor-badge">СОР</span>`);
   if(l.soch) badges.push(`<span class="soch-badge">СОЧ</span>`);
-  if(l.cancelled) badges.push(`<span class="role-badge" style="background:#FECACA;color:#991B1B;margin-left:8px">ОТМЕНЁН</span>`);
+  if(l.cancelled) badges.push(`<span class="role-badge admin" style="margin-left:8px">ОТМЕНЁН</span>`);
   const dateIso = normDate(l.date);
   const user = getCurrentUser();
   const email = user ? user.email : '';
@@ -1431,16 +1518,24 @@ function lessonRowHTML(l, mode, hwStatuses, i){
     let chipText = '—', chipCls = 'lesson-grade-chip';
     if(entry && entry.status === 'Н'){ chipText = 'Н'; chipCls += ' filled g1'; }
     else if(entry && typeof entry.grade === 'number'){ chipText = entry.grade; chipCls += ' filled ' + gradeColorClass(entry.grade); }
-    chip = `<div class="${chipCls}" title="${canGrade()?'Нажмите для оценки':'Ваша оценка'}">${chipText}</div>`;
+    chip = `<div class="${chipCls}" title="Оценка">${chipText}</div>`;
   }
-  const status = hwStatuses && hwStatuses[l.id];
+  const status = hwStatuses ? hwStatuses[l.id] : undefined;
   if(mode === 'homework' && status !== undefined){
-    badges.push(`<span class="role-badge" style="${status?'background:rgba(16,185,129,.15);color:#059669':'background:#FECACA;color:#991B1B'};margin-left:8px">${status?'СДЕЛАНО':'НЕ СДЕЛАНО'}</span>`);
+    badges.push(`<span class="role-badge ${status?'teacher':'admin'}" style="margin-left:8px">${status?'СДЕЛАНО':'НЕ СДЕЛАНО'}</span>`);
   }
   const hwIcon = l.homework ? `<div style="margin-top:8px;font-size:12.5px;color:var(--text);display:flex;align-items:flex-start;gap:6px"><span class="msr" style="font-size:16px;color:var(--accent);flex-shrink:0">menu_book</span><span>${esc(l.homework)}</span></div>` : '';
-  const editBtns = (canEditSchedule() && mode === 'schedule')
-    ? `<button class="btn-icon" onclick="editLesson('${l.id}')"><span class="msr">edit</span></button><button class="btn-icon danger" onclick="deleteLesson('${l.id}')"><span class="msr">delete</span></button>`
-    : `<button class="btn-icon" onclick="showToast('${esc(l.subject||'')}')"><span class="msr">visibility</span></button>`;
+
+  let editBtns = '';
+  if(mode === 'schedule' && canEditSchedule()){
+    editBtns = `<button class="btn-icon" onclick="editLesson('${esc(l.id)}')"><span class="msr">edit</span></button><button class="btn-icon danger" onclick="deleteLesson('${esc(l.id)}')"><span class="msr">delete</span></button>`;
+  } else if(mode === 'homework'){
+    const done = !!(hwStatuses && hwStatuses[l.id]);
+    editBtns = `<button class="btn-icon ${done?'success':''}" title="${done?'Отметить невыполненным':'Отметить выполненным'}" onclick="toggleHw('${esc(l.id)}', ${done?'false':'true'})"><span class="msr">${done?'undo':'check'}</span></button>`;
+  } else {
+    editBtns = `<button class="btn-icon" onclick="showToast('${esc(l.subject||'')}')"><span class="msr">visibility</span></button>`;
+  }
+
   return `<div class="lesson-row ${cls.join(' ')}" style="--i:${i||0}">
     <div class="lesson-num">${esc(l.lessonNum||'—')}</div>
     <div class="lesson-info">
@@ -1480,6 +1575,9 @@ function bindWeekPanel(){
   document.querySelectorAll('.wp-day').forEach(b => { b.onclick = () => { setDayOfWeek(parseInt(b.dataset.day,10)); loadPageData(currentPage); }; });
 }
 
+/* =========================================================
+   ДНЕВНИК
+   ========================================================= */
 function calcDiaryAverages(){
   const u = getCurrentUser(); if(!u) return { overall: null, days: {} };
   const email = u.email;
@@ -1570,6 +1668,9 @@ function diaryContentHTML(){
   `;
 }
 
+/* =========================================================
+   УПРАВЛЕНИЕ
+   ========================================================= */
 function usersContentHTML(){
   if(!canEditSchedule()) return `<div class="banner"><span class="msr">lock</span><div class="banner-title">Нет доступа</div></div>`;
   if(currentTableDate){
@@ -1593,7 +1694,6 @@ function usersContentHTML(){
       <div class="date-card-counter"><span class="msr">grade</span>${cnt}</div>
     </button>`;
   }).join('');
-
   return `<div class="banner"><span class="msr">grade</span><div class="banner-title">Оценки учеников</div>
     <span style="margin-left:auto;font-size:11px;opacity:.85">Выберите дату</span></div>
     <div class="date-grid" id="dateGrid">${dateCards}</div>
@@ -1637,14 +1737,12 @@ function gradesTableForDateHTML(dateIso){
   const dateLabel = formatRuDate(dateIso);
   const wd = WEEKDAYS[new Date(dateIso+'T00:00:00').getDay()];
   const lessons = prefetched.scheduleByDate[dateIso] || [];
-
   const header = `<tr>
     <th class="sticky-col">Ф.И. ученика</th>
     ${lessons.length
-      ? lessons.map(l => `<th class="lesson-head" data-lesson-head="${l.id}">${esc(l.subject||('Урок '+(l.lessonNum||'')))}</th>`).join('')
+      ? lessons.map(l => `<th class="lesson-head" data-lesson-head="${esc(l.id)}">${esc(l.subject||('Урок '+(l.lessonNum||'')))}</th>`).join('')
       : `<th class="lesson-head" style="opacity:.5">Уроков нет</th>`}
   </tr>`;
-
   const rows = students.map(u => {
     const cells = lessons.length
       ? lessons.map(l => {
@@ -1652,7 +1750,7 @@ function gradesTableForDateHTML(dateIso){
           let text = '—', cls = 'cell-btn';
           if(e && e.status === 'Н'){ text = 'Н'; cls += ' absent'; }
           else if(e && typeof e.grade === 'number'){ text = e.grade; cls += ' filled ' + gradeColorClass(e.grade); }
-          return `<td><button class="${cls}" data-tbl-date="${dateIso}" data-tbl-lesson="${l.id}" data-tbl-email="${esc(u.email)}" type="button">${text}</button></td>`;
+          return `<td><button class="${cls}" data-tbl-date="${dateIso}" data-tbl-lesson="${esc(l.id)}" data-tbl-email="${esc(u.email)}" type="button">${text}</button></td>`;
         }).join('')
       : `<td><span class="cell-btn not-here">—</span></td>`;
     return `<tr>
@@ -1660,7 +1758,6 @@ function gradesTableForDateHTML(dateIso){
       ${cells}
     </tr>`;
   }).join('');
-
   return `
     <div class="table-toolbar">
       <button class="back-btn" id="backToDates"><span class="msr">arrow_back</span> Назад</button>
@@ -1678,22 +1775,21 @@ function gradesTableForDateHTML(dateIso){
     </div>
   `;
 }
-
 function bindUsersPage(){
   document.querySelectorAll('[data-open-date]').forEach(card => {
-    card.onclick = () => { currentTableDate = card.dataset.openDate; refreshCurrentPage(); };
+    card.onclick = async () => {
+      currentTableDate = card.dataset.openDate;
+      const u = getCurrentUser();
+      if(u && prefetched.scheduleByDate[currentTableDate] === undefined){
+        try{ await fetchSched(currentTableDate, u); }catch(e){}
+      }
+      refreshCurrentPage();
+    };
   });
-  const addDateBtn = $('addDateBtn');
-  if(addDateBtn) addDateBtn.onclick = openDatePicker;
-
-  const backBtn = $('backToDates');
-  if(backBtn) backBtn.onclick = () => { currentTableDate = null; refreshCurrentPage(); };
-
+  const addDateBtn = $('addDateBtn'); if(addDateBtn) addDateBtn.onclick = openDatePicker;
+  const backBtn = $('backToDates'); if(backBtn) backBtn.onclick = () => { currentTableDate = null; refreshCurrentPage(); };
   const addLessonToDate = $('addLessonToDate');
-  if(addLessonToDate) addLessonToDate.onclick = () => {
-    selectedDate = currentTableDate;
-    if(typeof window.openModal === 'function') window.openModal(null);
-  };
+  if(addLessonToDate) addLessonToDate.onclick = () => { selectedDate = currentTableDate; if(typeof window.openModal === 'function') window.openModal(null); };
 
   document.querySelectorAll('.cell-btn[data-tbl-lesson]').forEach(btn => {
     btn.onclick = e => { e.stopPropagation(); openPopover(btn, 'table'); };
@@ -1711,14 +1807,12 @@ function bindUsersPage(){
     }, {passive:true});
     ['touchend','touchmove','touchcancel'].forEach(ev => btn.addEventListener(ev, () => clearTimeout(timer)));
   });
-
   document.querySelectorAll('.lesson-head[data-lesson-head]').forEach(th => {
     th.addEventListener('contextmenu', e => {
       e.preventDefault();
       showCtxMenu(e.clientX, e.clientY, { type:'lesson-head', date: currentTableDate, lesson: th.dataset.lessonHead });
     });
   });
-
   document.querySelectorAll('.name-cell[data-student-email]').forEach(td => {
     td.addEventListener('contextmenu', e => {
       e.preventDefault();
@@ -1734,7 +1828,6 @@ function bindUsersPage(){
     }, {passive:true});
     ['touchend','touchmove','touchcancel'].forEach(ev => td.addEventListener(ev, () => clearTimeout(timer)));
   });
-
   document.querySelectorAll('[data-role-email]').forEach(sel => {
     sel.onchange = async () => {
       const email = sel.dataset.roleEmail;
@@ -1769,7 +1862,7 @@ function bindUsersPage(){
 }
 
 /* =========================================================
-   DATE PICKER — с полем ввода и кнопкой "Из расписания"
+   DATE PICKER
    ========================================================= */
 function openDatePicker(){
   $('dpInput').value = '';
@@ -1778,11 +1871,7 @@ function openDatePicker(){
   $('datePickerModal').classList.add('show');
   setTimeout(() => $('dpInput').focus(), 100);
 }
-function closeDatePicker(){
-  $('datePickerModal').classList.remove('show');
-}
-
-// Маска ввода 00/00/0000
+function closeDatePicker(){ $('datePickerModal').classList.remove('show'); }
 $('dpInput').addEventListener('input', e => {
   let v = e.target.value.replace(/[^\d]/g, '');
   if(v.length > 8) v = v.slice(0, 8);
@@ -1792,53 +1881,38 @@ $('dpInput').addEventListener('input', e => {
   if(v.length >= 5) out += '/' + v.slice(4, 8);
   e.target.value = out;
 });
-$('dpInput').addEventListener('keydown', e => {
-  if(e.key === 'Enter'){ e.preventDefault(); $('dpSave').click(); }
-});
-
-// Кнопка "Выбрать из расписания"
+$('dpInput').addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); $('dpSave').click(); } });
 $('dpPickFromSchedule').onclick = () => {
   const panel = $('dpPanel');
   const grid = $('dpDatesGrid');
   if(panel.classList.contains('open')){ panel.classList.remove('open'); return; }
-
-  // Собираем все даты, где есть уроки:
-  // 1) из prefetched.scheduleByDate (уже загруженные)
-  // 2) из cfg.columns (которые уже добавлены в таблицу, но могут не иметь уроков)
   const dates = new Set();
   Object.keys(prefetched.scheduleByDate||{}).forEach(d => {
     const arr = prefetched.scheduleByDate[d];
     if(Array.isArray(arr) && arr.length) dates.add(d);
   });
-  // Добавим из таблицы (columns), даже без уроков — на всякий случай
   const cfg = getTableCfg();
   (cfg.columns||[]).forEach(d => dates.add(d));
-
   const sorted = Array.from(dates).sort();
   if(!sorted.length){
     grid.innerHTML = `<div class="dp-empty"><span class="msr">event_busy</span>Ни в одном дне нет уроков.<br>Введите дату вручную.</div>`;
     panel.classList.add('open');
     return;
   }
-
   grid.innerHTML = sorted.map(iso => {
     const d = new Date(iso+'T00:00:00');
     const dd = d.getDate();
     const mm = MONTHS_SHORT[d.getMonth()];
     const yyyy = String(d.getFullYear()).slice(2);
-    const lessons = (prefetched.scheduleByDate[iso]||[]);
-    const cnt = lessons.length;
-    return `<button class="dp-date-chip" data-dp-date="${iso}" type="button" title="${cnt} уроков">
+    return `<button class="dp-date-chip" data-dp-date="${iso}" type="button">
       <span class="dp-date-chip-day">${dd}</span>
       <span class="dp-date-chip-month">${mm}</span>
       <span class="dp-date-chip-year">20${yyyy}</span>
     </button>`;
   }).join('');
-
   grid.querySelectorAll('[data-dp-date]').forEach(chip => {
     chip.onclick = () => {
       const iso = chip.dataset.dpDate;
-      // Преобразуем в ДД/ММ/ГГГГ
       const d = new Date(iso+'T00:00:00');
       const dd = String(d.getDate()).padStart(2,'0');
       const mm = String(d.getMonth()+1).padStart(2,'0');
@@ -1851,11 +1925,9 @@ $('dpPickFromSchedule').onclick = () => {
   });
   panel.classList.add('open');
 };
-
 $('dpClose').onclick = closeDatePicker;
 $('dpCancel').onclick = closeDatePicker;
 $('datePickerModal').onclick = e => { if(e.target === $('datePickerModal')) closeDatePicker(); };
-
 $('dpSave').onclick = () => {
   const v = $('dpInput').value.trim();
   if(!v){ showToast('Введите дату'); $('dpInput').focus(); return; }
@@ -1864,36 +1936,27 @@ $('dpSave').onclick = () => {
   const cfg = getTableCfg();
   if(cfg.columns.indexOf(iso) === -1){
     cfg.columns.push(iso); cfg.columns.sort(); saveTableCfg(cfg);
-    closeDatePicker();
-    refreshCurrentPage();
+    closeDatePicker(); refreshCurrentPage();
     showToast('Дата добавлена: ' + formatRuDate(iso));
-    // Подгрузим уроки этой даты, если их ещё нет
     const user = getCurrentUser();
     if(user && prefetched.scheduleByDate[iso] === undefined){
-      fetchSched(iso, user).then(() => {
-        if(currentPage === 'users') refreshCurrentPage();
-      }).catch(()=>{});
+      fetchSched(iso, user).then(() => { if(currentPage === 'users') refreshCurrentPage(); }).catch(()=>{});
     }
-  } else {
-    closeDatePicker();
-    showToast('Такая дата уже есть');
-  }
+  } else { closeDatePicker(); showToast('Такая дата уже есть'); }
 };
-
 function parseDateDMY(str){
   const s = String(str).trim();
-  // ДД/ММ/ГГГГ или ДД.ММ.ГГГГ или ДД-ММ-ГГГГ
   let m = s.match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{4})$/);
   if(!m) return '';
   const d = parseInt(m[1],10), mo = parseInt(m[2],10), y = parseInt(m[3],10);
-  if(d<1||d>31||mo<1||mo>12||y<2000||y<0) return '';
+  if(d<1||d>31||mo<1||mo>12||y<2000) return '';
   const dt = new Date(y, mo-1, d);
   if(dt.getDate() !== d || dt.getMonth() !== mo-1) return '';
   return isoOfDate(dt);
 }
 
 /* =========================================================
-   MINI MODAL (для переименования и т.п.)
+   MINI MODAL
    ========================================================= */
 let miniCallback = null;
 function showMiniInput(title, label, defaultValue, callback){
@@ -1925,12 +1988,9 @@ function showCtxMenu(x, y, data){
   else if(data.type === 'column') titleText = 'Дата';
   else if(data.type === 'lesson-head') titleText = 'Урок';
   title.textContent = titleText;
-
   menu.querySelectorAll('.ctx-item').forEach(it => {
     const act = it.dataset.ctx;
-    let show = false;
-    let label = '';
-    let icon = '';
+    let show = false, label = '', icon = '';
     if(data.type === 'cell'){
       show = ['add-lesson','clear','delete'].includes(act);
       if(act === 'add-lesson'){ label = 'Добавить урок'; icon = 'add_circle'; }
@@ -1956,7 +2016,6 @@ function showCtxMenu(x, y, data){
     it.style.display = show ? '' : 'none';
     if(show){ it.innerHTML = `<span class="msr">${icon}</span> ${label}`; }
   });
-
   menu.classList.add('open');
   const rect = menu.getBoundingClientRect();
   const vw = window.innerWidth, vh = window.innerHeight;
@@ -2011,7 +2070,7 @@ function addStudent(){
 }
 function clearRow(email){
   if(!confirm('Очистить все оценки этого ученика?')) return;
-  Object.keys(gradesStore).forEach(k => { if(k.endsWith('::' + email)) delete gradesStore[k]; });
+  Object.keys(gradesStore).forEach(k => { if(k.endsWith('::' + String(email).toLowerCase())) delete gradesStore[k]; });
   saveGrades(gradesStore); refreshCurrentPage(); showToast('Очищено');
 }
 function clearColumn(dateIso){
@@ -2028,7 +2087,7 @@ function deleteRow(email){
   const cfg = getTableCfg();
   cfg.students = cfg.students.filter(s => s.email !== email);
   saveTableCfg(cfg);
-  Object.keys(gradesStore).forEach(k => { if(k.endsWith('::' + email)) delete gradesStore[k]; });
+  Object.keys(gradesStore).forEach(k => { if(k.endsWith('::' + String(email).toLowerCase())) delete gradesStore[k]; });
   saveGrades(gradesStore); refreshCurrentPage(); showToast('Удалён');
 }
 function deleteColumn(dateIso){
@@ -2060,7 +2119,9 @@ function deleteLessonById(lessonId){
   jsonp({action:'del_sched', requester:user.email, role:userRole(), id:lessonId}).then(() => refreshCurrentPage()).catch(()=>{});
 }
 
-/* POPOVER */
+/* =========================================================
+   POPOVER
+   ========================================================= */
 let popState = { status:'ЕСТЬ', grade:null };
 let popTarget = null;
 function buildGradesGrid(){
@@ -2116,20 +2177,22 @@ document.querySelectorAll('.status-btn').forEach(b => b.onclick = () => { popSta
 $('popClear').onclick = () => {
   if(!popTarget) return;
   setGrade(popTarget.dateIso, popTarget.lessonId, popTarget.email, { status:'ЕСТЬ', grade:null });
-  closePopover(); refreshCurrentPage();
+  closePopover(); refreshCurrentPage(); showToast('Очищено');
 };
 $('popSave').onclick = () => {
   if(!popTarget) return;
   const entry = { status: popState.status, grade: null };
   if(popState.status === 'ЕСТЬ' && popState.grade) entry.grade = popState.grade;
   setGrade(popTarget.dateIso, popTarget.lessonId, popTarget.email, entry);
-  closePopover(); refreshCurrentPage();
+  closePopover(); refreshCurrentPage(); showToast('Сохранено');
 };
 document.addEventListener('keydown', e => { if(e.key === 'Escape') { closePopover(); hideCtxMenu(); closeDatePicker(); } });
 window.addEventListener('resize', () => { if(popTarget && popTarget.btn) positionPopover(popTarget.btn); });
 window.addEventListener('scroll', () => { if(popTarget && popTarget.btn) positionPopover(popTarget.btn); }, true);
 
-/* MODAL LESSON */
+/* =========================================================
+   МОДАЛ УРОКА
+   ========================================================= */
 window.openModal = function(lesson){
   if(!canEditSchedule()){ showToast('Нет прав'); return; }
   editingId = lesson ? lesson.id : null;
@@ -2183,7 +2246,7 @@ $('modalSave').onclick = () => {
     if(res && res.status === 'ok' && res.id && !editingId && prefetched.scheduleByDate[dateKey]){
       const arr = prefetched.scheduleByDate[dateKey];
       const i = arr.findIndex(x => String(x.id) === String(localId));
-      if(i>=0) arr[i].id = res.id;
+      if(i>=0){ arr[i].id = res.id; if(currentPage === 'schedule' || currentPage === 'homework') refreshCurrentPage(); }
     }
   }).catch(()=>{});
 };
@@ -2200,7 +2263,21 @@ window.deleteLesson = function(id){
   showToast('Удалено');
   jsonp({action:'del_sched', requester:user.email, role:userRole(), id}).catch(()=>{});
 };
+window.toggleHw = async function(lessonId, done){
+  const u = getCurrentUser(); if(!u) return;
+  if(!cacheHwStatuses) cacheHwStatuses = {};
+  cacheHwStatuses[lessonId] = done;
+  prefetched.hwStatuses = cacheHwStatuses;
+  refreshCurrentPage();
+  try{
+    const res = await jsonp({action:'set_hw', requester:u.email, lessonId, done: done ? 'true':'false'});
+    if(!res || res.status !== 'ok'){ showToast('Не сохранено'); }
+  }catch(e){ showToast('Ошибка сети'); }
+};
 
+/* =========================================================
+   TOAST
+   ========================================================= */
 function showToast(m){
   let t = $('toast');
   if(!t){ t = document.createElement('div'); t.id='toast'; document.body.appendChild(t); }
@@ -2208,14 +2285,27 @@ function showToast(m){
   clearTimeout(t._tid); t._tid = setTimeout(() => t.classList.remove('show'), 2400);
 }
 
+/* =========================================================
+   НАВИГАЦИЯ
+   ========================================================= */
 document.addEventListener('click', e => {
   const mb = e.target.closest('.menu-item');
   if(mb && mb.dataset.page){ renderPage(mb.dataset.page); return; }
   const mbb = e.target.closest('.mb-item');
   if(mbb && mbb.dataset.page){ renderPage(mbb.dataset.page); return; }
 });
-$$('[data-logout]').forEach(b => b.onclick = () => { showLoader(); clearSession(); setTimeout(()=>location.reload(), 3000); });
+$$('[data-logout]').forEach(b => b.onclick = () => {
+  showLoader();
+  prefetched.scheduleByDate = {};
+  prefetched.hwStatuses = null;
+  prefetched.users = null;
+  clearSession();
+  setTimeout(()=>location.reload(), 2500);
+});
 
+/* =========================================================
+   INIT
+   ========================================================= */
 (async function init(){
   requestAnimationFrame(fitFormHeight);
   initAllSelects();
@@ -2229,7 +2319,7 @@ $$('[data-logout]').forEach(b => b.onclick = () => { showLoader(); clearSession(
   const s = getSession();
   if(s && s.user){
     showLoader();
-    await new Promise(r => setTimeout(r, 3000));
+    await new Promise(r => setTimeout(r, 2500));
     hideLoader();
     $('authView').classList.add('hidden');
     $('appView').classList.remove('hidden');
@@ -2241,7 +2331,7 @@ $$('[data-logout]').forEach(b => b.onclick = () => { showLoader(); clearSession(
     }).catch(()=>{});
   } else {
     showLoader();
-    await new Promise(r => setTimeout(r, 3000));
+    await new Promise(r => setTimeout(r, 2500));
     hideLoader();
     $('authView').classList.remove('hidden');
   }
