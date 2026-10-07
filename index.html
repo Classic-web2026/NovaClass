@@ -36,32 +36,20 @@ html[data-theme="dark"]{
   --shadow-hover:0 8px 24px -8px rgba(59,130,246,.35);
   --now-light:rgba(22,163,74,.15);--soon-light:rgba(234,88,12,.15);
 }
-/* ===== ЗИМНЯЯ: ЧИСТАЯ СВЕТЛАЯ ГОЛУБАЯ (БЕЛО-ГОЛУБАЯ) ===== */
 html[data-theme="winter"]{
-  --bg:#F2F8FE;
-  --section:#E8F1FB;
-  --card:#FFFFFF;
-  --text:#1E3A5F;
-  --muted:#6B8BAA;
-  --brand:#0F2A4A;
-  --accent:#6FB0E5;
-  --accent-h:#5399D6;
-  --accent-light:#DCEDFB;
+  --bg:#F2F8FE;--section:#E8F1FB;--card:#FFFFFF;
+  --text:#1E3A5F;--muted:#6B8BAA;--brand:#0F2A4A;
+  --accent:#6FB0E5;--accent-h:#5399D6;--accent-light:#DCEDFB;
   --border:#D2E3F3;
   --shadow:0 1px 3px rgba(111,176,229,.08),0 1px 2px rgba(111,176,229,.04);
   --shadow-hover:0 10px 26px -10px rgba(111,176,229,.35);
   --shadow-lg:0 20px 40px -16px rgba(15,42,74,.12);
   --now-light:#DCFCE7;--soon-light:#FFEDD5;
 }
-html[data-theme="winter"] body{
-  background:#F2F8FE;
-}
-
-/* ============ БАЗА ============ */
+html[data-theme="winter"] body{background:#F2F8FE}
 body{font-family:'Comfortaa',sans-serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.5;overflow:hidden;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;transition:background-color .25s ease,color .25s ease}
 .hidden{display:none!important}
 .msr{font-family:'Material Symbols Rounded';font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;font-size:26px;display:inline-flex;align-items:center;justify-content:center;color:currentColor;line-height:1;user-select:none;flex-shrink:0}
-
 .role-badge{display:inline-block;padding:3px 10px;border-radius:var(--rb);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;line-height:1.4}
 .role-badge.student{background:rgba(37,99,235,.12);color:#2563EB}
 html[data-theme="winter"] .role-badge.student{background:rgba(111,176,229,.18);color:#3E7FB8}
@@ -72,29 +60,24 @@ html[data-theme="winter"] .role-badge.student{background:rgba(111,176,229,.18);c
 .role-badge.creator{background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff}
 .sor-badge{display:inline-block;padding:3px 9px;margin-left:8px;border-radius:var(--rb);font-size:10px;font-weight:700;background:rgba(31,158,168,.15);color:#1F9EA8}
 .soch-badge{display:inline-block;padding:3px 9px;margin-left:8px;border-radius:var(--rb);font-size:10px;font-weight:700;background:rgba(30,136,229,.15);color:#1E88E5}
-
 .now-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;margin-left:8px;background:linear-gradient(135deg,#16A34A,#22C55E);color:#fff;border-radius:var(--rp);font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
 .now-badge::before{content:'';width:6px;height:6px;background:#fff;border-radius:50%}
 .soon-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;margin-left:8px;background:linear-gradient(135deg,#EA580C,#F97316);color:#fff;border-radius:var(--rp);font-size:10.5px;font-weight:700;text-transform:uppercase}
 .soon-badge .msr{font-size:14px;color:#fff}
 .past-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;margin-left:8px;background:var(--section);color:var(--muted);border:1px solid var(--border);border-radius:var(--rp);font-size:10px;font-weight:700;text-transform:uppercase}
 .past-badge .msr{font-size:13px;color:var(--muted)}
-
 .lesson-row{position:relative;overflow:hidden}
 .lesson-row.now{border-color:rgba(22,163,74,.55);background:linear-gradient(135deg,rgba(22,163,74,.05),rgba(22,163,74,.01))}
 .lesson-row.now::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:4px;height:70%;background:linear-gradient(180deg,#16A34A,#22C55E);border-radius:0 4px 4px 0}
 .lesson-row.now .lesson-num{background:var(--now-light);border-color:var(--now);color:var(--now)}
 .lesson-row.past{opacity:.72}
-
 #syncDot{position:fixed;top:14px;right:14px;z-index:10001;display:none;align-items:center;gap:6px;padding:6px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--rp);font-size:11px;font-weight:700;color:var(--muted);box-shadow:var(--shadow);opacity:0;transition:opacity .25s ease}
 #syncDot.show{display:inline-flex;opacity:1}
 #syncDot .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:syncSpin 1s linear infinite}
 @keyframes syncSpin{0%,100%{opacity:.3}50%{opacity:1}}
-
 #topProgress{position:fixed;top:6px;left:24px;right:24px;height:4px;z-index:10000;pointer-events:none;opacity:0;transition:opacity .25s ease}
 #topProgress.active{opacity:1}
 #topProgressFill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--brand));border-radius:10px;transition:width .35s var(--ease-out)}
-
 #loader{position:fixed;inset:0;z-index:100000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;transition:opacity .5s ease}
 #loader.fade-out{opacity:0;pointer-events:none}
 .loader-stage{position:relative;width:130px;height:130px}
@@ -110,7 +93,6 @@ html[data-theme="dark"] .spinner-track{stroke:#1E293B}
 html[data-theme="winter"] .loader-bar-fill{background:linear-gradient(90deg,#8EC4EC,#6FB0E5)}
 .loader-label{font-size:18px;font-weight:700;color:var(--accent);opacity:0;transform:translateY(8px);transition:opacity .4s ease,transform .4s ease}
 .loader-label.show{opacity:1;transform:translateY(0)}
-
 #authView{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:transparent;position:relative;z-index:10}
 .card{width:100%;max-width:400px;background:var(--card);border:1px solid var(--border);border-radius:var(--rc);padding:28px;box-shadow:var(--shadow);animation:zoom .4s var(--ease-spring) both;position:relative;z-index:1}
 @keyframes zoom{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
@@ -143,7 +125,6 @@ input.error{border-color:#DC2626;box-shadow:0 0 0 3px rgba(220,38,38,.12)}
 .btn-ghost{background:var(--bg);color:var(--text);border:1px solid var(--border)}
 .btn-ghost:hover{background:var(--section)}
 .err{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA;border-radius:var(--ri);padding:11px 14px;font-size:13px;margin-bottom:14px}
-
 #appView{position:fixed;inset:0;z-index:10;opacity:0;transition:opacity .35s ease}
 #appView.ready{opacity:1}
 .app-layout{display:flex;gap:var(--gap);padding:var(--gap);height:100%;overflow:hidden;position:relative;z-index:1}
@@ -213,7 +194,6 @@ html[data-theme="winter"] .ud-ava{background:linear-gradient(135deg,#8EC4EC,#6FB
 .ud-danger-label{font-size:10.5px;font-weight:700;color:#DC2626;text-transform:uppercase;letter-spacing:.6px;padding:6px 12px 4px;opacity:.75}
 .mobile-sidebar-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:70;opacity:0;pointer-events:none;transition:opacity .3s ease}
 .mobile-sidebar-backdrop.open{opacity:1;pointer-events:auto}
-
 .pages-viewport{flex:1;min-height:0;position:relative;overflow:hidden;border-radius:var(--rc)}
 .page-pane{position:absolute;inset:0;background:var(--card);border:1px solid var(--border);border-radius:var(--rc);box-shadow:var(--shadow);padding:clamp(20px,2.5vw,32px);overflow:auto;animation:paneIn .32s var(--ease-out) both}
 .page-pane.slide-in-right{animation:paneInRight .32s var(--ease-out) both}
@@ -225,12 +205,10 @@ html[data-theme="winter"] .ud-ava{background:linear-gradient(135deg,#8EC4EC,#6FB
 @keyframes paneInLeft{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
 @keyframes paneOutLeft{to{opacity:0;transform:translateX(-30px)}}
 @keyframes paneOutRight{to{opacity:0;transform:translateX(30px)}}
-
 .banner{width:100%;border-radius:16px;background:linear-gradient(135deg,#3B82F6 0%,#2563EB 100%);color:#fff;padding:22px 28px;display:flex;align-items:center;gap:12px;margin-bottom:22px;min-height:76px}
 html[data-theme="winter"] .banner{background:linear-gradient(135deg,#8EC4EC 0%,#6FB0E5 100%)}
 .banner .msr{font-size:26px;color:#fff}
 .banner-title{font-size:clamp(15px,1.5vw,17px);font-weight:700}
-
 .week-wrap{display:flex;flex-direction:column;margin-bottom:18px;border-radius:16px}
 .week-panel{width:100%;border-radius:16px;background:linear-gradient(135deg,#3B82F6 0%,#2563EB 100%);display:flex;flex-direction:column;overflow:visible;position:relative}
 html[data-theme="winter"] .week-panel{background:linear-gradient(135deg,#8EC4EC 0%,#6FB0E5 100%)}
@@ -251,7 +229,6 @@ html[data-theme="winter"] .week-panel{background:linear-gradient(135deg,#8EC4EC 
 .wp-mobile{display:none;padding:4px 12px 0 12px}
 .wp-mobile .wp-mobile-tab{width:100%;min-height:60px;background:var(--card);color:var(--accent);border-radius:14px 14px 0 0;font-family:inherit;display:flex;align-items:center;justify-content:center;padding:10px;gap:8px}
 @media (max-width:820px){.wp-days{display:none}.wp-mobile{display:block}}
-
 .lessons-list{display:flex;flex-direction:column;gap:12px;margin-top:16px}
 .lesson-row{display:flex;align-items:flex-start;gap:16px;background:var(--bg);border:1.5px solid var(--border);border-radius:16px;padding:18px 20px;transition:border-color .2s ease,box-shadow .2s ease,transform .25s var(--ease-out);animation:rowIn .35s var(--ease-out) both;animation-delay:calc(var(--i,0)*40ms)}
 @keyframes rowIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
@@ -280,12 +257,10 @@ html[data-theme="winter"] .week-panel{background:linear-gradient(135deg,#8EC4EC 
 .empty-state h3{font-size:15px;font-weight:700;color:var(--brand)}
 .empty-add-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:var(--ri);border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer}
 .empty-add-btn .msr{font-size:22px;color:#fff}
-
 .lesson-atts{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .lesson-att-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px 6px 8px;background:var(--section);border:1px solid var(--border);border-radius:var(--rp);font-size:11.5px;font-weight:600;color:var(--text);text-decoration:none;cursor:pointer;max-width:220px}
 .lesson-att-chip .msr{font-size:16px;color:var(--accent)}
 .lesson-att-chip span:not(.msr){overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-
 .diary-banner{background:linear-gradient(135deg,#3B82F6 0%,#2563EB 100%);border-radius:var(--rc);padding:24px 28px;display:flex;align-items:center;gap:24px;color:#fff;margin-bottom:18px;position:relative;overflow:hidden}
 html[data-theme="winter"] .diary-banner{background:linear-gradient(135deg,#8EC4EC 0%,#6FB0E5 100%)}
 .diary-banner::after{content:'';position:absolute;top:-50%;right:-15%;width:380px;height:380px;background:radial-gradient(circle,rgba(255,255,255,.12) 0%,transparent 70%);pointer-events:none}
@@ -330,7 +305,6 @@ html[data-theme="winter"] .day-total{background:linear-gradient(135deg,#8EC4EC 0
 .day-total-value{font-size:28px;font-weight:700;line-height:1;letter-spacing:-1px}
 .day-total-value.empty{opacity:.4;font-size:20px}
 .day-total-sub{font-size:9.5px;opacity:.7}
-
 .date-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:22px}
 .date-card{position:relative;background:linear-gradient(135deg,#3B82F6 0%,#2563EB 100%);color:#fff;border:none;border-radius:18px;padding:22px 20px;cursor:pointer;font-family:inherit;text-align:left;overflow:hidden}
 html[data-theme="winter"] .date-card{background:linear-gradient(135deg,#8EC4EC 0%,#6FB0E5 100%)}
@@ -342,7 +316,6 @@ html[data-theme="winter"] .date-card{background:linear-gradient(135deg,#8EC4EC 0
 .date-card-weekday{position:absolute;top:16px;right:18px;font-size:10px;font-weight:700;background:rgba(255,255,255,.2);padding:3px 9px;border-radius:var(--rb)}
 .date-card-counter{position:absolute;bottom:14px;right:18px;font-size:10.5px;opacity:.85;font-weight:600;display:flex;align-items:center;gap:4px}
 .date-card-counter .msr{font-size:14px}
-
 .table-toolbar{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
 .back-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:var(--rt);border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}
 .back-btn:hover{background:var(--section)}
@@ -367,7 +340,6 @@ html[data-theme="winter"] .grades-table td.name-cell{background:linear-gradient(
 .grades-table .cell-btn.g9,.grades-table .cell-btn.g10{background:#16A34A}
 .grades-table .cell-btn.absent{background:#DC2626;color:#fff;border-color:transparent}
 .grades-table .cell-btn.not-here{opacity:.35;cursor:not-allowed;font-size:18px}
-
 .users-list{display:flex;flex-direction:column;gap:10px;margin-top:16px}
 .user-row{display:flex;align-items:center;gap:14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--ri);padding:14px 16px;cursor:context-menu}
 .user-row:hover{background:var(--section)}
@@ -380,7 +352,6 @@ html[data-theme="winter"] .u-ava{background:linear-gradient(135deg,#8EC4EC,#6FB0
 .u-del{width:36px;height:36px;border-radius:var(--rb);border:1px solid var(--border);background:var(--bg);color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
 .u-del:hover{background:#FEF2F2;color:#DC2626}
 .u-del .msr{font-size:20px}
-
 .pop-overlay{position:fixed;inset:0;z-index:199;background:transparent;display:none}
 .pop-overlay.open{display:block}
 .popover{position:absolute;z-index:200;width:300px;background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:0 24px 60px -16px rgba(15,23,42,.28);padding:16px;opacity:0;transform:scale(.95);pointer-events:none;transition:opacity .18s ease,transform .22s var(--ease-out)}
@@ -409,7 +380,6 @@ html[data-theme="winter"] .u-ava{background:linear-gradient(135deg,#8EC4EC,#6FB0
 .btn-clear:hover{background:#FEF2F2;color:#DC2626}
 .btn-save{background:var(--accent);color:#fff;border:none}
 .btn-save:hover{background:var(--accent-h)}
-
 .ctx-menu{position:fixed;z-index:500;background:var(--card);border:1px solid var(--border);border-radius:var(--ri);box-shadow:0 20px 50px -12px rgba(15,23,42,.28);padding:6px;min-width:230px;opacity:0;transform:scale(.95);pointer-events:none;transition:opacity .16s ease,transform .2s var(--ease-out);transform-origin:top left}
 .ctx-menu.open{opacity:1;transform:scale(1);pointer-events:auto}
 .ctx-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--rb);color:var(--text);font-family:inherit;font-size:13.5px;font-weight:500;cursor:pointer;text-align:left;width:100%;border:none;background:transparent}
@@ -419,7 +389,6 @@ html[data-theme="winter"] .u-ava{background:linear-gradient(135deg,#8EC4EC,#6FB0
 .ctx-item .msr{font-size:20px;opacity:.85}
 .ctx-divider{height:1px;background:var(--border);margin:4px 8px}
 .ctx-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;padding:8px 12px 4px}
-
 .modal-backdrop{position:fixed;inset:0;z-index:100;background:rgba(15,23,42,.5);display:none;align-items:center;justify-content:center;padding:16px;opacity:0;transition:opacity .22s ease}
 .modal-backdrop.show{display:flex;opacity:1}
 .modal{width:100%;max-width:540px;background:var(--card);border:1px solid var(--border);border-radius:22px;box-shadow:0 24px 60px -16px rgba(15,23,42,.28);max-height:92vh;overflow-y:auto;transform:scale(.96);transition:transform .25s var(--ease-out)}
@@ -441,7 +410,6 @@ html[data-theme="winter"] .u-ava{background:linear-gradient(135deg,#8EC4EC,#6FB0
 .check-field.sor input[type=checkbox]{accent-color:#1F9EA8}
 .check-field.soch input[type=checkbox]{accent-color:#1E88E5}
 .modal-backdrop.mini .modal{max-width:440px}
-
 .attach-section{border:1.5px solid var(--border);border-radius:var(--ri);background:var(--bg);padding:16px;margin-bottom:16px}
 .attach-section-title{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .attach-section-title .msr{font-size:18px;color:var(--accent)}
@@ -487,7 +455,6 @@ html[data-theme="winter"] .u-ava{background:linear-gradient(135deg,#8EC4EC,#6FB0
 .attach-viewer-body .av-fallback{padding:40px;text-align:center;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:16px}
 .attach-viewer-body .av-fallback .msr{font-size:64px;opacity:.6}
 .attach-viewer-body .av-fallback a{color:#60A5FA;text-decoration:none;font-weight:700;padding:12px 24px;border:1px solid #60A5FA;border-radius:12px}
-
 .dp-hint{font-size:11.5px;color:var(--muted);margin-top:6px;display:flex;align-items:center;gap:6px}
 .dp-hint .msr{font-size:16px}
 .dp-input{font-size:18px;font-weight:700;letter-spacing:2px;text-align:center;padding:16px 18px}
@@ -506,7 +473,6 @@ html[data-theme="winter"] .u-ava{background:linear-gradient(135deg,#8EC4EC,#6FB0
 .dp-date-chip-day{font-size:18px;letter-spacing:-.5px}
 .dp-date-chip-month{font-size:10px;text-transform:uppercase;opacity:.75}
 .dp-date-chip-year{font-size:9.5px;opacity:.55}
-
 .account-modal{max-width:480px}
 .settings-modal{max-width:820px;width:100%}
 .acc-avatar-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:22px}
@@ -543,16 +509,13 @@ html[data-theme="winter"] .acc-avatar-img{background:linear-gradient(135deg,#8EC
 .lang-card.active{border-color:var(--accent);background:var(--accent-light)}
 .lang-flag{font-size:26px}
 .lang-name{font-size:14px;font-weight:700;color:var(--text)}
-
 .mobile-bottom{position:fixed;left:10px;right:10px;bottom:10px;height:68px;background:var(--card);border:1px solid var(--border);border-radius:22px;box-shadow:0 -4px 20px -8px rgba(15,23,42,.12);display:none;align-items:center;padding:6px 8px;gap:4px;z-index:45}
 .mb-item{flex:1;height:56px;border:none;background:transparent;border-radius:16px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted)}
 .mb-item.active{background:var(--accent);color:#fff}
 .mb-item .msr{font-size:26px}
-
 #toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(20px);background:#0F172A;color:#fff;padding:12px 20px;border-radius:var(--rt);font-size:13px;font-weight:600;z-index:100001;opacity:0;transition:opacity .25s ease,transform .3s ease;pointer-events:none;max-width:90vw;text-align:center}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 html[data-theme="dark"] #toast{background:#334155}
-
 .cs-wrap{position:relative;width:100%}
 .cs-input{width:100%;padding:13px 44px 13px 16px;border:1px solid var(--border);border-radius:var(--ri);background:var(--bg);color:var(--text);font-family:inherit;font-size:14px;cursor:pointer;text-align:left}
 .cs-input.placeholder{color:#94A3B8}
@@ -565,7 +528,6 @@ html[data-theme="dark"] #toast{background:#334155}
 .cs-option:hover{background:var(--accent-light);color:var(--accent)}
 .cs-option.selected{background:var(--accent);color:#fff}
 .cs-empty{padding:16px;text-align:center;color:var(--muted);font-size:13px}
-
 .tree-page{display:flex;flex-direction:column;gap:20px;padding-bottom:20px}
 .tree-hero{position:relative;overflow:hidden;border-radius:22px;padding:32px 28px;background:linear-gradient(135deg,#8EC4EC 0%,#6FB0E5 100%);color:#fff}
 .tree-hero h1{font-size:clamp(20px,2.6vw,28px);font-weight:700;letter-spacing:-.4px;margin-bottom:10px}
@@ -689,7 +651,6 @@ html[data-theme="dark"] .participant.place-3{background:linear-gradient(135deg,r
 .place-btn:hover{border-color:var(--accent);color:var(--accent)}
 .place-btn.selected{background:var(--accent);color:#fff;border-color:transparent}
 .place-btn.taken{opacity:.35;cursor:not-allowed}
-
 @media (max-width:900px){
   .tree-workspace{grid-template-columns:1fr}
   .bg-choices{grid-template-columns:1fr;max-width:420px}
@@ -969,7 +930,10 @@ html[data-theme="dark"] .participant.place-3{background:linear-gradient(135deg,r
 <div id="toast"></div>
 
 <script>
-const GAS_URL='https://script.google.com/macros/s/AKfycbzzQR5ER-IR-44nE7AcnNkK8RcYNvYmGvTrOfFXuDKfHhkLxa17AHoAUgH730VKQNHW/exec';
+/* ============================================================
+   NOVACLASS — ПОЛНЫЙ КЛИЕНТ
+   ============================================================ */
+const GAS_URL='https://script.google.com/macros/s/AKfycbwzo0kvhaUbXpkeurXnC_s7oSTGDEDD4ZoIyOjiv_eFcZvlUbmIoNHUapJgFztiiJEC/exec';
 const CREATOR_EMAIL='maksimsuhomlinov37@gmail.com';
 const SESSION_KEY='nc_session',SESSION_MS=30*24*60*60*1000;
 const THEME_KEY='nc_theme',LANG_KEY='nc_lang',AVATAR_KEY='nc_avatar',SEASON_KEY='nc_season';
@@ -1007,8 +971,39 @@ function canEditSchedule(){return EDITOR_ROLES.indexOf(userRole())!==-1;}
 function isAdmin(){const r=userRole();return r==='Администратор'||r==='Создатель';}
 function canManageUsers(){return isAdmin();}
 function isCreator(){return userRole()==='Создатель'||String((getCurrentUser()||{}).email||'').toLowerCase()===CREATOR_EMAIL.toLowerCase();}
+
+/* ============ JSONP БЕЗ ТАЙМАУТА + 3 ПОПЫТКИ ============ */
 let jsonpCounter=0;
-function jsonp(params,timeout){return new Promise((resolve,reject)=>{const cbName='nc_cb_'+(++jsonpCounter)+'_'+Date.now();let finished=false,script,to;const cleanup=()=>{try{delete window[cbName];}catch(e){}if(script&&script.parentNode)script.parentNode.removeChild(script);clearTimeout(to);};window[cbName]=function(data){if(finished)return;finished=true;cleanup();resolve(data);};const qs=new URLSearchParams(Object.assign({},params,{callback:cbName})).toString();script=document.createElement('script');script.src=GAS_URL+'?'+qs+'&_='+Date.now();script.onerror=function(){if(finished)return;finished=true;cleanup();reject(new Error('Нет связи'));};document.head.appendChild(script);to=setTimeout(()=>{if(finished)return;finished=true;cleanup();reject(new Error('Таймаут'));},timeout||15000);});}
+function jsonpOnce(params){
+  return new Promise((resolve,reject)=>{
+    const cbName='nc_cb_'+(++jsonpCounter)+'_'+Date.now();
+    let finished=false,script;
+    const cleanup=()=>{
+      try{delete window[cbName];}catch(e){}
+      if(script&&script.parentNode)script.parentNode.removeChild(script);
+    };
+    window[cbName]=function(data){if(finished)return;finished=true;cleanup();resolve(data);};
+    const qs=new URLSearchParams(Object.assign({},params,{callback:cbName})).toString();
+    script=document.createElement('script');
+    script.src=GAS_URL+'?'+qs+'&_='+Date.now();
+    script.onerror=function(){if(finished)return;finished=true;cleanup();reject(new Error('Нет связи'));};
+    document.head.appendChild(script);
+    // Без таймаута — GAS может отвечать 30-60 сек при первом запуске
+  });
+}
+async function jsonp(params){
+  let lastErr;
+  for(let attempt=0; attempt<3; attempt++){
+    try{
+      return await jsonpOnce(params);
+    }catch(e){
+      lastErr=e;
+      if(attempt<2) await new Promise(r=>setTimeout(r,700));
+    }
+  }
+  throw lastErr||new Error('Ошибка связи');
+}
+
 function loadCacheJson(key,def){try{const r=localStorage.getItem(key);return r?JSON.parse(r):def;}catch(e){return def;}}
 function saveCacheJson(key,val){try{localStorage.setItem(key,JSON.stringify(val));}catch(e){}}
 function normDate(v){if(!v)return'';const s=String(v).trim();let m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);if(m)return m[1]+'-'+m[2]+'-'+m[3];m=s.match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})/);if(m)return m[3]+'-'+String(m[2]).padStart(2,'0')+'-'+String(m[1]).padStart(2,'0');const d=new Date(s);if(!isNaN(d.getTime()))return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');return s.slice(0,10);}
@@ -1051,8 +1046,8 @@ const PAGE_ORDER={home:0,schedule:1,homework:2,diary:3,tree:4,users:5};
 let syncCount=0;
 function syncStart(){syncCount++;$('syncDot').classList.add('show');}
 function syncEnd(){syncCount=Math.max(0,syncCount-1);if(syncCount===0)$('syncDot').classList.remove('show');}
-async function pushGradeToServer(dateIso,lessonId,email,entry){const u=getCurrentUser();if(!u)return;try{await jsonp({action:'grades_set',requester:u.email,date:dateIso,lessonId:String(lessonId),email,status:entry?entry.status:'ЕСТЬ',grade:(entry&&entry.grade!=null)?entry.grade:''},12000);}catch(e){}}
-async function pullGradesFromServer(user){try{const res=await jsonp({action:'grades_get',requester:user.email},15000);if(!res||res.status!=='ok'||!Array.isArray(res.grades))return;gradesStore={};res.grades.forEach(g=>{gradesStore[gradeKey(g.date,g.lessonId,g.email)]={status:g.status,grade:g.grade};});saveGrades(gradesStore);}catch(e){}}
+async function pushGradeToServer(dateIso,lessonId,email,entry){const u=getCurrentUser();if(!u)return;try{await jsonp({action:'grades_set',requester:u.email,date:dateIso,lessonId:String(lessonId),email,status:entry?entry.status:'ЕСТЬ',grade:(entry&&entry.grade!=null)?entry.grade:''});}catch(e){}}
+async function pullGradesFromServer(user){try{const res=await jsonp({action:'grades_get',requester:user.email});if(!res||res.status!=='ok'||!Array.isArray(res.grades))return;gradesStore={};res.grades.forEach(g=>{gradesStore[gradeKey(g.date,g.lessonId,g.email)]={status:g.status,grade:g.grade};});saveGrades(gradesStore);}catch(e){}}
 function setGrade(dateIso,lessonId,email,entry){const k=gradeKey(dateIso,lessonId,email);if(!entry||(entry.status==='ЕСТЬ'&&(entry.grade===null||entry.grade===undefined)))delete gradesStore[k];else gradesStore[k]=entry;saveGrades(gradesStore);pushGradeToServer(dateIso,lessonId,email,entry);}
 function loadTableCfg(){try{const r=localStorage.getItem(TABLE_KEY);return r?JSON.parse(r):{students:[],columns:[]};}catch(e){return{students:[],columns:[]};}}
 function saveTableCfg(c){try{localStorage.setItem(TABLE_KEY,JSON.stringify(c));}catch(e){}}
@@ -1074,12 +1069,12 @@ function showTopProgress(){const w=$('topProgress'),f=$('topProgressFill');f.sty
 const NovaLoader=(function(){let i=null,p=0,l=false;function start(){p=0;l=false;const f=$('loaderFill'),lb=$('loaderLabel');if(f)f.style.width='0%';if(lb)lb.classList.remove('show');i=setInterval(()=>{p+=(92-p)*0.08;if(f)f.style.width=p.toFixed(2)+'%';if(p>25&&!l){l=true;if(lb)lb.classList.add('show');}},60);}function stop(){clearInterval(i);const f=$('loaderFill');if(f){f.style.transition='width .35s ease';f.style.width='100%';}}return{start,stop};})();
 function showLoader(){const l=$('loader');l.classList.remove('hidden','fade-out');NovaLoader.start();}
 function hideLoader(){const l=$('loader');NovaLoader.stop();l.classList.add('fade-out');setTimeout(()=>{l.classList.add('hidden');l.classList.remove('fade-out');},500);}
-async function fetchSched(date,user,force){if(!force&&prefetched.scheduleByDate[date]!==undefined)return prefetched.scheduleByDate[date];if(inflight.has(date))return inflight.get(date);const p=jsonp({action:'get_sched',requester:user.email,date},10000).then(res=>{if(res&&res.status==='ok'){const lessons=filterByDate(res.lessons,date).map(l=>Object.assign({},l,{attachments:normalizeAttachments(l.attachments)}));prefetched.scheduleByDate[date]=lessons;saveCacheJson(LESSONS_CACHE_KEY,prefetched.scheduleByDate);return lessons;}if(prefetched.scheduleByDate[date]===undefined){prefetched.scheduleByDate[date]=[];saveCacheJson(LESSONS_CACHE_KEY,prefetched.scheduleByDate);}return prefetched.scheduleByDate[date];}).catch(e=>{if(prefetched.scheduleByDate[date]===undefined)prefetched.scheduleByDate[date]=[];throw e;}).finally(()=>inflight.delete(date));inflight.set(date,p);return p;}
-async function prefetchAll(user){if(!user||!user.email)return;syncStart();const mon=mondayOf(new Date(selectedDate+'T00:00:00'));const dates=[];for(let w=-1;w<=1;w++)for(let i=0;i<5;i++){const d=new Date(mon);d.setDate(mon.getDate()+w*7+i);dates.push(isoOfDate(d));}const jobs=dates.map(date=>fetchSched(date,user,true).catch(()=>{}));jobs.push(jsonp({action:'hw_status',requester:user.email},8000).then(hr=>{if(hr&&hr.status==='ok'){prefetched.hwStatuses=hr.statuses||{};saveCacheJson(HW_CACHE_KEY,prefetched.hwStatuses);}}).catch(()=>{}));jobs.push(jsonp({action:'users_list',requester:user.email},8000).then(ur=>{if(ur&&ur.status==='ok'){prefetched.users=ur.users||[];saveCacheJson(USERS_CACHE_KEY,prefetched.users);}}).catch(()=>{}));jobs.push(pullGradesFromServer(user).catch(()=>{}));jobs.push(pullTreeFromServer(user).catch(()=>{}));await Promise.all(jobs);syncEnd();}
+async function fetchSched(date,user,force){if(!force&&prefetched.scheduleByDate[date]!==undefined)return prefetched.scheduleByDate[date];if(inflight.has(date))return inflight.get(date);const p=jsonp({action:'get_sched',requester:user.email,date}).then(res=>{if(res&&res.status==='ok'){const lessons=filterByDate(res.lessons,date).map(l=>Object.assign({},l,{attachments:normalizeAttachments(l.attachments)}));prefetched.scheduleByDate[date]=lessons;saveCacheJson(LESSONS_CACHE_KEY,prefetched.scheduleByDate);return lessons;}if(prefetched.scheduleByDate[date]===undefined){prefetched.scheduleByDate[date]=[];saveCacheJson(LESSONS_CACHE_KEY,prefetched.scheduleByDate);}return prefetched.scheduleByDate[date];}).catch(e=>{if(prefetched.scheduleByDate[date]===undefined)prefetched.scheduleByDate[date]=[];throw e;}).finally(()=>inflight.delete(date));inflight.set(date,p);return p;}
+async function prefetchAll(user){if(!user||!user.email)return;syncStart();const mon=mondayOf(new Date(selectedDate+'T00:00:00'));const dates=[];for(let w=-1;w<=1;w++)for(let i=0;i<5;i++){const d=new Date(mon);d.setDate(mon.getDate()+w*7+i);dates.push(isoOfDate(d));}const jobs=dates.map(date=>fetchSched(date,user,true).catch(()=>{}));jobs.push(jsonp({action:'hw_status',requester:user.email}).then(hr=>{if(hr&&hr.status==='ok'){prefetched.hwStatuses=hr.statuses||{};saveCacheJson(HW_CACHE_KEY,prefetched.hwStatuses);}}).catch(()=>{}));jobs.push(jsonp({action:'users_list',requester:user.email}).then(ur=>{if(ur&&ur.status==='ok'){prefetched.users=ur.users||[];saveCacheJson(USERS_CACHE_KEY,prefetched.users);}}).catch(()=>{}));jobs.push(pullGradesFromServer(user).catch(()=>{}));jobs.push(pullTreeFromServer(user).catch(()=>{}));await Promise.all(jobs);syncEnd();}
 function prefetchWeek(user,baseDate){if(!user||!user.email)return;const mon=mondayOf(new Date(baseDate+'T00:00:00'));for(let i=0;i<5;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);const iso=isoOfDate(d);if(prefetched.scheduleByDate[iso]===undefined)fetchSched(iso,user,true).catch(()=>{});}}
 async function pullTreeFromServer(user){
   try{
-    const res=await jsonp({action:'tree_get',requester:user.email},15000);
+    const res=await jsonp({action:'tree_get',requester:user.email});
     if(res&&res.status==='ok'&&Array.isArray(res.submissions)){
       prefetched.treeSubmissions=res.submissions;
       saveCacheJson(TREE_KEY,prefetched.treeSubmissions);
@@ -1087,7 +1082,8 @@ async function pullTreeFromServer(user){
         const my=loadCacheJson(MY_TREE_KEY,null);
         if(my&&my.submitted){
           const hasMe=res.submissions.some(s=>String(s.email).toLowerCase()===String(user.email).toLowerCase());
-          if(!hasMe){
+          const hasOthers=res.submissions.length>0;
+          if(!hasMe && hasOthers){
             try{localStorage.removeItem(MY_TREE_KEY);}catch(e){}
             treeState={decorations:[],bg:'blue',step:1};
           }
@@ -1096,9 +1092,14 @@ async function pullTreeFromServer(user){
     }
   }catch(e){}
 }
-async function pushTreeToServer(user,payload){try{await jsonp(Object.assign({action:'tree_save',requester:user.email},payload),15000);}catch(e){}}
-async function adminTreeAction(user,email,action,place){try{await jsonp({action:'tree_admin',requester:user.email,email,decision:action,place:place||''},15000);}catch(e){}}
-const Account=(function(){function loadAvatar(){try{return localStorage.getItem(AVATAR_KEY)||'';}catch(e){return'';}}function saveAvatar(u){try{localStorage.setItem(AVATAR_KEY,u);}catch(e){}}function applyAvatar(){const url=loadAvatar();const u=getCurrentUser();const letter=u?(u.name||u.email||'П').charAt(0).toUpperCase():'П';document.querySelectorAll('[data-user-ava]').forEach(el=>{if(url){el.style.backgroundImage=`url(${url})`;el.style.backgroundSize='cover';el.style.backgroundPosition='center';el.textContent='';}else{el.style.backgroundImage='';el.textContent=letter;}});}function handleFile(input){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{saveAvatar(e.target.result);applyAvatar();showToast('Фото обновлено');};r.readAsDataURL(f);input.value='';}function fillFields(){const u=getCurrentUser();if(!u)return;const name=u.name||(u.email?u.email.split('@')[0]:'');['accName','accName2'].forEach(id=>{const el=$(id);if(el)el.value=name;});['accEmail','accEmail2'].forEach(id=>{const el=$(id);if(el)el.value=u.email||'';});applyAvatar();}async function saveProfile(){const u=getCurrentUser();if(!u)return;const nn=($('accName')&&$('accName').value.trim())||u.name||'';const ne=($('accEmail')&&$('accEmail').value.trim())||u.email||'';const oe=u.email;if(!nn||!ne){showToast('Заполните поля');return;}try{await jsonp({action:'update_profile',requester:oe,oldEmail:oe,email:ne,name:nn},12000);}catch(e){}u.name=nn;u.email=ne;saveSession(u);applyUserToUI();fillFields();showToast('Профиль сохранён');$('accountModal').classList.remove('show');}async function changePassword(){const u=getCurrentUser();if(!u)return;const np=prompt('Новый пароль (мин. 6):');if(!np||np.length<6){showToast('Слишком короткий');return;}const np2=prompt('Повторите пароль:');if(np!==np2){showToast('Не совпадают');return;}try{await jsonp({action:'update_password',requester:u.email,email:u.email,pass:np},12000);}catch(e){}u.pass=np;saveSession(u);showToast('Пароль изменён');}function init(){(['accAvatarInput','accAvatarInput2']).forEach(id=>{const inp=$(id);if(inp)inp.onchange=()=>handleFile(inp);});const cn=$('accChangeName');if(cn)cn.onclick=()=>{const i=$('accName');i.disabled=false;i.focus();};const ce=$('accChangeEmail');if(ce)ce.onclick=()=>{const i=$('accEmail');i.disabled=false;i.focus();};const cp=$('accChangePass');if(cp)cp.onclick=changePassword;const sv=$('accSave');if(sv)sv.onclick=saveProfile;fillFields();}return{init,applyAvatar,fillFields,loadAvatar};})();
+async function pushTreeToServer(user,payload){
+  try{
+    const res=await jsonp(Object.assign({action:'tree_save',requester:user.email},payload));
+    return !!(res && res.status==='ok');
+  }catch(e){return false;}
+}
+async function adminTreeAction(user,email,action,place){try{await jsonp({action:'tree_admin',requester:user.email,email,decision:action,place:place||''});}catch(e){}}
+const Account=(function(){function loadAvatar(){try{return localStorage.getItem(AVATAR_KEY)||'';}catch(e){return'';}}function saveAvatar(u){try{localStorage.setItem(AVATAR_KEY,u);}catch(e){}}function applyAvatar(){const url=loadAvatar();const u=getCurrentUser();const letter=u?(u.name||u.email||'П').charAt(0).toUpperCase():'П';document.querySelectorAll('[data-user-ava]').forEach(el=>{if(url){el.style.backgroundImage=`url(${url})`;el.style.backgroundSize='cover';el.style.backgroundPosition='center';el.textContent='';}else{el.style.backgroundImage='';el.textContent=letter;}});}function handleFile(input){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{saveAvatar(e.target.result);applyAvatar();showToast('Фото обновлено');};r.readAsDataURL(f);input.value='';}function fillFields(){const u=getCurrentUser();if(!u)return;const name=u.name||(u.email?u.email.split('@')[0]:'');['accName','accName2'].forEach(id=>{const el=$(id);if(el)el.value=name;});['accEmail','accEmail2'].forEach(id=>{const el=$(id);if(el)el.value=u.email||'';});applyAvatar();}async function saveProfile(){const u=getCurrentUser();if(!u)return;const nn=($('accName')&&$('accName').value.trim())||u.name||'';const ne=($('accEmail')&&$('accEmail').value.trim())||u.email||'';const oe=u.email;if(!nn||!ne){showToast('Заполните поля');return;}try{await jsonp({action:'update_profile',requester:oe,oldEmail:oe,email:ne,name:nn});}catch(e){}u.name=nn;u.email=ne;saveSession(u);applyUserToUI();fillFields();showToast('Профиль сохранён');$('accountModal').classList.remove('show');}async function changePassword(){const u=getCurrentUser();if(!u)return;const np=prompt('Новый пароль (мин. 6):');if(!np||np.length<6){showToast('Слишком короткий');return;}const np2=prompt('Повторите пароль:');if(np!==np2){showToast('Не совпадают');return;}try{await jsonp({action:'update_password',requester:u.email,email:u.email,pass:np});}catch(e){}u.pass=np;saveSession(u);showToast('Пароль изменён');}function init(){(['accAvatarInput','accAvatarInput2']).forEach(id=>{const inp=$(id);if(inp)inp.onchange=()=>handleFile(inp);});const cn=$('accChangeName');if(cn)cn.onclick=()=>{const i=$('accName');i.disabled=false;i.focus();};const ce=$('accChangeEmail');if(ce)ce.onclick=()=>{const i=$('accEmail');i.disabled=false;i.focus();};const cp=$('accChangePass');if(cp)cp.onclick=changePassword;const sv=$('accSave');if(sv)sv.onclick=saveProfile;fillFields();}return{init,applyAvatar,fillFields,loadAvatar};})();
 const UserMenu=(function(){function close(){$('userDropdown').classList.remove('open');}function toggle(){$('userDropdown').classList.contains('open')?close():$('userDropdown').classList.add('open');}function init(){const chip=$('userChip');if(chip)chip.onclick=e=>{e.stopPropagation();toggle();};document.querySelectorAll('.ud-tab').forEach(tab=>{tab.onclick=()=>{const k=tab.dataset.udTab;document.querySelectorAll('.ud-tab').forEach(t=>t.classList.toggle('active',t===tab));$('udTabs').dataset.active=k;document.querySelectorAll('.ud-pane').forEach(p=>p.classList.toggle('active',p.dataset.udPane===k));};});document.querySelectorAll('[data-open-account]').forEach(b=>b.onclick=e=>{e.stopPropagation();close();Account.fillFields();$('accountModal').classList.add('show');});document.querySelectorAll('[data-open-settings]').forEach(b=>b.onclick=e=>{e.stopPropagation();close();Account.fillFields();$('settingsModal').classList.add('show');});const ac=$('accModalClose');if(ac)ac.onclick=()=>$('accountModal').classList.remove('show');const acc=$('accClose');if(acc)acc.onclick=()=>$('accountModal').classList.remove('show');const sc=$('setModalClose');if(sc)sc.onclick=()=>$('settingsModal').classList.remove('show');$('accountModal').onclick=e=>{if(e.target===$('accountModal'))$('accountModal').classList.remove('show');};$('settingsModal').onclick=e=>{if(e.target===$('settingsModal'))$('settingsModal').classList.remove('show');};document.querySelectorAll('.set-tab').forEach(tab=>{tab.onclick=()=>{const k=tab.dataset.setTab;document.querySelectorAll('.set-tab').forEach(t=>t.classList.toggle('active',t===tab));document.querySelectorAll('.set-pane').forEach(p=>p.classList.toggle('active',p.dataset.setPane===k));};});document.querySelectorAll('[data-delete-account]').forEach(b=>b.onclick=()=>{if(!confirm('Удалить аккаунт?'))return;clearSession();try{localStorage.removeItem(AVATAR_KEY);}catch(e){}showToast('Аккаунт удалён');setTimeout(()=>location.reload(),1000);});document.addEventListener('click',e=>{if(!$('userMenuWrap').contains(e.target))close();});const burger=$('burgerBtn'),sb=$('sidebar'),bd=$('mobileSbBackdrop');function closeSb(){sb.classList.remove('open');burger.classList.remove('open');bd.classList.remove('open');}burger.onclick=()=>{sb.classList.toggle('open');burger.classList.toggle('open');bd.classList.toggle('open');};bd.onclick=closeSb;document.addEventListener('click',e=>{const mi=e.target.closest('.menu-item');if(mi&&window.innerWidth<=640)closeSb();});}return{init};})();
 function fitFormHeight(){const p=document.querySelector('.slide-pane[data-pane="'+$('track').dataset.active+'"]');if(p)$('formsWrap').style.height=p.scrollHeight+'px';}
 function switchTab(w){hideErr();const l=w==='login';$('tabLogin').classList.toggle('active',l);$('tabReg').classList.toggle('active',!l);$('tabs').dataset.active=l?'login':'reg';$('track').dataset.active=l?'login':'reg';fitFormHeight();}
@@ -1111,8 +1112,8 @@ document.querySelectorAll('input').forEach(i=>i.addEventListener('input',()=>i.c
 $('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 $('regPass2').addEventListener('keydown',e=>{if(e.key==='Enter')doRegister();});
 $('loginBtn').onclick=doLogin;$('regBtn').onclick=doRegister;
-async function doLogin(){hideErr();if(markEmpty([$('loginEmail'),$('loginPass')])){showErr('Введите данные');return;}$('loginBtn').disabled=true;const email=$('loginEmail').value.trim().toLowerCase(),pass=$('loginPass').value;try{showLoader();const res=await jsonp({action:'login',email,pass});if(!res){hideLoader();showErr('Пустой ответ');return;}if(res.status!=='ok'){hideLoader();showErr(res.message||'Ошибка входа');return;}const u=res.user||{};if(!u.name)u.name=u.email?u.email.split('@')[0]:'Пользователь';if(!u.role||!ROLES[u.role])u.role='Ученик';if(String(u.email||'').toLowerCase()===CREATOR_EMAIL.toLowerCase())u.role='Создатель';u.pass=pass;saveSession(u);await new Promise(r=>setTimeout(r,900));hideLoader();await enterApp();prefetchAll(u).then(()=>{if(['schedule','homework','diary','tree','users'].includes(currentPage))refreshCurrentPage();});}catch(e){hideLoader();showErr('Ошибка: '+e.message);}finally{$('loginBtn').disabled=false;}}
-async function doRegister(){hideErr();if(markEmpty([$('regName'),$('regEmail'),$('regPass'),$('regPass2')])){showErr('Введите данные');return;}const p1=$('regPass').value,p2=$('regPass2').value;if(p1.length<6){showErr('Пароль минимум 6 символов');return;}if(p1!==p2){showErr('Пароли не совпадают');return;}$('regBtn').disabled=true;const email=$('regEmail').value.trim().toLowerCase(),name=$('regName').value.trim();try{showLoader();const res=await jsonp({action:'register',email,pass:p1,name});if(!res){hideLoader();showErr('Пустой ответ');return;}if(res.status!=='ok'){hideLoader();showErr(res.message||'Ошибка');return;}const u=res.user||{};if(!u.name)u.name=name;if(!u.role||!ROLES[u.role])u.role='Ученик';if(String(u.email||'').toLowerCase()===CREATOR_EMAIL.toLowerCase())u.role='Создатель';u.pass=p1;saveSession(u);await new Promise(r=>setTimeout(r,900));hideLoader();await enterApp();prefetchAll(u);}catch(e){hideLoader();showErr('Ошибка: '+e.message);}finally{$('regBtn').disabled=false;}}
+async function doLogin(){hideErr();if(markEmpty([$('loginEmail'),$('loginPass')])){showErr('Введите данные');return;}$('loginBtn').disabled=true;const email=$('loginEmail').value.trim().toLowerCase(),pass=$('loginPass').value;try{showLoader();const res=await jsonp({action:'login',email,pass});if(!res){hideLoader();showErr('Пустой ответ');return;}if(res.status!=='ok'){hideLoader();showErr(res.message||'Ошибка входа');return;}const u=res.user||{};if(!u.name)u.name=u.email?u.email.split('@')[0]:'Пользователь';if(!u.role||!ROLES[u.role])u.role='Ученик';if(String(u.email||'').toLowerCase()===CREATOR_EMAIL.toLowerCase())u.role='Создатель';u.pass=pass;saveSession(u);await new Promise(r=>setTimeout(r,600));hideLoader();await enterApp();prefetchAll(u).then(()=>{if(['schedule','homework','diary','tree','users'].includes(currentPage))refreshCurrentPage();});}catch(e){hideLoader();showErr('Ошибка: '+e.message);}finally{$('loginBtn').disabled=false;}}
+async function doRegister(){hideErr();if(markEmpty([$('regName'),$('regEmail'),$('regPass'),$('regPass2')])){showErr('Введите данные');return;}const p1=$('regPass').value,p2=$('regPass2').value;if(p1.length<6){showErr('Пароль минимум 6 символов');return;}if(p1!==p2){showErr('Пароли не совпадают');return;}$('regBtn').disabled=true;const email=$('regEmail').value.trim().toLowerCase(),name=$('regName').value.trim();try{showLoader();const res=await jsonp({action:'register',email,pass:p1,name});if(!res){hideLoader();showErr('Пустой ответ');return;}if(res.status!=='ok'){hideLoader();showErr(res.message||'Ошибка');return;}const u=res.user||{};if(!u.name)u.name=name;if(!u.role||!ROLES[u.role])u.role='Ученик';if(String(u.email||'').toLowerCase()===CREATOR_EMAIL.toLowerCase())u.role='Создатель';u.pass=p1;saveSession(u);await new Promise(r=>setTimeout(r,600));hideLoader();await enterApp();prefetchAll(u);}catch(e){hideLoader();showErr('Ошибка: '+e.message);}finally{$('regBtn').disabled=false;}}
 async function enterApp(){$('authView').classList.add('hidden');$('appView').classList.remove('hidden');applyUserToUI();addCreatorMenu();renderPage('home');requestAnimationFrame(()=>{$('appView').classList.add('ready');moveIndicator();});startStatusTimer();}
 function applyUserToUI(){const u=getCurrentUser();let name='Пользователь',role='Ученик';if(u){if(u.name&&u.name.trim())name=u.name.trim();else if(u.email)name=u.email.split('@')[0];role=userRole();}const letter=name.charAt(0).toUpperCase()||'П';$$('[data-user-ava]').forEach(el=>{if(!Account.loadAvatar())el.textContent=letter;});$$('[data-user-name]').forEach(el=>el.textContent=name);$$('[data-user-role]').forEach(el=>{el.className='role-badge '+(ROLES[role]||'student');el.textContent=role;});Account.applyAvatar();updateTopbarAdd();}
 function updateTopbarAdd(){const b=$('topbarAddBtn');if(!b)return;b.classList.toggle('hidden',!(canEditSchedule()&&currentPage==='schedule'));}
@@ -1126,7 +1127,7 @@ function getPaneHTML(key){if(key==='home')return homeContentHTML();if(key==='sch
 function renderPage(key){const vp=$('pagesViewport');$$('.menu-item').forEach(b=>b.classList.toggle('active',b.dataset.page===key));$$('.mb-item').forEach(b=>b.classList.toggle('active',b.dataset.page===key));moveIndicator();$('topbarTitle').textContent=TITLES[key]||'Главная';if(!vp.firstChild){vp.appendChild(buildPane(key));bindPage(key);currentPage=key;updateTopbarAdd();loadPageData(key);return;}if(key===currentPage||animating)return;animating=true;showTopProgress();const oldPane=vp.querySelector('.page-pane');const dir=(PAGE_ORDER[key]||0)>(PAGE_ORDER[currentPage]||0)?'next':'prev';const newPane=buildPane(key,dir);vp.appendChild(newPane);bindPage(key);if(oldPane)oldPane.classList.add(dir==='next'?'slide-out-left':'slide-out-right');setTimeout(()=>{if(oldPane&&oldPane.parentNode)oldPane.parentNode.removeChild(oldPane);animating=false;},350);currentPage=key;updateTopbarAdd();loadPageData(key);}
 function bindPage(key){if(key==='schedule'||key==='homework')bindWeekPanel();if(key==='users')bindUsersPage();if(key==='tree')bindTreePage();bindAttachmentOpeners();}
 function refreshCurrentPage(){const pane=document.querySelector('.page-pane[data-page="'+currentPage+'"]');if(!pane)return;pane.innerHTML=getPaneHTML(currentPage);bindPage(currentPage);}
-async function loadPageData(key){const user=getCurrentUser();if(!user)return;if(key==='schedule'||key==='homework'){const hasCache=prefetched.scheduleByDate[selectedDate]!==undefined;if(hasCache){cacheLessons=prefetched.scheduleByDate[selectedDate];if(key==='homework'&&prefetched.hwStatuses)cacheHwStatuses=prefetched.hwStatuses;if(currentPage===key)refreshCurrentPage();}prefetchWeek(user,selectedDate);try{const fresh=await fetchSched(selectedDate,user,true);cacheLessons=fresh;if(key==='homework'){if(prefetched.hwStatuses)cacheHwStatuses=prefetched.hwStatuses;else{try{const hr=await jsonp({action:'hw_status',requester:user.email},8000);if(hr&&hr.status==='ok'){cacheHwStatuses=hr.statuses||{};prefetched.hwStatuses=cacheHwStatuses;saveCacheJson(HW_CACHE_KEY,cacheHwStatuses);}}catch(e){}}}if(currentPage===key)refreshCurrentPage();}catch(e){if(!hasCache){cacheLessons=[];if(currentPage===key)refreshCurrentPage();}}return;}if(key==='users'){if(prefetched.users&&currentPage===key)refreshCurrentPage();try{const res=await jsonp({action:'users_list',requester:user.email},8000);if(res&&res.status==='ok'){prefetched.users=res.users||[];saveCacheJson(USERS_CACHE_KEY,prefetched.users);}}catch(e){}if(currentTableDate&&prefetched.scheduleByDate[currentTableDate]===undefined){try{await fetchSched(currentTableDate,user,true);}catch(e){}}if(currentPage===key)refreshCurrentPage();}if(key==='tree'){await pullTreeFromServer(user);if(currentPage===key)refreshCurrentPage();}}
+async function loadPageData(key){const user=getCurrentUser();if(!user)return;if(key==='schedule'||key==='homework'){const hasCache=prefetched.scheduleByDate[selectedDate]!==undefined;if(hasCache){cacheLessons=prefetched.scheduleByDate[selectedDate];if(key==='homework'&&prefetched.hwStatuses)cacheHwStatuses=prefetched.hwStatuses;if(currentPage===key)refreshCurrentPage();}prefetchWeek(user,selectedDate);try{const fresh=await fetchSched(selectedDate,user,true);cacheLessons=fresh;if(key==='homework'){if(prefetched.hwStatuses)cacheHwStatuses=prefetched.hwStatuses;else{try{const hr=await jsonp({action:'hw_status',requester:user.email});if(hr&&hr.status==='ok'){cacheHwStatuses=hr.statuses||{};prefetched.hwStatuses=cacheHwStatuses;saveCacheJson(HW_CACHE_KEY,cacheHwStatuses);}}catch(e){}}}if(currentPage===key)refreshCurrentPage();}catch(e){if(!hasCache){cacheLessons=[];if(currentPage===key)refreshCurrentPage();}}return;}if(key==='users'){if(prefetched.users&&currentPage===key)refreshCurrentPage();try{const res=await jsonp({action:'users_list',requester:user.email});if(res&&res.status==='ok'){prefetched.users=res.users||[];saveCacheJson(USERS_CACHE_KEY,prefetched.users);}}catch(e){}if(currentTableDate&&prefetched.scheduleByDate[currentTableDate]===undefined){try{await fetchSched(currentTableDate,user,true);}catch(e){}}if(currentPage===key)refreshCurrentPage();}if(key==='tree'){await pullTreeFromServer(user);if(currentPage===key)refreshCurrentPage();}}
 function homeContentHTML(){const today=todayISO();const lessons=prefetched.scheduleByDate[today]||[];const nowL=lessons.find(l=>getLessonTimeStatus(l,today)==='now');const nextL=lessons.find(l=>getLessonTimeStatus(l,today)==='soon');let info='';if(nowL)info=`<div style="margin-top:14px;display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:var(--now-light);border:1.5px solid rgba(22,163,74,.35);border-radius:var(--rp);font-size:13px;font-weight:700;color:var(--now)"><span class="msr" style="font-size:18px">play_circle</span>Сейчас: ${esc(nowL.subject)} · ${esc(nowL.time)}</div>`;else if(nextL){const mins=getSoonMinutes(nextL);info=`<div style="margin-top:14px;display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:var(--soon-light);border:1.5px solid rgba(234,88,12,.35);border-radius:var(--rp);font-size:13px;font-weight:700;color:var(--soon)"><span class="msr" style="font-size:18px">schedule</span>Скоро: ${esc(nextL.subject)} через ${mins} мин</div>`;}return`<div class="banner"><span class="msr">home</span><div class="banner-title">Главная</div></div><div class="empty-state" style="padding:48px 24px"><span class="msr">waving_hand</span><h3>Добро пожаловать в NovaClass</h3><p>Выберите раздел в меню, чтобы начать работу</p>${info}</div>${participantsListHTML()}`;}
 function scheduleContentHTML(lessons){let list;if(!lessons||!lessons.length){const canEdit=canEditSchedule();list=`<div class="empty-state"><span class="msr">event_busy</span><h3>Уроков на этот день нет</h3>${canEdit?`<button class="empty-add-btn" onclick="openModal(null)"><span class="msr">add</span> Добавить урок</button>`:''}</div>`;}else list='<div class="lessons-list">'+lessons.map((l,i)=>lessonRowHTML(l,'schedule',null,i)).join('')+'</div>';return weekPanelHTML()+list;}
 function homeworkContentHTML(lessons,hwStatuses){const withHw=(lessons||[]).filter(l=>l.homework&&l.homework.trim());let list;if(!withHw.length)list=`<div class="empty-state"><span class="msr">menu_book</span><h3>Домашних заданий нет</h3></div>`;else list='<div class="lessons-list">'+withHw.map((l,i)=>lessonRowHTML(l,'homework',hwStatuses,i)).join('')+'</div>';return weekPanelHTML()+list;}
@@ -1156,49 +1157,9 @@ function usersListSectionHTML(){if(!canManageUsers())return'';const users=prefet
 function userRowHTML(u){const letter=(u.name||u.email||'?').charAt(0).toUpperCase();const role=ROLES[u.role]?u.role:'Ученик';const isSelf=String(u.email).toLowerCase()===String((getCurrentUser()||{}).email||'').toLowerCase();const isCU=String(u.email).toLowerCase()===CREATOR_EMAIL.toLowerCase();const opts=Object.keys(ROLES).map(r=>`<option value="${r}" ${r===role?'selected':''} ${isCU&&r!=='Создатель'?'disabled':''}>${r}</option>`).join('');return`<div class="user-row" data-user-email="${esc(u.email)}"><div class="u-ava">${esc(letter)}</div><div class="u-info"><div class="u-name">${esc(u.name||'—')}</div><div class="u-email">${esc(u.email||'')}</div></div><div class="u-role"><select data-role-email="${esc(u.email)}" ${isSelf||isCU?'disabled':''}>${opts}</select></div><button class="u-del" data-del-user="${esc(u.email)}" ${isSelf||isCU?'disabled style="opacity:.35;cursor:not-allowed"':''}><span class="msr">delete</span></button></div>`;}
 function gradesTableForDateHTML(dateIso){const cfg=getTableCfg();const students=cfg.students;const dl=formatRuDate(dateIso);const wd=WEEKDAYS[new Date(dateIso+'T00:00:00').getDay()];const lessons=prefetched.scheduleByDate[dateIso]||[];const header=`<tr><th class="sticky-col">Ф.И. ученика</th>${lessons.length?lessons.map(l=>`<th class="lesson-head" data-lesson-head="${esc(l.id)}">${esc(l.subject||('Урок '+(l.lessonNum||'')))}</th>`).join(''):`<th class="lesson-head" style="opacity:.5">Уроков нет</th>`}</tr>`;const rows=students.map(u=>{const cells=lessons.length?lessons.map(l=>{const e=getGrade(dateIso,l.id,u.email);let t='—',c='cell-btn';if(e&&e.status==='Н'){t='Н';c+=' absent';}else if(e&&typeof e.grade==='number'){t=e.grade;c+=' filled '+gradeColorClass(e.grade);}return`<td><button class="${c}" data-tbl-date="${dateIso}" data-tbl-lesson="${esc(l.id)}" data-tbl-email="${esc(u.email)}" type="button">${t}</button></td>`;}).join(''):`<td><span class="cell-btn not-here">—</span></td>`;return`<tr><td class="name-cell" data-student-email="${esc(u.email)}">${esc(u.name)}</td>${cells}</tr>`;}).join('');return`<div class="table-toolbar"><button class="back-btn" id="backToDates"><span class="msr">arrow_back</span> Назад</button><div class="table-title">${esc(dl)} · ${esc(wd)}</div></div><div class="table-hint"><span class="msr">info</span><span>ПКМ (или долгое нажатие) — меню действий</span></div><div class="grades-table-wrap">${lessons.length?`<table class="grades-table"><thead>${header}</thead><tbody>${rows}</tbody></table>`:`<div class="empty-state"><span class="msr">event_busy</span><h3>На этот день нет уроков</h3></div>`}</div>`;}
 function seasonsTabHTML(){const cur=Season.current();return`<div class="banner"><span class="msr">palette</span><div class="banner-title">Управление сезонами</div></div><p style="color:var(--muted);font-size:13px;margin-bottom:16px">Выберите сезонную тему. Только создатель может менять.</p><div class="season-grid"><button class="season-card ${cur==='system'?'active':''}" data-season="system" type="button"><div class="season-card-check"><span class="msr">check</span></div><div class="season-preview system"></div><div class="season-card-name">Системная</div><div class="season-card-hint">Светлая / тёмная</div></button><button class="season-card ${cur==='winter'?'active':''}" data-season="winter" type="button"><div class="season-card-check"><span class="msr">check</span></div><div class="season-preview winter"></div><div class="season-card-name">Зимняя</div><div class="season-card-hint">Светлая голубая</div></button></div>`;}
-function treeAdminTabHTML(){
-  const list=prefetched.treeSubmissions||[];
-  const pending=list.filter(s=>!s.status||s.status==='pending');
-  const approved=list.filter(s=>s.status==='approved');
-  const rejected=list.filter(s=>s.status==='rejected');
-  const all=[...pending,...approved,...rejected];
-  let html=`<div class="banner"><span class="msr">forest</span><div class="banner-title">Заявки на конкурс ёлочек</div></div><p style="color:var(--muted);font-size:13px;margin-bottom:16px">Одобрите работу, отклоните или разрешите пересобрать.</p>`;
-  if(!all.length){html+=`<div class="empty-state"><span class="msr">forest</span><h3>Заявок пока нет</h3><p>Как только ученики отправят ёлочки — они появятся здесь.</p></div>`;}
-  else html+='<div class="admin-tree-list">'+all.map(s=>{
-    const preview=renderMiniTreeSVG(s);
-    const statusBadge=s.status==='approved'?`<span class="role-badge teacher">Принята · Место ${s.place}</span>`:(s.status==='rejected'?`<span class="role-badge admin">Отказано</span>`:`<span class="role-badge student">Ожидает</span>`);
-    return`<div class="admin-tree-item"><div class="admin-tree-preview" data-bg="${esc(s.bg||'white')}">${preview}</div><div class="admin-tree-info"><div class="admin-tree-name">${esc(s.name||s.email)}</div><div class="admin-tree-sub"><span><span class="msr">mail</span>${esc(s.email)}</span><span><span class="msr">schedule</span>${s.timestamp?new Date(s.timestamp).toLocaleString('ru-RU'):'—'}</span></div><div style="margin-top:8px">${statusBadge}</div></div><div class="admin-tree-actions"><button class="btn-reject" data-tree-reject="${esc(s.email)}" type="button"><span class="msr">cancel</span> Отказано</button><button class="btn-accept" data-tree-accept="${esc(s.email)}" type="button"><span class="msr">check_circle</span> ${s.status==='approved'?'Изменить место':'Выбрать место'}</button><button class="btn-reset" data-tree-reset="${esc(s.email)}" type="button"><span class="msr">refresh</span> Разрешить пересобрать</button></div></div>`;
-  }).join('')+'</div>';
-  return html;
-}
+function treeAdminTabHTML(){const list=prefetched.treeSubmissions||[];const pending=list.filter(s=>!s.status||s.status==='pending');const approved=list.filter(s=>s.status==='approved');const rejected=list.filter(s=>s.status==='rejected');const all=[...pending,...approved,...rejected];let html=`<div class="banner"><span class="msr">forest</span><div class="banner-title">Заявки на конкурс ёлочек</div></div><p style="color:var(--muted);font-size:13px;margin-bottom:16px">Одобрите работу, отклоните или разрешите пересобрать.</p>`;if(!all.length){html+=`<div class="empty-state"><span class="msr">forest</span><h3>Заявок пока нет</h3><p>Как только ученики отправят ёлочки — они появятся здесь.</p></div>`;}else html+='<div class="admin-tree-list">'+all.map(s=>{const preview=renderMiniTreeSVG(s);const statusBadge=s.status==='approved'?`<span class="role-badge teacher">Принята · Место ${s.place}</span>`:(s.status==='rejected'?`<span class="role-badge admin">Отказано</span>`:`<span class="role-badge student">Ожидает</span>`);return`<div class="admin-tree-item"><div class="admin-tree-preview" data-bg="${esc(s.bg||'white')}">${preview}</div><div class="admin-tree-info"><div class="admin-tree-name">${esc(s.name||s.email)}</div><div class="admin-tree-sub"><span><span class="msr">mail</span>${esc(s.email)}</span><span><span class="msr">schedule</span>${s.timestamp?new Date(s.timestamp).toLocaleString('ru-RU'):'—'}</span></div><div style="margin-top:8px">${statusBadge}</div></div><div class="admin-tree-actions"><button class="btn-reject" data-tree-reject="${esc(s.email)}" type="button"><span class="msr">cancel</span> Отказано</button><button class="btn-accept" data-tree-accept="${esc(s.email)}" type="button"><span class="msr">check_circle</span> ${s.status==='approved'?'Изменить место':'Выбрать место'}</button><button class="btn-reset" data-tree-reset="${esc(s.email)}" type="button"><span class="msr">refresh</span> Разрешить пересобрать</button></div></div>`;}).join('')+'</div>';return html;}
 function renderMiniTreeSVG(sub){const decos=(sub.decorations||[]).map(d=>{if(d.type&&d.type.startsWith('ball-')){const color={'ball-red':'#DC2626','ball-blue':'#2563EB','ball-gold':'#F59E0B','ball-pink':'#EC4899','ball-green':'#16A34A'}[d.type]||'#DC2626';return`<circle cx="${d.x*3}" cy="${d.y*4}" r="8" fill="${color}"/>`;}return`<text x="${d.x*3}" y="${d.y*4}" font-size="20" text-anchor="middle" dominant-baseline="middle">${esc(d.type||'⭐')}</text>`;}).join('');return`<svg class="mini-tree" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg"><polygon points="150,40 95,140 205,140" fill="#22C55E"/><polygon points="150,100 75,220 225,220" fill="#16A34A"/><polygon points="150,170 55,310 245,310" fill="#15803D"/><polygon points="150,0 158,24 182,24 163,38 170,62 150,48 130,62 137,38 118,24 142,24" fill="#FCD34D" stroke="#F59E0B" stroke-width="2"/><rect x="135" y="305" width="30" height="55" rx="6" fill="#78350F"/>${decos}</svg>`;}
-function bindUsersPage(){
-  document.querySelectorAll('[data-mgmt-tab]').forEach(b=>{b.onclick=()=>{manageTab=b.dataset.mgmtTab;refreshCurrentPage();};});
-  document.querySelectorAll('[data-open-date]').forEach(card=>{card.onclick=async()=>{currentTableDate=card.dataset.openDate;const u=getCurrentUser();if(u&&prefetched.scheduleByDate[currentTableDate]===undefined){try{await fetchSched(currentTableDate,u,true);}catch(e){}}refreshCurrentPage();};});
-  const addDateBtn=$('addDateBtn');if(addDateBtn)addDateBtn.onclick=openDatePicker;
-  const backBtn=$('backToDates');if(backBtn)backBtn.onclick=()=>{currentTableDate=null;refreshCurrentPage();};
-  document.querySelectorAll('.cell-btn[data-tbl-lesson]').forEach(btn=>{btn.onclick=e=>{e.stopPropagation();openPopover(btn);};btn.addEventListener('contextmenu',e=>{e.preventDefault();showCtxMenu(e.clientX,e.clientY,{type:'cell',date:btn.dataset.tblDate,lesson:btn.dataset.tblLesson,email:btn.dataset.tblEmail});});});
-  document.querySelectorAll('.lesson-head[data-lesson-head]').forEach(th=>{th.addEventListener('contextmenu',e=>{e.preventDefault();showCtxMenu(e.clientX,e.clientY,{type:'lesson-head',date:currentTableDate,lesson:th.dataset.lessonHead});});});
-  document.querySelectorAll('.name-cell[data-student-email]').forEach(td=>{td.addEventListener('contextmenu',e=>{e.preventDefault();showCtxMenu(e.clientX,e.clientY,{type:'row',email:td.dataset.studentEmail});});});
-  document.querySelectorAll('[data-role-email]').forEach(sel=>{sel.onchange=async()=>{const email=sel.dataset.roleEmail,role=sel.value,me=getCurrentUser();try{const r=await jsonp({action:'set_role',requester:me.email,email,role});if(!r||r.status!=='ok'){showToast('Ошибка');refreshCurrentPage();return;}showToast('Роль обновлена');const pu=(prefetched.users||[]).find(u=>u.email===email);if(pu){pu.role=role;saveCacheJson(USERS_CACHE_KEY,prefetched.users);}}catch(e){showToast(e.message);refreshCurrentPage();}};});
-  document.querySelectorAll('[data-del-user]').forEach(btn=>{if(btn.disabled)return;btn.onclick=async()=>{const email=btn.dataset.delUser;if(!confirm('Удалить '+email+'?'))return;const me=getCurrentUser();try{const r=await jsonp({action:'delete_user',requester:me.email,email});if(!r||r.status!=='ok'){showToast('Ошибка');return;}showToast('Удалён');prefetched.users=(prefetched.users||[]).filter(u=>u.email!==email);saveCacheJson(USERS_CACHE_KEY,prefetched.users);refreshCurrentPage();}catch(e){showToast(e.message);}};});
-  document.querySelectorAll('.season-card').forEach(c=>{c.onclick=()=>{if(!isCreator()){showToast('Только создатель');return;}Season.apply(c.dataset.season);refreshCurrentPage();showToast(c.dataset.season==='winter'?'Зимний сезон включён':'Системный сезон');};});
-  document.querySelectorAll('[data-tree-accept]').forEach(b=>{b.onclick=()=>{if(!isCreator()){showToast('Только создатель');return;}openPlaceModal(b.dataset.treeAccept);};});
-  document.querySelectorAll('[data-tree-reject]').forEach(b=>{b.onclick=async()=>{if(!isCreator()){showToast('Только создатель');return;}const email=b.dataset.treeReject;if(!confirm('Отказать?'))return;const me=getCurrentUser();await adminTreeAction(me,email,'rejected','');const sub=(prefetched.treeSubmissions||[]).find(s=>s.email===email);if(sub){sub.status='rejected';sub.place='';saveCacheJson(TREE_KEY,prefetched.treeSubmissions);}refreshCurrentPage();showToast('Отказано');};});
-  document.querySelectorAll('[data-tree-reset]').forEach(b=>{
-    b.onclick=async()=>{
-      if(!isCreator()){showToast('Только создатель');return;}
-      const email=b.dataset.treeReset;
-      if(!confirm('Разрешить '+email+' собрать ёлочку заново? Текущая работа будет удалена.')) return;
-      const me=getCurrentUser();
-      await adminTreeAction(me,email,'reset','');
-      prefetched.treeSubmissions=(prefetched.treeSubmissions||[]).filter(s=>String(s.email).toLowerCase()!==String(email).toLowerCase());
-      saveCacheJson(TREE_KEY,prefetched.treeSubmissions);
-      refreshCurrentPage();
-      showToast('Разрешено пересобрать');
-    };
-  });
-}
+function bindUsersPage(){document.querySelectorAll('[data-mgmt-tab]').forEach(b=>{b.onclick=()=>{manageTab=b.dataset.mgmtTab;refreshCurrentPage();};});document.querySelectorAll('[data-open-date]').forEach(card=>{card.onclick=async()=>{currentTableDate=card.dataset.openDate;const u=getCurrentUser();if(u&&prefetched.scheduleByDate[currentTableDate]===undefined){try{await fetchSched(currentTableDate,u,true);}catch(e){}}refreshCurrentPage();};});const addDateBtn=$('addDateBtn');if(addDateBtn)addDateBtn.onclick=openDatePicker;const backBtn=$('backToDates');if(backBtn)backBtn.onclick=()=>{currentTableDate=null;refreshCurrentPage();};document.querySelectorAll('.cell-btn[data-tbl-lesson]').forEach(btn=>{btn.onclick=e=>{e.stopPropagation();openPopover(btn);};btn.addEventListener('contextmenu',e=>{e.preventDefault();showCtxMenu(e.clientX,e.clientY,{type:'cell',date:btn.dataset.tblDate,lesson:btn.dataset.tblLesson,email:btn.dataset.tblEmail});});});document.querySelectorAll('.lesson-head[data-lesson-head]').forEach(th=>{th.addEventListener('contextmenu',e=>{e.preventDefault();showCtxMenu(e.clientX,e.clientY,{type:'lesson-head',date:currentTableDate,lesson:th.dataset.lessonHead});});});document.querySelectorAll('.name-cell[data-student-email]').forEach(td=>{td.addEventListener('contextmenu',e=>{e.preventDefault();showCtxMenu(e.clientX,e.clientY,{type:'row',email:td.dataset.studentEmail});});});document.querySelectorAll('[data-role-email]').forEach(sel=>{sel.onchange=async()=>{const email=sel.dataset.roleEmail,role=sel.value,me=getCurrentUser();try{const r=await jsonp({action:'set_role',requester:me.email,email,role});if(!r||r.status!=='ok'){showToast('Ошибка');refreshCurrentPage();return;}showToast('Роль обновлена');const pu=(prefetched.users||[]).find(u=>u.email===email);if(pu){pu.role=role;saveCacheJson(USERS_CACHE_KEY,prefetched.users);}}catch(e){showToast(e.message);refreshCurrentPage();}};});document.querySelectorAll('[data-del-user]').forEach(btn=>{if(btn.disabled)return;btn.onclick=async()=>{const email=btn.dataset.delUser;if(!confirm('Удалить '+email+'?'))return;const me=getCurrentUser();try{const r=await jsonp({action:'delete_user',requester:me.email,email});if(!r||r.status!=='ok'){showToast('Ошибка');return;}showToast('Удалён');prefetched.users=(prefetched.users||[]).filter(u=>u.email!==email);saveCacheJson(USERS_CACHE_KEY,prefetched.users);refreshCurrentPage();}catch(e){showToast(e.message);}};});document.querySelectorAll('.season-card').forEach(c=>{c.onclick=()=>{if(!isCreator()){showToast('Только создатель');return;}Season.apply(c.dataset.season);refreshCurrentPage();showToast(c.dataset.season==='winter'?'Зимний сезон включён':'Системный сезон');};});document.querySelectorAll('[data-tree-accept]').forEach(b=>{b.onclick=()=>{if(!isCreator()){showToast('Только создатель');return;}openPlaceModal(b.dataset.treeAccept);};});document.querySelectorAll('[data-tree-reject]').forEach(b=>{b.onclick=async()=>{if(!isCreator()){showToast('Только создатель');return;}const email=b.dataset.treeReject;if(!confirm('Отказать?'))return;const me=getCurrentUser();await adminTreeAction(me,email,'rejected','');const sub=(prefetched.treeSubmissions||[]).find(s=>s.email===email);if(sub){sub.status='rejected';sub.place='';saveCacheJson(TREE_KEY,prefetched.treeSubmissions);}refreshCurrentPage();showToast('Отказано');};});document.querySelectorAll('[data-tree-reset]').forEach(b=>{b.onclick=async()=>{if(!isCreator()){showToast('Только создатель');return;}const email=b.dataset.treeReset;if(!confirm('Разрешить '+email+' собрать ёлочку заново?'))return;const me=getCurrentUser();await adminTreeAction(me,email,'reset','');prefetched.treeSubmissions=(prefetched.treeSubmissions||[]).filter(s=>String(s.email).toLowerCase()!==String(email).toLowerCase());saveCacheJson(TREE_KEY,prefetched.treeSubmissions);refreshCurrentPage();showToast('Разрешено пересобрать');};});}
 function openDatePicker(){$('dpInput').value='';$('dpPanel').classList.remove('open');$('dpDatesGrid').innerHTML='';$('datePickerModal').classList.add('show');setTimeout(()=>$('dpInput').focus(),100);}
 function closeDatePicker(){$('datePickerModal').classList.remove('show');}
 $('dpInput').addEventListener('input',e=>{let v=e.target.value.replace(/[^\d]/g,'');if(v.length>8)v=v.slice(0,8);let o='';if(v.length>=1)o=v.slice(0,2);if(v.length>=3)o+='/'+v.slice(2,4);if(v.length>=5)o+='/'+v.slice(4,8);e.target.value=o;});
@@ -1244,7 +1205,7 @@ function treeContentHTML(){const u=getCurrentUser();const name=u?(u.name||'др�
 function bindTreePage(){const my=loadCacheJson(MY_TREE_KEY,null);if(my&&my.submitted)return;if(my&&my.decorations)treeState.decorations=my.decorations;if(my&&my.bg)treeState.bg=my.bg;const stage=treeState.step||1;if(stage===1)bindStage1();if(stage===2)bindStage2();if(stage===3)bindStage3();}
 function bindStage1(){const canvas=document.querySelector('.tree-canvas');const drop=$('treeDrop');if(!canvas||!drop)return;function renderDecos(){drop.innerHTML=treeState.decorations.map((d,i)=>{let style=`left:${d.x}%;top:${d.y}%;`;if(d.type&&d.type.startsWith('ball-')){const c={'ball-red':'#DC2626','ball-blue':'#2563EB','ball-gold':'#F59E0B','ball-pink':'#EC4899','ball-green':'#16A34A'}[d.type]||'#DC2626';return`<div class="tree-decoration ball" data-idx="${i}" style="${style}background:${c}"></div>`;}return`<div class="tree-decoration" data-idx="${i}" style="${style}">${esc(d.type)}</div>`;}).join('');drop.querySelectorAll('.tree-decoration').forEach(el=>{let dragging=false,startX=0,startY=0,origX=0,origY=0;const idx=parseInt(el.dataset.idx,10);el.addEventListener('pointerdown',e=>{e.preventDefault();dragging=true;const r=canvas.getBoundingClientRect();startX=e.clientX;startY=e.clientY;origX=treeState.decorations[idx].x;origY=treeState.decorations[idx].y;el.setPointerCapture(e.pointerId);});el.addEventListener('pointermove',e=>{if(!dragging)return;const dx=e.clientX-startX,dy=e.clientY-startY;const r=canvas.getBoundingClientRect();const nx=Math.max(2,Math.min(98,origX+(dx/r.width)*100));const ny=Math.max(2,Math.min(98,origY+(dy/r.height)*100));treeState.decorations[idx].x=nx;treeState.decorations[idx].y=ny;el.style.left=nx+'%';el.style.top=ny+'%';});el.addEventListener('pointerup',()=>{dragging=false;saveMyTree();});el.addEventListener('pointercancel',()=>{dragging=false;});el.addEventListener('dblclick',()=>{treeState.decorations.splice(idx,1);renderDecos();saveMyTree();});});}renderDecos();document.querySelectorAll('.palette-item').forEach(p=>{p.onclick=()=>{const type=p.dataset.deco;treeState.decorations.push({type,x:30+Math.random()*40,y:20+Math.random()*60});renderDecos();saveMyTree();};});const c=$('treeClearAll');if(c)c.onclick=()=>{if(confirm('Очистить ёлку?')){treeState.decorations=[];renderDecos();saveMyTree();}};const n=$('treeNext1');if(n)n.onclick=()=>{treeState.step=2;saveMyTree();refreshCurrentPage();};}
 function bindStage2(){document.querySelectorAll('.bg-choice').forEach(c=>{c.onclick=()=>{treeState.bg=c.dataset.bg;saveMyTree();document.querySelectorAll('.bg-choice').forEach(x=>x.classList.toggle('active',x===c));};});const b=$('treeBack2');if(b)b.onclick=()=>{treeState.step=1;saveMyTree();refreshCurrentPage();};const n=$('treeNext2');if(n)n.onclick=()=>{treeState.step=3;saveMyTree();refreshCurrentPage();};}
-function bindStage3(){const b=$('treeBack3');if(b)b.onclick=()=>{treeState.step=2;saveMyTree();refreshCurrentPage();};const s=$('treeSaveBtn');if(s)s.onclick=async()=>{const name=$('treeNameInput').value.trim();if(!name){showToast('Введите имя');return;}const u=getCurrentUser();if(!u)return;const payload={name,email:u.email,decorations:treeState.decorations,bg:treeState.bg,timestamp:Date.now()};saveCacheJson(MY_TREE_KEY,{submitted:true,name,email:u.email,decorations:treeState.decorations,bg:treeState.bg,timestamp:Date.now()});if(!prefetched.treeSubmissions)prefetched.treeSubmissions=[];const ex=prefetched.treeSubmissions.findIndex(s=>s.email===u.email);const submission={name,email:u.email,decorations:treeState.decorations,bg:treeState.bg,timestamp:Date.now(),status:'pending',place:''};if(ex>=0)prefetched.treeSubmissions[ex]=submission;else prefetched.treeSubmissions.push(submission);saveCacheJson(TREE_KEY,prefetched.treeSubmissions);await pushTreeToServer(u,payload);showToast('Ёлочка отправлена!');refreshCurrentPage();};}
+function bindStage3(){const b=$('treeBack3');if(b)b.onclick=()=>{treeState.step=2;saveMyTree();refreshCurrentPage();};const s=$('treeSaveBtn');if(s)s.onclick=async()=>{const name=$('treeNameInput').value.trim();if(!name){showToast('Введите имя');return;}const u=getCurrentUser();if(!u)return;const payload={name,email:u.email,decorations:treeState.decorations,bg:treeState.bg,timestamp:Date.now()};saveCacheJson(MY_TREE_KEY,{submitted:true,name,email:u.email,decorations:treeState.decorations,bg:treeState.bg,timestamp:Date.now()});if(!prefetched.treeSubmissions)prefetched.treeSubmissions=[];const ex=prefetched.treeSubmissions.findIndex(s=>s.email===u.email);const submission={name,email:u.email,decorations:treeState.decorations,bg:treeState.bg,timestamp:Date.now(),status:'pending',place:''};if(ex>=0)prefetched.treeSubmissions[ex]=submission;else prefetched.treeSubmissions.push(submission);saveCacheJson(TREE_KEY,prefetched.treeSubmissions);const ok=await pushTreeToServer(u,payload);showToast(ok?'Ёлочка отправлена!':'Сохранено локально (нет связи с сервером)');refreshCurrentPage();};}
 function saveMyTree(){const u=getCurrentUser();if(!u)return;const cur=loadCacheJson(MY_TREE_KEY,null)||{};saveCacheJson(MY_TREE_KEY,Object.assign({},cur,{decorations:treeState.decorations,bg:treeState.bg,step:treeState.step}));}
 let placeTargetEmail=null,placeSelected=null;
 function openPlaceModal(email){placeTargetEmail=email;const sub=(prefetched.treeSubmissions||[]).find(s=>s.email===email);placeSelected=sub&&sub.place?parseInt(sub.place,10):null;const taken=new Set((prefetched.treeSubmissions||[]).filter(s=>s.email!==email&&s.status==='approved'&&s.place).map(s=>String(s.place)));const grid=$('placeGrid');let html='';for(let i=1;i<=20;i++){const isTaken=taken.has(String(i));html+=`<button class="place-btn ${placeSelected===i?'selected':''} ${isTaken?'taken':''}" data-place="${i}" type="button" ${isTaken?'disabled':''}>${i}</button>`;}grid.innerHTML=html;grid.querySelectorAll('.place-btn').forEach(b=>{b.onclick=()=>{if(b.disabled)return;placeSelected=parseInt(b.dataset.place,10);grid.querySelectorAll('.place-btn').forEach(x=>x.classList.toggle('selected',x===b));};});$('placeModal').classList.add('show');}
@@ -1255,7 +1216,7 @@ $('placeSave').onclick=async()=>{if(!placeSelected){showToast('Выберите 
 function participantsListHTML(){const list=(prefetched.treeSubmissions||[]).filter(s=>s.status==='approved'&&s.place).sort((a,b)=>parseInt(a.place,10)-parseInt(b.place,10));if(!list.length)return`<div class="participants-card"><div class="participants-head"><span class="msr">emoji_events</span><span>Победители конкурса «Собери ёлочку»</span></div><div class="participants-empty"><span class="msr">forest</span><div>Пока нет победителей — станьте первым!</div></div></div>`;const html=list.map(s=>{const cls=s.place<=3?'place-'+s.place:'';return`<div class="participant ${cls}"><div class="participant-place">${s.place}</div><div class="participant-name">${esc(s.name||s.email)}</div><div class="participant-score">Место ${s.place}</div></div>`;}).join('');return`<div class="participants-card"><div class="participants-head"><span class="msr">emoji_events</span><span>Победители конкурса «Собери ёлочку»</span></div><div class="participants-list">${html}</div></div>`;}
 $$('[data-logout]').forEach(b=>b.onclick=()=>{showLoader();prefetched.scheduleByDate={};prefetched.hwStatuses=null;prefetched.users=null;try{localStorage.removeItem(LESSONS_CACHE_KEY);localStorage.removeItem(HW_CACHE_KEY);localStorage.removeItem(USERS_CACHE_KEY);}catch(e){}clearSession();if(statusTimer){clearInterval(statusTimer);statusTimer=null;}setTimeout(()=>location.reload(),1000);});
 document.addEventListener('click',e=>{const mb=e.target.closest('.menu-item');if(mb&&mb.dataset.page){renderPage(mb.dataset.page);return;}const mbb=e.target.closest('.mb-item');if(mbb&&mbb.dataset.page){renderPage(mbb.dataset.page);return;}});
-(async function init(){try{requestAnimationFrame(fitFormHeight);initAllSelects();buildGradesGrid();Theme.init();Season.init();I18N.init();UserMenu.init();Account.init();Account.applyAvatar();const s=getSession();if(s&&s.user){showLoader();await new Promise(r=>setTimeout(r,600));hideLoader();$('authView').classList.add('hidden');$('appView').classList.remove('hidden');applyUserToUI();addCreatorMenu();renderPage('home');requestAnimationFrame(()=>{$('appView').classList.add('ready');moveIndicator();});startStatusTimer();prefetchAll(s.user).then(()=>{if(['schedule','homework','diary','tree','users'].includes(currentPage))refreshCurrentPage();}).catch(()=>{});}else{showLoader();await new Promise(r=>setTimeout(r,600));hideLoader();$('authView').classList.remove('hidden');}}catch(err){console.error('Init error:',err);hideLoader();$('authView').classList.remove('hidden');}})();
+(async function init(){try{requestAnimationFrame(fitFormHeight);initAllSelects();buildGradesGrid();Theme.init();Season.init();I18N.init();UserMenu.init();Account.init();Account.applyAvatar();const s=getSession();if(s&&s.user){showLoader();await new Promise(r=>setTimeout(r,400));hideLoader();$('authView').classList.add('hidden');$('appView').classList.remove('hidden');applyUserToUI();addCreatorMenu();renderPage('home');requestAnimationFrame(()=>{$('appView').classList.add('ready');moveIndicator();});startStatusTimer();prefetchAll(s.user).then(()=>{if(['schedule','homework','diary','tree','users'].includes(currentPage))refreshCurrentPage();}).catch(()=>{});}else{showLoader();await new Promise(r=>setTimeout(r,400));hideLoader();$('authView').classList.remove('hidden');}}catch(err){console.error('Init error:',err);hideLoader();$('authView').classList.remove('hidden');}})();
 </script>
 </body>
 </html>
