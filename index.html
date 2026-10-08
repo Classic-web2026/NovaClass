@@ -78,7 +78,7 @@ html[data-theme="winter"] .role-badge.student{background:rgba(111,176,229,.18);c
 @keyframes syncSpin{0%,100%{opacity:.3}50%{opacity:1}}
 #topProgress{position:fixed;top:6px;left:24px;right:24px;height:4px;z-index:10000;pointer-events:none;opacity:0;transition:opacity .25s ease}
 #topProgress.active{opacity:1}
-#topProgressFill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--brand));border-radius:10px;transition:width .35s var(--ease-out)}
+#topProgressFill{height:100%;width:0;background:linear-gradient(90deg,#60A5FA,#2563EB);border-radius:10px;transition:width .35s var(--ease-out)}
 #loader{position:fixed;inset:0;z-index:100000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;transition:opacity .5s ease}
 #loader.fade-out{opacity:0;pointer-events:none}
 .loader-stage{position:relative;width:130px;height:130px}
@@ -90,7 +90,7 @@ html[data-theme="winter"] .spinner-track{stroke:#D2E3F3}
 html[data-theme="dark"] .spinner-track{stroke:#1E293B}
 .loader-bar{width:min(420px,80vw)}
 .loader-bar-track{height:8px;padding:1px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rc);overflow:hidden}
-.loader-bar-fill{height:100%;width:0;background:linear-gradient(90deg,#2563EB,#1D4ED8);border-radius:var(--rc);transition:width .35s var(--ease-out)}
+.loader-bar-fill{height:100%;width:0;background:linear-gradient(90deg,#60A5FA,#2563EB);border-radius:var(--rc);transition:width .35s var(--ease-out)}
 html[data-theme="winter"] .loader-bar-fill{background:linear-gradient(90deg,#8EC4EC,#6FB0E5)}
 .loader-label{font-size:18px;font-weight:700;color:var(--accent);opacity:0;transform:translateY(8px);transition:opacity .4s ease,transform .4s ease}
 .loader-label.show{opacity:1;transform:translateY(0)}
@@ -445,7 +445,7 @@ html[data-theme="winter"] .u-ava{background:linear-gradient(135deg,#8EC4EC,#6FB0
 .attach-file-picker .ui-icon{width:20px;height:20px}
 .attach-upload-progress{margin-top:10px;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rb)}
 .attach-progress-track{height:6px;background:var(--section);border:1px solid var(--border);border-radius:var(--rp);overflow:hidden;margin-bottom:8px}
-.attach-progress-fill{height:100%;width:0;background:linear-gradient(90deg,#3B82F6,#2563EB);transition:width .2s ease;border-radius:var(--rp)}
+.attach-progress-fill{height:100%;width:0;background:linear-gradient(90deg,#60A5FA,#2563EB);transition:width .2s ease;border-radius:var(--rp)}
 .attach-progress-text{font-size:11.5px;color:var(--muted);text-align:center;font-weight:600}
 .attach-hint{display:flex;align-items:flex-start;gap:6px;font-size:11px;color:var(--muted);padding:10px;background:var(--section);border-radius:var(--rb);line-height:1.5;margin-top:10px}
 .attach-hint .ui-icon{width:16px;height:16px;color:var(--accent);flex-shrink:0;margin-top:1px}
@@ -706,7 +706,7 @@ html[data-theme="dark"] .participant.place-3{background:linear-gradient(135deg,r
 </head>
 <body>
 
-<!-- ==================== ТВОИ ИКОНКИ (SVG sprite) ==================== -->
+<!-- SVG ICONS -->
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
   <symbol id="icon-home" viewBox="0 0 24 24"><path d="M2 11.5L12 3l10 8.5"/><path d="M4.5 10.5V19.5A1.5 1.5 0 0 0 6 21h12a1.5 1.5 0 0 0 1.5-1.5V10.5"/><path d="M9.5 21v-6a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v6"/></symbol>
   <symbol id="icon-schedule" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="9.5" x2="21" y2="9.5"/><line x1="7" y1="13.5" x2="17" y2="13.5"/><line x1="7" y1="17" x2="14" y2="17"/></symbol>
@@ -756,7 +756,7 @@ html[data-theme="dark"] .participant.place-3{background:linear-gradient(135deg,r
 <div id="loader">
   <svg width="0" height="0" style="position:absolute"><defs>
     <linearGradient id="spinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#2563EB"/><stop offset="100%" stop-color="#0F172A"/>
+      <stop offset="0%" stop-color="#60A5FA"/><stop offset="100%" stop-color="#2563EB"/>
     </linearGradient>
   </defs></svg>
   <div class="loader-stage">
@@ -990,7 +990,7 @@ html[data-theme="dark"] .participant.place-3{background:linear-gradient(135deg,r
 /* ============================================================
    NOVACLASS — ПОЛНЫЙ КЛИЕНТ
    ============================================================ */
-const GAS_URL='https://script.google.com/macros/s/AKfycbwzo0kvhaUbXpkeurXnC_s7oSTGDEDD4ZoIyOjiv_eFcZvlUbmIoNHUapJgFztiiJEC/exec';
+const GAS_URL='https://script.google.com/macros/s/AKfycbxWdOtpczDkEmU0Nb1gEE8iIovoqTfJPYPTqoUKM__MtciH0xEAlFX3ROPmMnYhxSMd/exec';
 const CREATOR_EMAIL='maksimsuhomlinov37@gmail.com';
 const SESSION_KEY='nc_session',SESSION_MS=30*24*60*60*1000;
 const THEME_KEY='nc_theme',LANG_KEY='nc_lang',AVATAR_KEY='nc_avatar',SEASON_KEY='nc_season';
@@ -1082,6 +1082,7 @@ function attachShortUrl(u){const s=String(u||'');return s.length>70?s.slice(0,67
 function getYouTubeId(u){const m=String(u||'').match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/))([\w-]{11})/);return m?m[1]:'';}
 function getDrivePreview(u){const m=String(u||'').match(/\/file\/d\/([\w-]+)/);if(m)return'https://drive.google.com/file/d/'+m[1]+'/preview';const m2=String(u||'').match(/[?&]id=([\w-]+)/);if(m2&&/drive\.google\.com/.test(u))return'https://drive.google.com/file/d/'+m2[1]+'/preview';return'';}
 function uploadToCatbox(file,onProg){return new Promise((res,rej)=>{const xhr=new XMLHttpRequest();xhr.open('POST',CATBOX_URL);const fd=new FormData();fd.append('reqtype','fileupload');fd.append('fileToUpload',file);xhr.upload.onprogress=e=>{if(e.lengthComputable&&onProg)onProg(e.loaded,e.total);};xhr.onload=()=>{const t=String(xhr.responseText||'').trim();if(xhr.status===200&&/^https?:\/\//.test(t))res(t);else rej(new Error('Ошибка загрузки'));};xhr.onerror=()=>rej(new Error('Ошибка сети'));xhr.send(fd);});}
+
 let currentPage='home',selectedDate=initialDate(),animating=false;
 let cacheLessons=[],cacheHwStatuses={},editingId=null;
 let editingAttachments=[],currentTableDate=null,miniCallback=null,ctxData=null;
