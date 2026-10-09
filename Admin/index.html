@@ -1,832 +1,1193 @@
-
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="light">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NovaClass Admin</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,viewport-fit=cover">
+<title>NovaClass · Админ-панель</title>
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;700&display=swap" rel="stylesheet">
+<script>
+(function(){try{var t=localStorage.getItem('nc_theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
 :root{
-  --bg:#f8fafb;--bg-soft:#f1f5f9;--card:#ffffff;--text:#0f172a;--muted:#64748b;
-  --border:#eef2f7;--primary:#16a34a;--primary-2:#22c55e;--danger:#ef4444;--warn:#f59e0b;
-  --strip:#4ade80;
-  --shadow-sm:0 2px 6px rgba(0,0,0,.05);--shadow:0 6px 20px rgba(0,0,0,.08);--shadow-lg:0 16px 48px rgba(0,0,0,.18)
+  --bg:#FFFFFF;--section:#F1F5F9;--card:#F8FAFC;
+  --text:#1E293B;--muted:#64748B;--brand:#0F172A;
+  --accent:#2563EB;--accent-h:#1D4ED8;--accent-light:#DBEAFE;
+  --border:#E2E8F0;
+  --rc:20px;--ri:14px;--rt:12px;--rb:10px;--rp:32px;
+  --shadow:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.02);
+  --shadow-hover:0 8px 24px -8px rgba(37,99,235,.22);
+  --shadow-lg:0 20px 40px -16px rgba(15,23,42,.14);
+  --ease-spring:cubic-bezier(.34,1.4,.64,1);
+  --ease-out:cubic-bezier(.4,0,.2,1);
+  --ok:#16A34A;--ok-light:#DCFCE7;
+  --warn:#EA580C;--warn-light:#FFEDD5;
+  --err:#DC2626;--err-light:#FEF2F2;
+  --purple:#A855F7;--purple-light:rgba(168,85,247,.12);
+  --pink:#EC4899;--pink-light:rgba(236,72,153,.12);
+  --cyan:#06B6D4;--cyan-light:rgba(6,182,212,.12);
 }
-body.dark{
-  --bg:#0b1220;--bg-soft:#111a2e;--card:#131c30;--text:#e8eefc;--muted:#8fa0bd;
-  --border:#1e2a44;--shadow-sm:0 2px 6px rgba(0,0,0,.3);--shadow:0 6px 20px rgba(0,0,0,.4);--shadow-lg:0 16px 48px rgba(0,0,0,.55)
+html[data-theme="dark"]{
+  --bg:#0B1220;--section:#1E293B;--card:#0F172A;
+  --text:#E2E8F0;--muted:#94A3B8;--brand:#F1F5F9;
+  --accent:#3B82F6;--accent-h:#2563EB;--accent-light:rgba(59,130,246,.15);
+  --border:#1E293B;
+  --shadow:0 1px 3px rgba(0,0,0,.3);
+  --shadow-hover:0 8px 24px -8px rgba(59,130,246,.35);
+  --shadow-lg:0 20px 40px -16px rgba(0,0,0,.5);
+  --ok-light:rgba(22,163,74,.15);--warn-light:rgba(234,88,12,.15);
+  --err-light:rgba(220,38,38,.15);--purple-light:rgba(168,85,247,.15);
+  --pink-light:rgba(236,72,153,.15);--cyan-light:rgba(6,182,212,.15);
 }
-body.oled{
-  --bg:#000;--bg-soft:#0a0a0a;--card:#0a0a0a;--text:#f5f5f5;--muted:#8a8a8a;
-  --border:#161616;--shadow-sm:0 2px 6px rgba(0,0,0,.6);--shadow:0 6px 20px rgba(0,0,0,.7);--shadow-lg:0 16px 48px rgba(0,0,0,.85)
+html[data-theme="winter"]{
+  --bg:#F2F8FE;--section:#E8F1FB;--card:#FFFFFF;
+  --text:#1E3A5F;--muted:#6B8BAA;--brand:#0F2A4A;
+  --accent:#6FB0E5;--accent-h:#5399D6;--accent-light:#DCEDFB;
+  --border:#D2E3F3;
 }
-body{font-family:'Comfortaa',cursive,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;transition:background .35s,color .35s}
-button,input,textarea,select{font-family:'Comfortaa',cursive,sans-serif}
-.msr{font-family:'Material Symbols Rounded';font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;font-size:20px;display:inline-flex;align-items:center;justify-content:center}
+body{font-family:'Comfortaa',sans-serif;background:var(--section);color:var(--text);font-size:15px;line-height:1.5;overflow:hidden;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+.hidden{display:none!important}
+.ui-icon{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1}
+.ui-icon.sm{width:18px;height:18px}
+.ui-icon.lg{width:32px;height:32px}
+.ui-icon.xl{width:40px;height:40px}
 
-@keyframes fadeInUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@keyframes scaleIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
-@keyframes shimmerLine{0%{transform:translateX(-100%)}100%{transform:translateX(200%)}}
-@keyframes pulseDot{0%,100%{opacity:.4}50%{opacity:1}}
-@keyframes ripple{from{transform:scale(0);opacity:.5}to{transform:scale(4);opacity:0}}
-@keyframes subtlePop{0%{transform:scale(.98)}50%{transform:scale(1.015)}100%{transform:scale(1)}}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes itemsIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.items-fade{animation:itemsIn .4s cubic-bezier(.2,0,0,1) both}
+/* ===== AUTH ===== */
+#authScreen{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg)}
+.auth-card{width:100%;max-width:420px;background:var(--card);border:1px solid var(--border);border-radius:22px;padding:32px;box-shadow:var(--shadow-lg);animation:zoom .4s var(--ease-spring) both}
+@keyframes zoom{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+.auth-icon{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#3B82F6,#2563EB);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 12px 28px -10px rgba(37,99,235,.5)}
+.auth-icon .ui-icon{width:36px;height:36px;stroke:#fff;stroke-width:2.2}
+.auth-title{font-size:20px;font-weight:700;color:var(--brand);text-align:center;margin-bottom:6px}
+.auth-sub{font-size:12.5px;color:var(--muted);text-align:center;margin-bottom:24px}
 
-#loader{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary-2));transition:opacity .35s}
-#loader.hide{opacity:0;pointer-events:none}
-#loader .lg{width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:30px;animation:subtlePop .9s infinite}
-#loader .tt{font-size:34px;font-weight:700;margin-top:14px;letter-spacing:-.5px}
-#loader .sub{margin-top:8px;font-size:12px;opacity:.85}
-#loader .spinner{margin-top:20px;width:32px;height:32px;border:3px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
+/* ===== LAYOUT ===== */
+#app{display:flex;height:100%;padding:16px;gap:16px;background:var(--section)}
+.sidebar{flex-shrink:0;width:78px;background:var(--card);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);padding:18px 12px;display:flex;flex-direction:column;overflow:hidden;transition:width .3s var(--ease-out);z-index:30}
+.sidebar:hover,.sidebar.open{width:250px;box-shadow:var(--shadow-lg)}
+.sb-head{display:flex;align-items:center;gap:12px;padding:4px 4px 16px;border-bottom:1px solid var(--border);margin-bottom:14px;min-height:60px;overflow:hidden;white-space:nowrap}
+.sb-logo{width:48px;height:48px;border-radius:14px;overflow:hidden;flex-shrink:0;box-shadow:0 6px 16px -8px rgba(111,176,229,.5)}
+.sb-logo svg{width:100%;height:100%}
+.sb-name{font-size:16px;font-weight:700;color:var(--brand);opacity:0;max-width:0;overflow:hidden;transition:opacity .25s,max-width .3s}
+.sidebar:hover .sb-name,.sidebar.open .sb-name{opacity:1;max-width:180px}
+.sb-name small{display:block;font-size:10px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+.menu{display:flex;flex-direction:column;gap:5px;overflow-y:auto;flex:1;min-height:0}
+.mi{display:flex;align-items:center;gap:16px;padding:13px 14px;border-radius:14px;border:none;background:transparent;color:var(--text);font-family:inherit;font-size:13.5px;font-weight:500;cursor:pointer;text-align:left;white-space:nowrap;min-height:48px;overflow:hidden;transition:background .18s}
+.mi:hover:not(.active){background:var(--section)}
+.mi.active{background:var(--accent);color:#fff;font-weight:700}
+.mi.active .ui-icon{stroke:#fff}
+.mi span{opacity:0;max-width:0;overflow:hidden;transition:opacity .25s,max-width .3s}
+.sidebar:hover .mi span,.sidebar.open .mi span{opacity:1;max-width:180px}
+.mi .badge{margin-left:auto;background:var(--err);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;opacity:0;transition:opacity .25s}
+.sidebar:hover .mi .badge,.sidebar.open .mi .badge{opacity:1}
+.sb-foot{margin-top:auto;padding:14px 4px 4px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;overflow:hidden;white-space:nowrap}
+.sb-ava{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0}
+.sb-ava.online{position:relative}
+.sb-ava.online::after{content:'';position:absolute;bottom:-1px;right:-1px;width:13px;height:13px;background:#16A34A;border:2.5px solid var(--card);border-radius:50%}
+.sb-user-info{flex:1;min-width:0;opacity:0;max-width:0;overflow:hidden;transition:opacity .25s,max-width .3s}
+.sidebar:hover .sb-user-info,.sidebar.open .sb-user-info{opacity:1;max-width:180px}
+.sb-user-info b{font-size:12.5px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-user-info small{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.sb-out{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;opacity:0;max-width:0;overflow:hidden;transition:all .2s}
+.sidebar:hover .sb-out,.sidebar.open .sb-out{opacity:1;max-width:60px}
+.sb-out:hover{background:var(--err-light);color:var(--err);border-color:var(--err)}
+.sb-out .ui-icon{width:18px;height:18px}
 
-.auth{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg);z-index:90;padding:16px}
-.auth-card{width:100%;max-width:400px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;animation:fadeInUp .35s ease;box-shadow:var(--shadow);position:relative;overflow:hidden}
-.auth-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--primary-2));animation:shimmerLine 3s infinite}
-.auth-logo{width:52px;height:52px;border-radius:14px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:24px;margin:0 auto;transition:transform .25s}
-.auth-logo:hover{transform:scale(1.06) rotate(-3deg)}
-.input{width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:10px;background:var(--bg-soft);color:var(--text);outline:none;font-size:13px;transition:all .2s;margin-bottom:9px}
-.input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(22,163,74,.15)}
-.input::placeholder{color:var(--muted)}
-textarea.input{resize:vertical;min-height:70px;line-height:1.5}
-.btn{padding:9px 14px;border-radius:10px;border:1px solid var(--border);background:var(--card);font-weight:600;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px;color:var(--text);transition:all .2s;position:relative;overflow:hidden}
-.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm)}
-.btn:active{transform:scale(.95)}
-.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
-.btn.danger{background:var(--danger);color:#fff;border-color:var(--danger)}
-.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.5);transform:scale(0);animation:ripple .6s ease;pointer-events:none}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;gap:16px;overflow:hidden}
+.topbar{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:14px 22px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);min-height:64px;flex-shrink:0}
+.tb-title{font-size:17px;font-weight:700;color:var(--brand);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tb-sub{font-size:11.5px;color:var(--muted);margin-top:2px}
+.tb-right{margin-left:auto;display:flex;gap:8px;align-items:center;flex-shrink:0}
+.tb-chip{padding:7px 14px;background:var(--section);border:1px solid var(--border);border-radius:20px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px}
+.tb-chip.green{background:var(--ok-light);color:var(--ok);border-color:transparent}
+.tb-chip.blue{background:var(--accent-light);color:var(--accent);border-color:transparent}
+.tb-chip .ui-icon{width:14px;height:14px}
+.tb-btn{padding:9px 14px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text);font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .18s}
+.tb-btn:hover{background:var(--accent-light);color:var(--accent);border-color:var(--accent)}
+.tb-btn.primary{background:var(--accent);color:#fff;border-color:transparent}
+.tb-btn.primary:hover{background:var(--accent-h)}
+.tb-btn.primary .ui-icon{stroke:#fff}
+.tb-btn .ui-icon{width:16px;height:16px}
+.burger{display:none;width:40px;height:40px;border-radius:12px;border:1px solid var(--border);background:var(--card);cursor:pointer;flex-direction:column;justify-content:center;align-items:center;gap:4px;padding:0}
+.burger span{display:block;width:18px;height:2px;background:var(--text);border-radius:2px}
 
-.top{position:fixed;top:0;left:0;right:0;height:56px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 14px;z-index:30;transition:background .35s}
-.top-left{display:flex;align-items:center;gap:10px}
-.top-logo{width:32px;height:32px;background:var(--primary);color:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;transition:transform .25s}
-.top-logo:hover{transform:scale(1.06) rotate(2deg)}
-.top-brand{font-weight:700;font-size:15px;letter-spacing:-.3px}
-.top-title{font-weight:600;font-size:11px;color:var(--muted);padding:3px 8px;border:1px solid var(--border);border-radius:100px}
-.dot{width:8px;height:8px;border-radius:50%;background:#cbd5e1;transition:background .3s;animation:pulseDot 1.6s infinite}
-.dot.ok{background:#22c55e;animation:none}
-.dot.err{background:#ef4444;animation:none}
+.page-area{flex:1;min-height:0;overflow-y:auto;border-radius:20px;padding-right:4px}
+.page-area::-webkit-scrollbar{width:8px}
+.page-area::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.page{animation:paneIn .35s var(--ease-out) both}
+@keyframes paneIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-.side{position:fixed;left:0;top:56px;bottom:0;width:250px;background:var(--card);border-right:1px solid var(--border);padding:12px;overflow-y:auto;z-index:19;transition:background .35s}
-#navWrap{position:relative}
-#navIndicator{position:absolute;left:0;right:0;top:0;height:42px;background:var(--text);border-radius:10px;transition:transform .38s cubic-bezier(.34,1.3,.4,1),height .25s;z-index:0;pointer-events:none;opacity:0}
-#navIndicator.ready{opacity:1}
-.nav-btn{width:100%;display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:10px;border:none;background:transparent;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;text-align:left;margin-bottom:2px;transition:color .2s,transform .2s;position:relative;z-index:1}
-.nav-btn:hover{transform:translateX(3px);color:var(--text)}
-.nav-btn.active{color:var(--card);font-weight:700}
-.nav-btn.active:hover{color:var(--card)}
+/* ===== SECTION TITLE ===== */
+.stitle{font-size:12.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin:22px 0 12px;display:flex;align-items:center;gap:8px}
+.stitle:first-child{margin-top:0}
+.stitle .ui-icon{width:18px;height:18px;color:var(--accent)}
+.stitle .line{flex:1;height:1px;background:var(--border)}
 
-.main{margin-left:250px;padding:20px;padding-top:76px;min-height:100vh}
-.tab{display:none}
-.tab.active{display:block;animation:fadeInUp .3s ease}
-.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px;transition:box-shadow .2s}
-.card:hover{box-shadow:var(--shadow-sm)}
-.card.hero{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;position:relative;overflow:hidden}
-.card.hero::after{content:'';position:absolute;top:0;left:0;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);animation:shimmerLine 3.5s infinite}
+/* ===== STATS ===== */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;position:relative;overflow:hidden;transition:all .25s var(--ease-out);animation:paneIn .5s var(--ease-out) both;animation-delay:calc(var(--i,0)*50ms)}
+.stat:hover{transform:translateY(-3px);box-shadow:var(--shadow-hover);border-color:var(--accent)}
+.stat::after{content:'';position:absolute;top:-40%;right:-30%;width:180px;height:180px;background:radial-gradient(circle,rgba(37,99,235,.06),transparent 70%);pointer-events:none}
+.stat-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.stat-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .3s var(--ease-spring)}
+.stat:hover .stat-icon{transform:scale(1.1) rotate(-6deg)}
+.stat-icon .ui-icon{width:22px;height:22px}
+.stat-icon.blue{background:var(--accent-light);color:var(--accent)}
+.stat-icon.green{background:var(--ok-light);color:var(--ok)}
+.stat-icon.orange{background:var(--warn-light);color:var(--warn)}
+.stat-icon.red{background:var(--err-light);color:var(--err)}
+.stat-icon.purple{background:var(--purple-light);color:var(--purple)}
+.stat-icon.pink{background:var(--pink-light);color:var(--pink)}
+.stat-icon.cyan{background:var(--cyan-light);color:var(--cyan)}
+.stat-lbl{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.stat-val{font-size:32px;font-weight:700;color:var(--brand);line-height:1;letter-spacing:-1px;position:relative;z-index:1}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:6px;position:relative;z-index:1;display:flex;align-items:center;gap:4px}
+.stat-sub.green{color:var(--ok);font-weight:700}
+.stat-sub.orange{color:var(--warn);font-weight:700}
 
-.row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px;border:1px solid var(--border);border-radius:12px;margin-bottom:8px;background:var(--card);transition:all .2s;animation:fadeInUp .3s ease}
-.row:hover{transform:translateY(-1px);border-color:var(--primary);box-shadow:0 4px 12px rgba(22,163,74,.08)}
-.row.danger{border-left:3px solid var(--danger)}
-.row.warn{border-left:3px solid var(--warn)}
-.row.ok{border-left:3px solid var(--primary)}
+/* ===== SERVER BANNER ===== */
+.server{background:linear-gradient(135deg,#16A34A,#22C55E);border-radius:20px;padding:22px 26px;color:#fff;display:flex;align-items:center;gap:20px;margin-bottom:12px;position:relative;overflow:hidden;animation:paneIn .4s var(--ease-out) both}
+.server.down{background:linear-gradient(135deg,#DC2626,#EF4444)}
+.server.slow{background:linear-gradient(135deg,#EA580C,#F97316)}
+.server::after{content:'';position:absolute;top:-50%;right:-10%;width:400px;height:400px;background:radial-gradient(circle,rgba(255,255,255,.15),transparent 70%);pointer-events:none}
+.server-icon{width:60px;height:60px;border-radius:16px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:1}
+.server-icon .ui-icon{width:30px;height:30px;stroke:#fff;animation:pulseIcon 2s ease-in-out infinite}
+@keyframes pulseIcon{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.server-info{flex:1;position:relative;z-index:1;min-width:0}
+.server-title{font-size:20px;font-weight:700;margin-bottom:4px}
+.server-sub{font-size:12.5px;opacity:.9;display:flex;gap:14px;flex-wrap:wrap}
+.server-sub span{display:inline-flex;align-items:center;gap:5px}
+.server-sub .ui-icon{width:14px;height:14px}
+.server-metrics{display:flex;gap:20px;position:relative;z-index:1}
+.server-metric-val{font-size:26px;font-weight:700;line-height:1;letter-spacing:-1px}
+.server-metric-lbl{font-size:10px;opacity:.8;text-transform:uppercase;letter-spacing:1.2px;margin-top:4px;font-weight:700;text-align:center}
 
-.week-strip{display:flex;align-items:stretch;background:var(--strip);border-radius:10px 10px 0 0;overflow:hidden;height:46px;animation:fadeInUp .35s ease}
-.week-strip .ws-arrow{width:36px;min-width:36px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.08);color:#fff;border:none;cursor:pointer;transition:background .2s}
-.week-strip .ws-arrow:hover{background:rgba(0,0,0,.16)}
-.week-strip .ws-arrow .msr{font-size:20px}
-.week-strip .ws-days{flex:1;display:grid;grid-template-columns:repeat(7,1fr);gap:1px;padding:3px 2px 0;min-width:0}
-.week-strip .ws-day{height:100%;display:flex;align-items:center;justify-content:center;background:transparent;color:rgba(255,255,255,.92);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;border:none;border-radius:7px 7px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 2px;transition:all .2s ease}
-.week-strip .ws-day:hover{background:rgba(255,255,255,.16)}
-.week-strip .ws-day.active{background:#fff;color:#0f172a;font-weight:800;animation:subtlePop .25s ease}
-.week-date{padding:11px 16px;font-size:17px;font-weight:800;color:#4EC67E;text-transform:uppercase;letter-spacing:.6px;background:var(--card);border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;margin-bottom:14px;transition:background .35s;animation:fadeInUp .35s ease}
-@media(max-width:900px){
-  .week-strip{height:42px}
-  .week-strip .ws-day{font-size:8.5px;letter-spacing:.3px}
-  .week-strip .ws-arrow{width:30px;min-width:30px}
-  .week-date{font-size:14px;padding:9px 12px}
-}
+/* ===== TABLE ===== */
+.tbl-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:auto;box-shadow:var(--shadow);margin-bottom:12px}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{background:var(--section);color:var(--muted);font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:12px 14px;text-align:left;white-space:nowrap;position:sticky;top:0;z-index:5;border-bottom:1px solid var(--border)}
+.tbl td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--section)}
+.tbl .usr-cell{display:flex;align-items:center;gap:10px}
+.tbl .ava{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;position:relative}
+.tbl .ava.online::after{content:'';position:absolute;bottom:-1px;right:-1px;width:10px;height:10px;background:#16A34A;border:2px solid var(--card);border-radius:50%}
+.tbl .usr-name{font-weight:700;color:var(--brand);font-size:13px}
+.tbl .usr-mail{font-size:11px;color:var(--muted)}
+.tbl .badge{padding:3px 9px;border-radius:8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap}
+.badge-student{background:rgba(37,99,235,.12);color:#2563EB}
+.badge-teacher{background:rgba(22,163,74,.15);color:#16A34A}
+.badge-admin{background:rgba(220,38,38,.15);color:#DC2626}
+.badge-creator{background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff}
+.badge-moderator{background:rgba(234,88,12,.15);color:#EA580C}
+.badge-director{background:rgba(168,85,247,.15);color:#A855F7}
+.badge-online{background:var(--ok-light);color:var(--ok);position:relative;padding-left:20px}
+.badge-online::before{content:'';position:absolute;left:9px;top:50%;transform:translateY(-50%);width:6px;height:6px;background:var(--ok);border-radius:50%;animation:blink 1.6s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.badge-offline{background:var(--section);color:var(--muted)}
+.tbl .icon-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .15s;margin-right:4px}
+.tbl .icon-btn:hover{background:var(--accent-light);color:var(--accent);border-color:var(--accent)}
+.tbl .icon-btn.dngr:hover{background:var(--err-light);color:var(--err);border-color:var(--err)}
+.tbl .icon-btn .ui-icon{width:16px;height:16px}
 
-.empty{padding:36px 20px;text-align:center;color:var(--muted);font-size:13px;border:1px dashed var(--border);border-radius:12px}
-.badge{font-size:10px;padding:2px 8px;border-radius:20px;background:#fef3c7;color:#92400e;font-weight:700}
-.badge.done{background:#dcfce7;color:#166534}
-.badge.ignored{background:#f1f5f9;color:#475569}
-body.dark .badge,body.oled .badge{background:#3b2f0d;color:#fde68a}
-body.dark .badge.done,body.oled .badge.done{background:#0d3320;color:#86efac}
-body.dark .badge.ignored,body.oled .badge.ignored{background:#1e293b;color:#cbd5e1}
+/* ===== SEARCH/FILTER BAR ===== */
+.bar{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.bar .search{position:relative;flex:1;min-width:200px}
+.bar .search input{width:100%;padding:11px 16px 11px 42px;border:1px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);font-family:inherit;font-size:13px;outline:none;transition:all .2s}
+.bar .search input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.bar .search .ui-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--muted)}
+.bar .seg{display:flex;gap:0;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:3px;overflow:hidden}
+.bar .seg button{padding:8px 14px;border:none;background:transparent;border-radius:9px;color:var(--muted);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
+.bar .seg button.active{background:var(--accent);color:#fff}
+.bar select{padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;outline:none}
 
-.ts-wrap{display:flex;gap:5px;align-items:center;padding:4px;background:var(--bg-soft);border:1px solid var(--border);border-radius:100px}
-.ts{width:24px;height:24px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:all .2s}
-.ts:hover{transform:scale(1.12)}
-.ts.active{border-color:var(--primary);box-shadow:0 0 0 2px rgba(22,163,74,.25)}
-.ts[data-th="light"]{background:linear-gradient(135deg,#fff,#e2e8f0)}
-.ts[data-th="dark"]{background:linear-gradient(135deg,#1e293b,#0f172a)}
-.ts[data-th="oled"]{background:linear-gradient(135deg,#000,#1a1a1a)}
+/* ===== EMPTY ===== */
+.empty{text-align:center;padding:60px 24px;background:var(--card);border:1px dashed var(--border);border-radius:16px;color:var(--muted)}
+.empty .ui-icon{width:56px;height:56px;color:#CBD5E1;stroke-width:1.5;margin-bottom:14px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.empty h3{font-size:15px;font-weight:700;color:var(--brand);margin-bottom:6px}
 
-#modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
-#modal.show{display:flex}
-#modalBody{background:var(--card);border-radius:16px;padding:22px;width:100%;max-width:420px;animation:scaleIn .25s;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
-#modalBody h3{font-size:17px;font-weight:700;margin-bottom:14px}
+/* ===== CHART ===== */
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:12px}
+.chart-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.chart-title{font-size:14px;font-weight:700;color:var(--brand);display:flex;align-items:center;gap:8px}
+.chart-title .ui-icon{width:20px;height:20px;color:var(--accent)}
+.chart{display:flex;align-items:flex-end;gap:6px;height:160px;padding:0 4px}
+.bar{flex:1;background:linear-gradient(180deg,#60A5FA,#2563EB);border-radius:8px 8px 4px 4px;min-height:4px;position:relative;transition:all .3s var(--ease-out);cursor:pointer}
+.bar:hover{filter:brightness(1.15)}
+.bar::after{content:attr(data-v);position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:700;color:var(--brand);opacity:0;transition:opacity .2s;white-space:nowrap}
+.bar:hover::after{opacity:1}
+.chart-x{display:flex;gap:6px;padding:8px 4px 0;font-size:10.5px;color:var(--muted);font-weight:600}
+.chart-x span{flex:1;text-align:center}
 
-#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);z-index:10001;background:var(--text);color:var(--card);padding:11px 18px;border-radius:10px;font-size:12px;font-weight:600;opacity:0;transition:all .3s;pointer-events:none}
-#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* ===== ROW LIST ===== */
+.row-list{display:flex;flex-direction:column;gap:8px}
+.row-item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:14px;transition:all .2s var(--ease-out);animation:paneIn .4s var(--ease-out) both;animation-delay:calc(var(--i,0)*30ms)}
+.row-item:hover{border-color:var(--accent);transform:translateX(3px);box-shadow:var(--shadow-hover)}
+.row-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.row-info{flex:1;min-width:0}
+.row-title{font-size:14px;font-weight:700;color:var(--brand);margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row-sub{font-size:11.5px;color:var(--muted);display:flex;gap:12px;flex-wrap:wrap}
+.row-sub span{display:inline-flex;align-items:center;gap:4px}
+.row-sub .ui-icon{width:13px;height:13px}
+.row-right{text-align:right;flex-shrink:0}
 
-.bottom-nav{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);width:calc(100% - 24px);max-width:440px;height:62px;background:var(--card);border:1px solid var(--border);border-radius:18px;display:none;justify-content:space-around;align-items:center;padding:4px;z-index:40;box-shadow:var(--shadow)}
-#bnavIndicator{position:absolute;top:4px;bottom:4px;left:4px;width:0;background:var(--text);border-radius:14px;transition:transform .38s cubic-bezier(.34,1.3,.4,1),width .3s;z-index:0;pointer-events:none}
-.bnav-btn{flex:1;display:flex;align-items:center;justify-content:center;height:52px;border-radius:14px;border:none;background:transparent;color:var(--muted);cursor:pointer;transition:color .2s,transform .2s;position:relative;z-index:1}
-.bnav-btn .msr{font-size:24px}
-.bnav-btn:active{transform:scale(.9)}
-.bnav-btn.active{color:var(--card)}
+/* ===== MODAL ===== */
+.mbg{position:fixed;inset:0;z-index:1000;background:rgba(15,23,42,.55);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
+.mbg.on{display:flex;animation:bgFade .25s ease both}
+@keyframes bgFade{from{opacity:0}to{opacity:1}}
+.mdl{width:100%;max-width:500px;background:var(--card);border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow-lg);overflow:hidden;margin:auto;animation:popIn .35s var(--ease-spring) both}
+@keyframes popIn{from{opacity:0;transform:scale(.9) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.mh{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid var(--border)}
+.mh b{font-size:16px;color:var(--brand);display:flex;align-items:center;gap:10px}
+.mh b .ui-icon{width:20px;height:20px;color:var(--accent)}
+.mh-close{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .2s}
+.mh-close:hover{background:var(--err-light);color:var(--err);border-color:var(--err);transform:rotate(90deg)}
+.mh-close .ui-icon{width:18px;height:18px}
+.mb{padding:20px 24px}
+.fld{margin-bottom:14px}
+.fld label{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;padding-left:2px}
+.fld label .ui-icon{width:14px;height:14px;opacity:.75}
+.fld input,.fld select,.fld textarea{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:var(--bg);color:var(--text);font-family:inherit;font-size:13.5px;outline:none;transition:all .2s}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.fld textarea{min-height:80px;resize:vertical}
+.fld input:disabled{opacity:.6;cursor:not-allowed}
+.mf{display:flex;gap:10px;padding:16px 24px 20px;border-top:1px solid var(--border)}
+.mf button{flex:1;padding:12px;border-radius:12px;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:all .18s}
+.btn-cancel{background:var(--bg);color:var(--text);border:1px solid var(--border)}
+.btn-cancel:hover{background:var(--section)}
+.btn-save{background:var(--accent);color:#fff;border:none}
+.btn-save:hover{background:var(--accent-h)}
+.btn-save:disabled{opacity:.6;cursor:wait}
+.btn-save .ui-icon{width:18px;height:18px;stroke:#fff}
 
-@media(max-width:900px){
-  .bottom-nav{display:flex}
-  .side{display:none}
-  .main{margin-left:0;padding:14px;padding-top:70px;padding-bottom:100px}
-  .top-title{display:none}
+/* ===== TOAST ===== */
+#toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:#0F172A;color:#fff;padding:13px 22px;border-radius:12px;font-size:13px;font-weight:600;z-index:10000;opacity:0;transition:all .3s var(--ease-spring);pointer-events:none;max-width:90vw;display:flex;align-items:center;gap:10px;box-shadow:0 20px 40px -16px rgba(15,23,42,.4)}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast .ui-icon{width:18px;height:18px;stroke:#fff}
+#toast.ok{background:#15803D}
+#toast.err{background:#B91C1C}
+
+@media (max-width:900px){
+  #app{padding:10px;gap:10px}
+  .sidebar{position:fixed;top:10px;left:10px;bottom:10px;width:260px;transform:translateX(-110%);transition:transform .3s var(--ease-out)}
+  .sidebar.open{transform:translateX(0);width:260px;box-shadow:var(--shadow-lg)}
+  .sidebar .sb-name,.sidebar .mi span,.sidebar .sb-user-info,.sidebar .sb-out{opacity:1;max-width:200px}
+  .burger{display:flex}
+  .stats{grid-template-columns:1fr 1fr}
+  .stat-val{font-size:26px}
+  .tb-title{font-size:15px}
+  .server{flex-direction:column;text-align:center;gap:14px}
+  .server-metrics{width:100%;justify-content:space-around}
 }
 </style>
 </head>
 <body>
 
-<div id="loader">
-  <div class="lg">N</div>
-  <div class="tt">NovaClass</div>
-  <div class="sub" id="loaderSub">Загрузка данных…</div>
-  <div class="spinner"></div>
-</div>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="14" rx="2"/><line x1="8" y1="22" x2="16" y2="22"/><line x1="12" y1="18" x2="12" y2="22"/><path d="M6 12l3-3 3 4 3-6 3 5"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="7.5" r="3.5"/><path d="M2 20.5c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/><path d="M17 4.5a3.5 3.5 0 0 1 0 7"/><path d="M22 20.5c0-2.5-1.5-4.5-3.5-5.2"/></symbol>
+  <symbol id="i-signal" viewBox="0 0 24 24"><path d="M2 20h.01"/><path d="M7 20v-4"/><path d="M12 20v-8"/><path d="M17 20V8"/><path d="M22 20V4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="8 12.5 11 15.5 16 9.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></symbol>
+  <symbol id="i-account" viewBox="0 0 24 24"><circle cx="12" cy="7.5" r="4"/><path d="M20 20.5c0-3.8-3.6-6.5-8-6.5s-8 2.7-8 6.5"/></symbol>
+  <symbol id="i-profile" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="9.5" r="3.5"/><path d="M6 18c0-2.2 2.7-3.8 6-3.8s6 1.6 6 3.8"/></symbol>
+  <symbol id="i-homework" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="17" rx="3"/><path d="M9 12.5l2 2 4-4.5"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="9.5" x2="21" y2="9.5"/><line x1="7" y1="13.5" x2="17" y2="13.5"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3.5H6.5A2.5 2.5 0 0 0 4 6v13.5z"/><line x1="8.5" y1="7.5" x2="16" y2="7.5"/><line x1="8.5" y1="11.5" x2="13.5" y2="11.5"/></symbol>
+  <symbol id="i-grades" viewBox="0 0 24 24"><path d="M3.5 16.5l4.5-5.5 4 3.5 7.5-9"/><line x1="3" y1="20.5" x2="21" y2="20.5"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M21 3.5v5h-5"/><path d="M20.5 14a8.5 8.5 0 1 1-.5-6.5L21 8.5"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3.5" y="10.5" width="17" height="10.5" rx="2.5"/><path d="M7 10.5V7a5 5 0 0 1 10 0v3.5"/></symbol>
+  <symbol id="i-login" viewBox="0 0 24 24"><path d="M15 3h3.5A2.5 2.5 0 0 1 21 5.5v13a2.5 2.5 0 0 1-2.5 2.5H15"/><polyline points="8 16.5 3.5 12 8 7.5"/><line x1="3.5" y1="12" x2="15.5" y2="12"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5.5A2.5 2.5 0 0 1 3 18.5v-13A2.5 2.5 0 0 1 5.5 3H9"/><polyline points="16 16.5 20.5 12 16 7.5"/><line x1="20.5" y1="12" x2="8.5" y2="12"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7.5"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M16 3l5 5-13 13H3v-5z"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3.5 6h17"/><path d="M8.5 6V4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v2"/><path d="M18.5 6l-1 13.5a2 2 0 0 1-2 1.5h-7a2 2 0 0 1-2-1.5L5.5 6"/></symbol>
+  <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v6c0 1.7 4 3 9 3s9-1.3 9-3V5"/><path d="M3 11v6c0 1.7 4 3 9 3s9-1.3 9-3v-6"/></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+  <symbol id="i-trending" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M2 11.5L12 3l10 8.5"/><path d="M4.5 10.5V19.5A1.5 1.5 0 0 0 6 21h12a1.5 1.5 0 0 0 1.5-1.5V10.5"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3.5 6a2 2 0 0 1 2-2h4l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2V6z"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 20.5a2 2 0 0 1-3.4 0"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2.5" fill="var(--card)"/><circle cx="16" cy="12" r="2.5" fill="var(--card)"/><circle cx="10" cy="18" r="2.5" fill="var(--card)"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.6 7.6a5.5 5.5 0 1 1-7.8 7.8 5.5 5.5 0 0 1 7.8-7.8zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.8L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><circle cx="12" cy="16.5" r="1.2" fill="currentColor"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M6 4h12v5a6 6 0 0 1-12 0V4z"/><path d="M6 4H4a2 2 0 0 0 0 4h2"/><path d="M18 4h2a2 2 0 0 1 0 4h-2"/><line x1="12" y1="15" x2="12" y2="19"/><path d="M8 22h8l-1-3H9l-1 3z"/></symbol>
+</svg>
 
-<div id="auth" class="auth" style="display:none">
+<!-- AUTH -->
+<div id="authScreen">
   <div class="auth-card">
-    <div style="text-align:center">
-      <div class="auth-logo">N</div>
-      <div style="font-weight:700;margin-top:12px;font-size:19px">NovaClass</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:2px">Панель управления</div>
+    <div class="auth-icon"><svg class="ui-icon"><use href="#i-lock"/></svg></div>
+    <div class="auth-title">Админ-панель</div>
+    <div class="auth-sub">NovaClass · Министерство образования</div>
+    <div class="fld">
+      <label><svg class="ui-icon"><use href="#i-account"/></svg>Логин</label>
+      <input type="text" id="authEmail" placeholder="Введите логин">
     </div>
-    <div style="margin-top:20px">
-      <input id="email" class="input" placeholder="Email" autocomplete="username">
-      <input id="pass" class="input" type="password" placeholder="Пароль" autocomplete="current-password">
-      <button class="btn primary" style="width:100%;justify-content:center;padding:12px" onclick="login()"><span class="msr">login</span> Войти</button>
+    <div class="fld">
+      <label><svg class="ui-icon"><use href="#i-lock"/></svg>Пароль</label>
+      <input type="password" id="authPass" placeholder="Введите пароль">
     </div>
-    <div id="authErr" style="color:var(--danger);font-size:12px;margin-top:10px;display:none;text-align:center"></div>
+    <div id="authErr" style="color:#DC2626;font-size:13px;display:none;padding:11px 14px;background:rgba(220,38,38,.1);border-radius:12px;margin-top:8px"></div>
+    <button class="tb-btn primary" id="authBtn" style="width:100%;margin-top:14px;padding:13px;justify-content:center;font-size:14px">
+      <svg class="ui-icon"><use href="#i-login"/></svg>Войти
+    </button>
   </div>
 </div>
 
+<!-- APP -->
 <div id="app" style="display:none">
-  <div class="top">
-    <div class="top-left">
-      <div class="top-logo">N</div>
-      <div class="top-brand">NovaClass</div>
-      <div class="top-title">Admin</div>
-      <span id="apiDot" class="dot"></span>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center">
-      <div class="ts-wrap">
-        <div class="ts" data-th="light" onclick="setTheme('light')"></div>
-        <div class="ts" data-th="dark" onclick="setTheme('dark')"></div>
-        <div class="ts" data-th="oled" onclick="setTheme('oled')"></div>
-      </div>
-      <button class="btn" onclick="init()" title="Обновить"><span class="msr" style="font-size:16px">refresh</span></button>
-      <button class="btn" onclick="logout()" title="Выйти"><span class="msr" style="font-size:16px">logout</span></button>
-    </div>
-  </div>
+  <div class="bd2" id="backdrop" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:70"></div>
 
-  <div class="side"><div id="navWrap"><div id="navIndicator"></div></div></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-head">
+      <div class="sb-logo"><svg viewBox="0 0 200 200"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3FA9FF"/><stop offset="1" stop-color="#0A47CC"/></linearGradient></defs><rect width="200" height="200" fill="url(#lg)"/><path d="M60 75C60 68 64 64 72 64C84 64 92 70 98 76L98 138C92 132 84 128 72 128C64 128 60 132 60 138Z" fill="#F0F4FA"/><path d="M140 75C140 68 136 64 128 64C116 64 108 70 102 76L102 138C108 132 116 128 128 128C136 128 140 132 140 138Z" fill="#fff"/></svg></div>
+      <div class="sb-name">NovaClass<small>Admin Panel</small></div>
+    </div>
+    <nav class="menu" id="menu">
+      <button class="mi active" data-page="dashboard"><svg class="ui-icon"><use href="#i-monitor"/></svg><span>Панель</span></button>
+      <button class="mi" data-page="server"><svg class="ui-icon"><use href="#i-signal"/></svg><span>Сервер</span></button>
+      <button class="mi" data-page="users"><svg class="ui-icon"><use href="#i-users"/></svg><span>Пользователи</span><span class="badge" id="badgeUsers">0</span></button>
+      <button class="mi" data-page="schedule"><svg class="ui-icon"><use href="#i-cal"/></svg><span>Расписание</span></button>
+      <button class="mi" data-page="grades"><svg class="ui-icon"><use href="#i-grades"/></svg><span>Оценки</span></button>
+      <button class="mi" data-page="reports"><svg class="ui-icon"><use href="#i-chart"/></svg><span>Отчёты</span></button>
+      <button class="mi" data-page="tree"><svg class="ui-icon"><use href="#i-trophy"/></svg><span>Ёлочка</span></button>
+      <button class="mi" data-page="settings"><svg class="ui-icon"><use href="#i-settings"/></svg><span>Настройки</span></button>
+    </nav>
+    <div class="sb-foot">
+      <div class="sb-ava online" id="sbAva">А</div>
+      <div class="sb-user-info"><b id="sbName">Админ</b><small id="sbRole">Администратор</small></div>
+      <button class="sb-out" id="logoutBtn" title="Выйти"><svg class="ui-icon"><use href="#i-logout"/></svg></button>
+    </div>
+  </aside>
 
   <div class="main">
-    <div id="p-dash" class="tab active"></div>
-    <div id="p-users" class="tab"></div>
-    <div id="p-messages" class="tab"></div>
-    <div id="p-complaints" class="tab"></div>
-    <div id="p-appeals" class="tab"></div>
-    <div id="p-sched" class="tab"></div>
-    <div id="p-hw" class="tab"></div>
-    <div id="p-banner" class="tab"></div>
+    <header class="topbar">
+      <button class="burger" id="burgerBtn"><span></span><span></span><span></span></button>
+      <div>
+        <div class="tb-title" id="pageTitle">Панель управления</div>
+        <div class="tb-sub" id="pageSub">NovaClass · Министерство образования</div>
+      </div>
+      <div class="tb-right">
+        <div class="tb-chip green" id="chipOnline"><svg class="ui-icon"><use href="#i-signal"/></svg><span id="chipOnlineCount">0</span> онлайн</div>
+        <div class="tb-chip blue"><svg class="ui-icon"><use href="#i-users"/></svg><span id="chipTotalCount">0</span></div>
+        <button class="tb-btn" id="refreshBtn"><svg class="ui-icon"><use href="#i-refresh"/></svg>Обновить</button>
+      </div>
+    </header>
+    <div class="page-area" id="pageArea"></div>
   </div>
-
-  <div class="bottom-nav" id="bottomNav"><div id="bnavIndicator"></div></div>
 </div>
 
-<div id="modal" onclick="if(event.target===this)closeModal()"><div id="modalBody"></div></div>
+<!-- MODAL: user -->
+<div class="mbg" id="userModal">
+  <div class="mdl">
+    <div class="mh">
+      <b id="umTitle"><svg class="ui-icon"><use href="#i-plus"/></svg>Добавить пользователя</b>
+      <button class="mh-close" id="umClose"><svg class="ui-icon"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="mb">
+      <div class="fld"><label><svg class="ui-icon"><use href="#i-account"/></svg>Имя и фамилия *</label><input id="uName" placeholder="Иван Иванов"></div>
+      <div class="fld"><label><svg class="ui-icon"><use href="#i-email"/></svg>Логин / Email *</label><input id="uEmail" placeholder="ivan@example.com"></div>
+      <div class="fld" id="passWrap"><label><svg class="ui-icon"><use href="#i-lock"/></svg>Пароль *</label><input id="uPass" placeholder="Минимум 6 символов"></div>
+      <div class="fld"><label><svg class="ui-icon"><use href="#i-key"/></svg>Роль</label>
+        <select id="uRole">
+          <option value="Ученик">Ученик</option>
+          <option value="Модератор">Модератор</option>
+          <option value="Учитель">Учитель</option>
+          <option value="Директор">Директор</option>
+          <option value="Администратор">Администратор</option>
+        </select>
+      </div>
+      <div id="umErr" style="color:#DC2626;font-size:13px;display:none;padding:11px 14px;background:rgba(220,38,38,.1);border-radius:12px;margin-top:4px"></div>
+    </div>
+    <div class="mf">
+      <button class="btn-cancel" id="umCancel">Отмена</button>
+      <button class="btn-save" id="umSave"><svg class="ui-icon"><use href="#i-check"/></svg>Сохранить</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
-/* ================= CONFIG ================= */
-const API_URL='https://script.google.com/macros/s/AKfycbzIHwTxKCJUpZUuqJd0-QHJ-tjTx3CCIDEyvzpZVCxYWkcYprY1Wp723J5jP9s_PA/exec';
-const ADMIN_EMAIL='maksimsuhomlinov37@gmail.com';
-const ADMIN_PASS='Suxmaks_12';
-
+/* ============================================================
+   NOVACLASS ADMIN PANEL
+   ============================================================ */
+const GAS_URL='https://script.google.com/macros/s/AKfycbxWdOtpczDkEmU0Nb1gEE8iIovoqTfJPYPTqoUKM__MtciH0xEAlFX3ROPmMnYhxSMd/exec';
+const SESSION_KEY='nc_admin_sess';
 const $=id=>document.getElementById(id);
-const DAY_FULL=['ВОСКРЕСЕНЬЕ','ПОНЕДЕЛЬНИК','ВТОРНИК','СРЕДА','ЧЕТВЕРГ','ПЯТНИЦА','СУББОТА'];
-const MONTH_FULL=['ЯНВАРЯ','ФЕВРАЛЯ','МАРТА','АПРЕЛЯ','МАЯ','ИЮНЯ','ИЮЛЯ','АВГУСТА','СЕНТЯБРЯ','ОКТЯБРЯ','НОЯБРЯ','ДЕКАБРЯ'];
+let ME=null, USERS=[], ONLINE={}, EDIT_EMAIL=null;
+let lastPing=0, refreshTimer=null, pingTimer=null, currentPage='dashboard';
+let SCHEDULE_DATA={}, GRADES_DATA=[];
 
-let DATA={users:[],schedule:[],homework:[],messages:[],banner:[],siteControl:{maintenance:false,primaryColor:'#16a34a'},complaints:[],appeals:[]};
-let currentTab='dash';
-let weekOffset=0;
-let activeDate=todayISO();
+const ROLE_LBL={'Ученик':'Ученик','Модератор':'Модератор','Учитель':'Учитель','Директор':'Директор','Администратор':'Админ','Создатель':'Создатель'};
+const ROLE_CLS={'Ученик':'student','Модератор':'moderator','Учитель':'teacher','Директор':'director','Администратор':'admin','Создатель':'creator'};
 
-/* ================= ДАТЫ ================= */
-function getMondayOf(date){
-  const d=new Date(date);d.setHours(0,0,0,0);
-  const day=d.getDay();
-  const diff=(day===0?-6:1-day);
-  d.setDate(d.getDate()+diff);
-  return d;
+/* ============= HELPERS ============= */
+function toast(msg,type){
+  const t=$('toast');
+  const ic=type==='ok'?'#i-check':type==='err'?'#i-x':'#i-monitor';
+  t.innerHTML='<svg class="ui-icon"><use href="'+ic+'"/></svg><span>'+msg+'</span>';
+  t.className='on'+(type?' '+type:'');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.className='',2400);
 }
-function weekDates(offset){
-  const mon=getMondayOf(new Date());
-  mon.setDate(mon.getDate()+offset*7);
-  const arr=[];for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);arr.push(d);}
-  return arr;
-}
-function todayISO(){const t=new Date();t.setHours(0,0,0,0);const y=t.getFullYear(),m=String(t.getMonth()+1).padStart(2,'0'),d=String(t.getDate()).padStart(2,'0');return `${y}-${m}-${d}`;}
-function isoOf(d){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${dd}`;}
-function dayNameFromISO(iso){const d=new Date(iso+'T00:00:00');return DAY_FULL[d.getDay()]||'';}
-function formatDateFull(iso){
-  const d=new Date(iso+'T00:00:00');
-  const day=String(d.getDate()).padStart(2,'0');
-  return `${day} ${MONTH_FULL[d.getMonth()]}`;
-}
+const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const isoD=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const today=()=>isoD(new Date());
+const MONG=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
 
-/* Универсальный фильтр — по дате ИЛИ по дню недели (для старых записей) */
-function recordMatchesDate(rec, iso){
-  if(rec.date && String(rec.date).length>=10){
-    return String(rec.date).slice(0,10) === iso;
-  }
-  if(rec.day){
-    const d=new Date(iso+'T00:00:00');
-    const name=DAY_FULL[d.getDay()]||'';
-    const recDay=String(rec.day).toUpperCase().trim();
-    /* поддержка и полного названия, и короткого (Пн/ПН/Понедельник) */
-    if(recDay===name) return true;
-    if(recDay===name.slice(0,2)) return true;
-    return false;
-  }
-  return false;
+function timeAgo(ms){
+  if(!ms||ms<0) return 'не заходил';
+  const now=new Date(),d=new Date(ms),s=Math.floor((now-d)/1000);
+  if(s<30) return 'только что';
+  if(s<60) return s+' сек назад';
+  const same=d.getDate()===now.getDate()&&d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+  const hh=pad(d.getHours()),mm=pad(d.getMinutes());
+  if(same){const m=Math.floor(s/60);if(m<60)return m+' мин назад';return 'в '+hh+':'+mm}
+  const yest=new Date(now);yest.setDate(yest.getDate()-1);
+  if(d.getDate()===yest.getDate()&&d.getMonth()===yest.getMonth()&&d.getFullYear()===yest.getFullYear())return 'вчера в '+hh+':'+mm;
+  return pad(d.getDate())+'.'+pad(d.getMonth()+1)+' в '+hh+':'+mm;
 }
 
-/* ================= API ================= */
-function apiGet(p){return fetch(API_URL+'?'+new URLSearchParams(p),{cache:'no-store'}).then(r=>r.json())}
-function apiPost(d){return fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(d)}).then(r=>r.json());}
-
-function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2200);}
-
-/* RIPPLE */
-document.addEventListener('click',e=>{const btn=e.target.closest('.btn,.ws-day,.ws-arrow,.bnav-btn');if(!btn)return;const r=btn.getBoundingClientRect();const s=document.createElement('span');const size=Math.max(r.width,r.height);s.className='ripple';s.style.width=s.style.height=size+'px';s.style.left=(e.clientX-r.left-size/2)+'px';s.style.top=(e.clientY-r.top-size/2)+'px';btn.appendChild(s);setTimeout(()=>s.remove(),600);});
-
-/* ================= THEME ================= */
-function setTheme(t){
-  document.body.classList.remove('dark','oled');
-  if(t==='dark')document.body.classList.add('dark');
-  if(t==='oled')document.body.classList.add('oled');
-  localStorage.setItem('nc_admin_theme',t);
-  document.querySelectorAll('.ts').forEach(x=>x.classList.toggle('active',x.dataset.th===t));
-  setTimeout(()=>{moveNavIndicator();moveBottomIndicator();},50);
-}
-function loadTheme(){setTheme(localStorage.getItem('nc_admin_theme')||'light');}
-
-/* ================= AUTH ================= */
-function login(){
-  const e=$('email').value.trim().toLowerCase();
-  const p=$('pass').value.trim();
-  if(e===ADMIN_EMAIL&&p===ADMIN_PASS){
-    sessionStorage.setItem('nc_admin','1');
-    $('auth').style.display='none';
-    $('app').style.display='block';
-    buildNav();
-    loadTheme();
-    init();
-  }else{
-    const err=$('authErr');
-    err.style.display='block';
-    err.textContent='Неверный логин или пароль';
-    err.style.animation='none';void err.offsetWidth;err.style.animation='subtlePop .3s ease';
-  }
-}
-function logout(){sessionStorage.removeItem('nc_admin');location.reload();}
-
-/* ================= NAV ================= */
-const NAV=[
-  {id:'dash',label:'Дашборд',icon:'dashboard'},
-  {id:'users',label:'Пользователи',icon:'group'},
-  {id:'messages',label:'СМС чата',icon:'chat_bubble'},
-  {id:'complaints',label:'Жалобы',icon:'flag'},
-  {id:'appeals',label:'Апелляции',icon:'gavel'},
-  {id:'sched',label:'Расписание',icon:'calendar_month'},
-  {id:'hw',label:'Домашка',icon:'menu_book'},
-  {id:'banner',label:'Баннер',icon:'wallpaper'}
-];
-function buildNav(){
-  const wrap=$('navWrap');
-  wrap.querySelectorAll('.nav-btn').forEach(x=>x.remove());
-  NAV.forEach(n=>{
-    const b=document.createElement('button');
-    b.className='nav-btn'+(currentTab===n.id?' active':'');
-    b.dataset.t=n.id;
-    b.innerHTML=`<span class="msr">${n.icon}</span><span>${n.label}</span>`;
-    b.onclick=()=>tab(n.id);
-    wrap.appendChild(b);
+/* ============= JSONP ============= */
+let seq=0;
+function jsonp(p){
+  return new Promise((res,rej)=>{
+    const n='cb'+(++seq)+Date.now();
+    let done=false,sc;
+    const cl=()=>{try{delete window[n]}catch(e){}if(sc&&sc.parentNode)sc.parentNode.removeChild(sc)};
+    window[n]=d=>{if(done)return;done=true;cl();res(d)};
+    const q=new URLSearchParams(Object.assign({},p,{callback:n})).toString();
+    sc=document.createElement('script');sc.src=GAS_URL+'?'+q+'&_='+Date.now();
+    sc.onerror=()=>{if(done)return;done=true;cl();rej(new Error('Нет связи'))};
+    document.head.appendChild(sc);
+    setTimeout(()=>{if(done)return;done=true;cl();rej(new Error('Таймаут'))},12000);
   });
-  const bn=$('bottomNav');
-  bn.querySelectorAll('.bnav-btn').forEach(x=>x.remove());
-  NAV.slice(0,5).forEach(n=>{
-    const b=document.createElement('button');
-    b.className='bnav-btn'+(currentTab===n.id?' active':'');
-    b.dataset.t=n.id;
-    b.innerHTML=`<span class="msr">${n.icon}</span>`;
-    b.onclick=()=>tab(n.id);
-    bn.appendChild(b);
-  });
-  requestAnimationFrame(()=>{moveNavIndicator();moveBottomIndicator();});
 }
-function moveNavIndicator(){
-  const a=document.querySelector('.nav-btn.active');
-  const ind=$('navIndicator');
-  if(!a||!ind)return;
-  ind.style.height=a.offsetHeight+'px';
-  ind.style.transform=`translateY(${a.offsetTop}px)`;
-  ind.classList.add('ready');
-}
-function moveBottomIndicator(){
-  const a=document.querySelector('.bnav-btn.active');
-  const ind=$('bnavIndicator');
-  if(!a||!ind)return;
-  const p=$('bottomNav').getBoundingClientRect();
-  const r=a.getBoundingClientRect();
-  ind.style.width=r.width+'px';
-  ind.style.transform=`translateX(${r.left-p.left-4}px)`;
-}
-window.addEventListener('resize',()=>{moveNavIndicator();moveBottomIndicator();});
+async function api(p){let l;for(let i=0;i<2;i++){try{return await jsonp(p)}catch(e){l=e;if(!i)await new Promise(r=>setTimeout(r,500))}}throw l}
 
-function tab(t){
-  currentTab=t;
-  document.querySelectorAll('.nav-btn,.bnav-btn').forEach(b=>b.classList.toggle('active',b.dataset.t===t));
-  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.id==='p-'+t));
-  moveNavIndicator();moveBottomIndicator();
-  if(t==='dash')renderDash();
-  if(t==='users')renderUsers();
-  if(t==='messages')renderMessages();
-  if(t==='complaints')renderComplaints();
-  if(t==='appeals')renderAppeals();
-  if(t==='sched')renderSched();
-  if(t==='hw')renderHw();
-  if(t==='banner')renderBanner();
+/* ============= SESSION ============= */
+function getSession(){try{const r=localStorage.getItem(SESSION_KEY);if(!r)return null;const d=JSON.parse(r);if(!d||Date.now()>=d.expiresAt){localStorage.removeItem(SESSION_KEY);return null}return d.user}catch(e){return null}}
+function saveSession(u){try{localStorage.setItem(SESSION_KEY,JSON.stringify({user:u,expiresAt:Date.now()+30*24*3600*1000}))}catch(e){}}
+function clearSession(){try{localStorage.removeItem(SESSION_KEY)}catch(e){}}
+
+/* ============= DATA LOADING ============= */
+async function loadUsers(){
+  try{const r=await api({action:'users_list',requester:ME.email});if(r&&r.status==='ok')USERS=r.users||[]}catch(e){}
+}
+async function loadOnline(){
+  try{const r=await api({action:'online_list',requester:ME.email});if(!r||r.status!=='ok')return;
+    ONLINE={};(r.users||[]).forEach(u=>{ONLINE[String(u.email).toLowerCase()]={status:u.status,lastSeen:u.lastSeen,diff:u.diff}});
+  }catch(e){}
+}
+async function pingServer(){
+  const t0=Date.now();
+  try{const r=await api({action:'ping'});lastPing=Date.now()-t0;return r&&r.status==='ok'}catch(e){lastPing=-1;return false}
+}
+async function loadScheduleForDate(d){
+  if(SCHEDULE_DATA[d]) return SCHEDULE_DATA[d];
+  try{const r=await api({action:'get_sched',requester:ME.email,date:d});
+    if(r&&r.status==='ok'){SCHEDULE_DATA[d]=r.lessons||[];return SCHEDULE_DATA[d]}
+  }catch(e){}
+  return [];
+}
+async function loadGrades(){
+  try{const r=await api({action:'grades_get',requester:ME.email});if(r&&r.status==='ok')GRADES_DATA=r.grades||[]}catch(e){}
 }
 
-/* ================= ЗАГРУЗКА (реальная, без обмана) ================= */
-async function init(){
-  $('apiDot').className='dot';
-  $('loader').style.display='flex';
-  $('loader').classList.remove('hide');
-  $('loaderSub').textContent='Загрузка данных…';
-
-  /* Показываем кеш пока грузится — чтобы не было пусто */
-  try{
-    const cached=JSON.parse(localStorage.getItem('nc_admin_cache')||'null');
-    if(cached&&cached.users){DATA=cached;}
-  }catch{}
-
-  try{
-    const d=await apiGet({action:'getAllData',t:Date.now()});
-    if(d.status==='ok'){
-      DATA.users=d.users||[];
-      DATA.schedule=d.schedule||[];
-      DATA.homework=d.homework||[];
-      DATA.messages=d.messages||[];
-      DATA.banner=d.banner||[];
-      DATA.complaints=d.complaints||[];
-      DATA.appeals=d.appeals||[];
-      DATA.siteControl=d.siteControl||{maintenance:false,primaryColor:'#16a34a'};
-      $('apiDot').className='dot ok';
-      try{localStorage.setItem('nc_admin_cache',JSON.stringify(DATA));}catch{}
-    }else{
-      $('apiDot').className='dot err';
-      toast('Ошибка: '+(d.message||'нет ответа'));
-    }
-  }catch(e){
-    console.error(e);
-    $('apiDot').className='dot err';
-    if(DATA.users.length===0) toast('Не удалось получить данные');
-    else toast('Показаны кешированные данные');
-  }finally{
-    $('loader').classList.add('hide');
-    setTimeout(()=>{$('loader').style.display='none';},350);
-    tab(currentTab);
-  }
+/* ============= STATUS ============= */
+function getStatus(email){
+  const rec=ONLINE[String(email).toLowerCase()];
+  if(!rec) return {cls:'unknown',lbl:'оффлайн'};
+  if(rec.status==='online') return {cls:'online',lbl:'в сети'};
+  if(!rec.lastSeen) return {cls:'unknown',lbl:'оффлайн'};
+  return {cls:rec.status==='recent'?'recent':'offline',lbl:timeAgo(rec.diff)};
 }
 
-/* ================= DASH ================= */
-function renderDash(){
-  $('p-dash').innerHTML=`
-    <div class="card hero">
-      <div style="font-size:22px;font-weight:700">Панель управления NovaClass</div>
-      <div style="opacity:.9;font-size:13px;margin-top:4px">Выберите раздел — всё в меню слева</div>
-    </div>
-    <div class="card">
-      <div style="font-weight:700;font-size:14px;margin-bottom:12px">Быстрые действия</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px">
-        ${NAV.slice(1).map(n=>`<button class="btn" style="justify-content:flex-start;padding:12px" onclick="tab('${n.id}')"><span class="msr" style="color:var(--primary)">${n.icon}</span> ${n.label}</button>`).join('')}
+/* ============= NAV ============= */
+const TITLES={
+  dashboard:['Панель управления','Обзор системы NovaClass'],
+  server:['Состояние сервера','Мониторинг в реальном времени'],
+  users:['Пользователи','Управление аккаунтами'],
+  schedule:['Расписание','Уроки и домашние задания'],
+  grades:['Оценки','Аналитика успеваемости'],
+  reports:['Отчёты','Статистика и аналитика'],
+  tree:['Конкурс ёлочки','Заявки и победители'],
+  settings:['Настройки','Параметры системы']
+};
+
+$('menu').onclick=e=>{
+  const b=e.target.closest('.mi');if(!b)return;
+  navigate(b.dataset.page);
+  if(window.innerWidth<=900) closeSidebar();
+};
+function navigate(p){
+  currentPage=p;
+  document.querySelectorAll('.mi').forEach(x=>x.classList.toggle('active',x.dataset.page===p));
+  $('pageTitle').textContent=TITLES[p][0];
+  $('pageSub').textContent=TITLES[p][1];
+  renderPage(p);
+}
+$('burgerBtn').onclick=()=>{$('sidebar').classList.toggle('open');$('backdrop').style.display=$('sidebar').classList.contains('open')?'block':'none'};
+$('backdrop').onclick=closeSidebar;
+function closeSidebar(){$('sidebar').classList.remove('open');$('backdrop').style.display='none'}
+
+/* ============= RENDER PAGE ============= */
+async function renderPage(p){
+  const area=$('pageArea');
+  area.innerHTML='<div style="padding:60px 20px;text-align:center;color:var(--muted)">Загрузка...</div>';
+  let html='';
+  if(p==='dashboard') html=await pgDashboard();
+  if(p==='server') html=pgServer();
+  if(p==='users') html=pgUsers();
+  if(p==='schedule') html=await pgSchedule();
+  if(p==='grades') html=await pgGrades();
+  if(p==='reports') html=pgReports();
+  if(p==='tree') html=await pgTree();
+  if(p==='settings') html=pgSettings();
+  area.innerHTML='<div class="page">'+html+'</div>';
+  bindPageEvents(p);
+}
+
+/* ============= PAGE: DASHBOARD ============= */
+async function pgDashboard(){
+  let online=0,recent=0,offline=0;
+  USERS.forEach(u=>{const st=getStatus(u.email);if(st.cls==='online')online++;else if(st.cls==='recent')recent++;else offline++});
+  const serverOk=lastPing>=0;
+
+  const recentUsers=USERS.map(u=>({...u,_st:getStatus(u.email)}))
+    .sort((a,b)=>{const r={online:0,recent:1,offline:2,unknown:3};return (r[a._st.cls]||3)-(r[b._st.cls]||3)})
+    .slice(0,5);
+
+  const html=`
+    <div class="server ${serverOk?'':(lastPing===-1?'down':'slow')}">
+      <div class="server-icon"><svg class="ui-icon"><use href="#i-monitor"/></svg></div>
+      <div class="server-info">
+        <div class="server-title">${serverOk?'Сервер работает стабильно':'Сервер недоступен'}</div>
+        <div class="server-sub">
+          <span><svg class="ui-icon"><use href="#i-check"/></svg>API v8</span>
+          <span><svg class="ui-icon"><use href="#i-clock"/></svg>Отклик: <b>${lastPing>=0?lastPing+' мс':'—'}</b></span>
+          <span><svg class="ui-icon"><use href="#i-refresh"/></svg>${new Date().toLocaleTimeString('ru-RU')}</span>
+        </div>
+      </div>
+      <div class="server-metrics">
+        <div><div class="server-metric-val">${lastPing>=0?lastPing:'—'}</div><div class="server-metric-lbl">ms</div></div>
+        <div><div class="server-metric-val">100%</div><div class="server-metric-lbl">uptime</div></div>
       </div>
     </div>
-    <div class="card">
-      <div style="font-weight:700;font-size:14px">Статус</div>
-      <div style="font-size:12px;color:var(--muted);margin-top:6px;line-height:1.8">
-        Бэкенд: <b style="color:var(--primary)">Google Apps Script</b><br>
-        База: <b>Google Таблицы</b><br>
-        Режим: <b>${DATA.siteControl.maintenance?'Техобслуживание':'Работа'}</b>
+
+    <div class="stitle"><svg class="ui-icon"><use href="#i-zap"/></svg>Ключевые метрики<span class="line"></span></div>
+    <div class="stats">
+      <div class="stat" style="--i:0">
+        <div class="stat-top"><div class="stat-icon green"><svg class="ui-icon"><use href="#i-signal"/></svg></div><div class="stat-lbl">Сейчас онлайн</div></div>
+        <div class="stat-val">${online}</div>
+        <div class="stat-sub green">${online>0?'активны прямо сейчас':'никого нет'}</div>
       </div>
-    </div>`;
+      <div class="stat" style="--i:1">
+        <div class="stat-top"><div class="stat-icon orange"><svg class="ui-icon"><use href="#i-clock"/></svg></div><div class="stat-lbl">Недавно</div></div>
+        <div class="stat-val">${recent}</div>
+        <div class="stat-sub orange">были до 1 часа назад</div>
+      </div>
+      <div class="stat" style="--i:2">
+        <div class="stat-top"><div class="stat-icon blue"><svg class="ui-icon"><use href="#i-users"/></svg></div><div class="stat-lbl">Всего юзеров</div></div>
+        <div class="stat-val">${USERS.length}</div>
+        <div class="stat-sub">в базе NovaClass</div>
+      </div>
+      <div class="stat" style="--i:3">
+        <div class="stat-top"><div class="stat-icon purple"><svg class="ui-icon"><use href="#i-database"/></svg></div><div class="stat-lbl">Оффлайн</div></div>
+        <div class="stat-val">${offline}</div>
+        <div class="stat-sub">не в сети</div>
+      </div>
+    </div>
+
+    <div class="stitle"><svg class="ui-icon"><use href="#i-trending"/></svg>Активность за 12 часов<span class="line"></span></div>
+    <div class="chart-card">
+      <div class="chart-head">
+        <div class="chart-title"><svg class="ui-icon"><use href="#i-chart"/></svg>Онлайн по часам</div>
+      </div>
+      <div class="chart" id="chart"></div>
+      <div class="chart-x" id="chartX"></div>
+    </div>
+
+    <div class="stitle"><svg class="ui-icon"><use href="#i-users"/></svg>Кто в сети<span class="line"></span></div>
+    <div class="row-list">
+      ${recentUsers.length?recentUsers.map((u,i)=>{
+        const L=(u.name||u.email||'?')[0].toUpperCase();
+        const st=u._st;
+        const cls=st.cls==='online'?'green':st.cls==='recent'?'orange':'blue';
+        return `<div class="row-item" style="--i:${i}">
+          <div class="row-icon" style="background:var(--${cls}-light);color:var(--${cls})"><svg class="ui-icon"><use href="#i-account"/></svg></div>
+          <div class="row-info">
+            <div class="row-title">${esc(u.name||'—')}</div>
+            <div class="row-sub">
+              <span><svg class="ui-icon"><use href="#i-email"/></svg>${esc(u.email||'')}</span>
+              <span><svg class="ui-icon"><use href="#i-clock"/></svg>${esc(st.lbl)}</span>
+            </div>
+          </div>
+          <span class="badge badge-${ROLE_CLS[u.role]||'student'}">${esc(ROLE_LBL[u.role]||u.role||'Ученик')}</span>
+        </div>`;
+      }).join(''):'<div class="empty"><svg class="ui-icon"><use href="#i-users"/></svg><h3>Нет пользователей</h3></div>'}
+    </div>
+  `;
+  setTimeout(drawChart,50);
+  return html;
 }
 
-/* ================= USERS ================= */
-function renderUsers(){
-  $('p-users').innerHTML=`
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-        <div style="font-weight:700">Пользователи</div>
-        <input id="uSearch" class="input" placeholder="Поиск по имени или email" style="max-width:240px;margin:0" oninput="renderUsersList()">
-      </div>
-      <div id="uList" style="margin-top:14px"></div>
-    </div>`;
-  renderUsersList();
-}
-function renderUsersList(){
-  const q=($('uSearch')?.value||'').toLowerCase();
-  const list=DATA.users.filter(u=>(u.name+' '+u.email).toLowerCase().includes(q));
-  $('uList').innerHTML=list.length?list.map(u=>`
-    <div class="row">
-      <div style="min-width:0">
-        <b>${u.name}</b>
-        <div style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${u.email} • ${u.id} • ${u.role}</div>
-      </div>
-      <div style="display:flex;gap:6px;flex-shrink:0">
-        <select class="input" style="width:110px;padding:6px 8px;margin:0" onchange="changeRole('${u.id}',this.value)">
-          <option ${u.role==='ученик'?'selected':''}>ученик</option>
-          <option ${u.role==='учитель'?'selected':''}>учитель</option>
-          <option ${u.role==='админ'?'selected':''}>админ</option>
-        </select>
-        <button class="btn danger" onclick="delUser('${u.id}')"><span class="msr" style="font-size:16px">delete</span></button>
-      </div>
-    </div>`).join(''):'<div class="empty">Нет пользователей</div>';
-}
-async function changeRole(id,role){
-  const u=DATA.users.find(x=>x.id==id);if(!u)return;
-  await apiPost({action:'update_user',id,role,name:u.name,email:u.email});
-  u.role=role;toast('Роль изменена');
-}
-async function delUser(id){
-  if(!confirm('Удалить пользователя?'))return;
-  await apiPost({action:'delete_user',id});
-  DATA.users=DATA.users.filter(x=>x.id!=id);
-  renderUsers();toast('Удалено');
-}
-
-/* ================= MESSAGES ================= */
-function renderMessages(){
-  $('p-messages').innerHTML=`
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div style="font-weight:700">Все СМС чата</div>
-        <button class="btn danger" onclick="clearChat()"><span class="msr" style="font-size:16px">delete_sweep</span> Очистить</button>
-      </div>
-      <div class="items-fade" style="margin-top:14px">
-        ${DATA.messages.slice().reverse().map(m=>`
-          <div class="row">
-            <div style="flex:1;min-width:0">
-              <b>${m.user||'—'}</b> <span style="font-size:11px;color:var(--muted)">${m.email||''} • ${m.createdAt?new Date(m.createdAt).toLocaleString():''}</span>
-              <div style="margin-top:6px;background:var(--bg-soft);padding:9px;border-radius:8px;font-size:13px;white-space:pre-wrap;word-wrap:break-word">${m.text||''}</div>
-              <div style="font-size:10px;color:var(--muted);margin-top:4px">ID: ${m.id}</div>
-            </div>
-            <button class="btn danger" onclick="deleteMsg('${m.id}')"><span class="msr" style="font-size:16px">delete</span></button>
-          </div>`).join('')||'<div class="empty">Сообщений нет</div>'}
-      </div>
-    </div>`;
-}
-async function deleteMsg(id){
-  if(!confirm('Удалить СМС?'))return;
-  await apiPost({action:'delete_message',id});
-  DATA.messages=DATA.messages.filter(m=>m.id!=id);
-  renderMessages();toast('Удалено');
-}
-async function clearChat(){
-  if(!confirm('Очистить весь чат?'))return;
-  await apiPost({action:'clear_chat'});
-  DATA.messages=[];renderMessages();toast('Чат очищен');
-}
-
-/* ================= COMPLAINTS ================= */
-function renderComplaints(){
-  $('p-complaints').innerHTML=`
-    <div class="card">
-      <div style="font-weight:700">Жалобы на СМС</div>
-      <div class="items-fade" style="margin-top:14px">
-        ${DATA.complaints.slice().reverse().map(c=>{
-          const orig=DATA.messages.find(m=>m.id==c.targetId);
-          const cls=c.status==='new'?'warn':c.status==='done'?'ok':'danger';
-          return `<div class="row ${cls}">
-            <div style="flex:1;min-width:0">
-              <div><span class="badge ${c.status==='done'?'done':c.status==='ignored'?'ignored':''}">${c.status}</span> <b>${c.type||'жалоба'}</b> от ${c.from||'—'} <span style="font-size:11px;color:var(--muted)">• ${c.createdAt?new Date(c.createdAt).toLocaleString():''}</span></div>
-              <div style="margin-top:6px;font-size:13px"><b>Текст:</b> ${c.text||''}</div>
-              ${orig?`<div style="margin-top:6px;background:var(--bg-soft);padding:8px;border-radius:8px;font-size:12px"><b>Оригинал:</b> ${orig.text}<br><span style="font-size:11px;color:var(--muted)">${orig.user} (${orig.email})</span></div>`:`<div style="font-size:11px;color:var(--danger);margin-top:4px">Оригинал не найден ID: ${c.targetId}</div>`}
-            </div>
-            <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">
-              <button class="btn primary" onclick="updateComp('${c.id}','done')">Решено</button>
-              <button class="btn" onclick="updateComp('${c.id}','ignored')">Игнор</button>
-              <button class="btn danger" onclick="deleteComp('${c.id}')">Удалить</button>
-              ${orig?`<button class="btn danger" onclick="deleteMsg('${orig.id}')">Уд. СМС</button>`:''}
-            </div>
-          </div>`;
-        }).join('')||'<div class="empty">Жалоб нет</div>'}
-      </div>
-    </div>`;
-}
-async function updateComp(id,status){
-  await apiPost({action:'update_complaint_status',id,status});
-  const c=DATA.complaints.find(x=>x.id==id);if(c)c.status=status;
-  renderComplaints();toast('Обновлено');
-}
-async function deleteComp(id){
-  await apiPost({action:'delete_complaint',id});
-  DATA.complaints=DATA.complaints.filter(x=>x.id!=id);
-  renderComplaints();toast('Удалено');
-}
-
-/* ================= APPEALS ================= */
-function renderAppeals(){
-  $('p-appeals').innerHTML=`
-    <div class="card">
-      <div style="font-weight:700">Апелляции / Баги</div>
-      <div class="items-fade" style="margin-top:14px">
-        ${DATA.appeals.slice().reverse().map(a=>{
-          const cls=a.status==='new'?'warn':'ok';
-          return `<div class="row ${cls}">
-            <div style="flex:1;min-width:0">
-              <div><span class="badge ${a.status==='done'?'done':''}">${a.status}</span> <b>${a.type||'апелляция'}</b> от ${a.from||'—'} <span style="font-size:11px;color:var(--muted)">• ${a.createdAt?new Date(a.createdAt).toLocaleString():''}</span></div>
-              <div style="margin-top:6px;background:var(--bg-soft);padding:9px;border-radius:8px;font-size:13px;white-space:pre-wrap">${a.text||''}</div>
-              ${a.adminNote?`<div style="font-size:12px;color:var(--muted);margin-top:4px"><b>Ответ:</b> ${a.adminNote}</div>`:''}
-            </div>
-            <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">
-              <button class="btn primary" onclick="updateAppeal('${a.id}','done')">Решено</button>
-              <button class="btn" onclick="answerAppeal('${a.id}')">Ответить</button>
-              <button class="btn danger" onclick="deleteAppeal('${a.id}')">Удалить</button>
-            </div>
-          </div>`;
-        }).join('')||'<div class="empty">Апелляций нет</div>'}
-      </div>
-    </div>`;
-}
-async function updateAppeal(id,status,note){
-  await apiPost({action:'update_appeal_status',id,status,adminNote:note||''});
-  const a=DATA.appeals.find(x=>x.id==id);
-  if(a){a.status=status;if(note)a.adminNote=note;}
-  renderAppeals();toast('Обновлено');
-}
-async function deleteAppeal(id){
-  await apiPost({action:'delete_appeal',id});
-  DATA.appeals=DATA.appeals.filter(x=>x.id!=id);
-  renderAppeals();toast('Удалено');
-}
-function answerAppeal(id){
-  const note=prompt('Ответ:');
-  if(note!==null)updateAppeal(id,'done',note);
-}
-
-/* ================= ПОЛОСА НЕДЕЛИ ================= */
-function weekStripHTML(callback){
-  const week=weekDates(weekOffset);
-  const daysHtml=week.map(d=>{
-    const iso=isoOf(d);
-    const name=dayNameFromISO(iso);
-    return `<button class="ws-day ${activeDate===iso?'active':''}" onclick="activeDate='${iso}';${callback}()" title="${name}">${name}</button>`;
+function drawChart(){
+  const chart=$('chart'),chartX=$('chartX');
+  if(!chart) return;
+  const now=new Date();
+  const buckets=[];
+  for(let i=11;i>=0;i--){
+    const h=new Date(now);h.setHours(now.getHours()-i,0,0,0);
+    const hEnd=new Date(h);hEnd.setHours(h.getHours()+1);
+    let count=0;
+    Object.values(ONLINE).forEach(rec=>{
+      if(!rec.lastSeen) return;
+      if(rec.lastSeen>=h.getTime() && rec.lastSeen<hEnd.getTime()) count++;
+    });
+    if(i===0 && count===0){Object.values(ONLINE).forEach(r=>{if(r.status==='online')count++})}
+    buckets.push({h,count});
+  }
+  const max=Math.max(1,...buckets.map(b=>b.count));
+  chart.innerHTML=buckets.map(b=>{
+    const pct=Math.max(6,(b.count/max)*100);
+    return `<div class="bar" style="height:${pct}%" data-v="${b.count}"></div>`;
   }).join('');
+  chartX.innerHTML=buckets.map(b=>'<span>'+pad(b.h.getHours())+'</span>').join('');
+}
+
+/* ============= PAGE: SERVER ============= */
+function pgServer(){
+  const ok=lastPing>=0;
   return `
-    <div class="week-strip">
-      <button class="ws-arrow" onclick="weekOffset-=1;${callback}()"><span class="msr">chevron_left</span></button>
-      <div class="ws-days">${daysHtml}</div>
-      <button class="ws-arrow" onclick="weekOffset+=1;${callback}()"><span class="msr">chevron_right</span></button>
-    </div>
-    <div class="week-date">${formatDateFull(activeDate)}</div>`;
-}
-
-/* ================= SCHEDULE ================= */
-function renderSched(){
-  const filtered=DATA.schedule.filter(s=>recordMatchesDate(s,activeDate));
-  $('p-sched').innerHTML=`
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <div style="font-weight:700">Расписание • ${dayNameFromISO(activeDate)}</div>
-        <button class="btn primary" onclick="openSched()"><span class="msr" style="font-size:16px">add</span> Урок</button>
+    <div class="server ${ok?'':(lastPing===-1?'down':'slow')}">
+      <div class="server-icon"><svg class="ui-icon"><use href="#i-signal"/></svg></div>
+      <div class="server-info">
+        <div class="server-title">${ok?'Все системы работают':'Проблемы с соединением'}</div>
+        <div class="server-sub">
+          <span>API endpoint активен</span>
+          <span>Проверка: ${new Date().toLocaleTimeString('ru-RU')}</span>
+        </div>
       </div>
-      ${weekStripHTML('renderSched')}
-      <div class="items-fade">
-        ${filtered.map(s=>`
-          <div class="row">
-            <div>
-              <div style="font-size:10px;color:var(--muted)">${s.time||''} ${s.date?'• '+s.date:''}</div>
-              <div style="font-weight:700;font-size:13px">${s.subject||''}</div>
-              <div style="font-size:10px;color:var(--muted)">${s.teacher||''} ${s.room?'• '+s.room:''}</div>
-            </div>
-            <div style="display:flex;gap:6px">
-              <button class="btn" onclick="openSched('${s.id}')"><span class="msr" style="font-size:16px">edit</span></button>
-              <button class="btn danger" onclick="delSched('${s.id}')"><span class="msr" style="font-size:16px">delete</span></button>
-            </div>
-          </div>`).join('')||'<div class="empty">Нет уроков на этот день</div>'}
-      </div>
-    </div>`;
-}
-function openSched(id){
-  const s=id?DATA.schedule.find(x=>x.id==id):null;
-  showModal(`
-    <h3>${s?'Редактировать урок':'Новый урок'}</h3>
-    <input id="f_date" type="date" class="input" value="${s?.date||activeDate}">
-    <input id="f_time" class="input" placeholder="08:00 — 08:45" value="${s?.time||''}">
-    <input id="f_subj" class="input" placeholder="Предмет" value="${s?.subject||''}">
-    <input id="f_teacher" class="input" placeholder="Учитель" value="${s?.teacher||''}">
-    <input id="f_room" class="input" placeholder="Кабинет" value="${s?.room||''}">
-    <div style="display:flex;gap:8px;margin-top:6px">
-      <button class="btn" style="flex:1" onclick="closeModal()">Отмена</button>
-      <button class="btn primary" style="flex:1" onclick="saveSched('${s?.id||''}')">Сохранить</button>
-    </div>`);
-}
-async function saveSched(id){
-  const date=$('f_date').value;
-  const o={
-    id:id||Date.now().toString(),
-    date,day:dayNameFromISO(date),
-    time:$('f_time').value.trim(),
-    subject:$('f_subj').value.trim(),
-    teacher:$('f_teacher').value.trim(),
-    room:$('f_room').value.trim()
-  };
-  if(!o.date||!o.subject||!o.time){toast('Дата, время, предмет обязательны');return;}
-  const r=await apiPost({action:'save_schedule',schedule:o});
-  if(r.status!=='ok'){toast('Ошибка: '+(r.message||''));return;}
-  const i=DATA.schedule.findIndex(x=>x.id===o.id);
-  if(i>=0)DATA.schedule[i]=o;else DATA.schedule.push(o);
-  closeModal();activeDate=date;renderSched();toast('Сохранено');
-}
-async function delSched(id){
-  if(!confirm('Удалить урок?'))return;
-  await apiPost({action:'delete_schedule',id});
-  DATA.schedule=DATA.schedule.filter(x=>x.id!=id);
-  renderSched();toast('Удалено');
-}
-
-/* ================= HOMEWORK ================= */
-function renderHw(){
-  const filtered=DATA.homework.filter(h=>recordMatchesDate(h,activeDate));
-  $('p-hw').innerHTML=`
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <div style="font-weight:700">Домашка • ${dayNameFromISO(activeDate)}</div>
-        <button class="btn primary" onclick="openHw()"><span class="msr" style="font-size:16px">add</span> Задание</button>
-      </div>
-      ${weekStripHTML('renderHw')}
-      <div class="items-fade">
-        ${filtered.map(h=>`
-          <div class="row">
-            <div style="min-width:0">
-              <b>${h.subject||''}</b>
-              <div style="font-size:13px;margin-top:3px">${h.task||''}</div>
-              <div style="font-size:11px;color:var(--muted);margin-top:3px">${h.deadline||''} ${h.date?'• '+h.date:''}</div>
-            </div>
-            <div style="display:flex;gap:6px">
-              <button class="btn" onclick="openHw('${h.id}')"><span class="msr" style="font-size:16px">edit</span></button>
-              <button class="btn danger" onclick="delHw('${h.id}')"><span class="msr" style="font-size:16px">delete</span></button>
-            </div>
-          </div>`).join('')||'<div class="empty">Нет заданий</div>'}
-      </div>
-    </div>`;
-}
-function openHw(id){
-  const h=id?DATA.homework.find(x=>x.id==id):null;
-  showModal(`
-    <h3>${h?'Редактировать ДЗ':'Новое ДЗ'}</h3>
-    <input id="h_date" type="date" class="input" value="${h?.date||activeDate}">
-    <input id="h_subj" class="input" placeholder="Предмет" value="${h?.subject||''}">
-    <textarea id="h_task" class="input" placeholder="Задание" style="min-height:80px">${h?.task||''}</textarea>
-    <input id="h_dead" class="input" placeholder="Дедлайн" value="${h?.deadline||''}">
-    <div style="display:flex;gap:8px;margin-top:6px">
-      <button class="btn" style="flex:1" onclick="closeModal()">Отмена</button>
-      <button class="btn primary" style="flex:1" onclick="saveHw('${h?.id||''}')">Сохранить</button>
-    </div>`);
-}
-async function saveHw(id){
-  const date=$('h_date').value;
-  const o={
-    id:id||Date.now().toString(),
-    date,day:dayNameFromISO(date),
-    subject:$('h_subj').value.trim(),
-    task:$('h_task').value.trim(),
-    deadline:$('h_dead').value.trim()
-  };
-  if(!o.date||!o.subject||!o.task){toast('Дата, предмет, задание обязательны');return;}
-  const r=await apiPost({action:'save_homework',homework:o});
-  if(r.status!=='ok'){toast('Ошибка: '+(r.message||''));return;}
-  const i=DATA.homework.findIndex(x=>x.id===o.id);
-  if(i>=0)DATA.homework[i]=o;else DATA.homework.push(o);
-  closeModal();activeDate=date;renderHw();toast('Сохранено');
-}
-async function delHw(id){
-  if(!confirm('Удалить задание?'))return;
-  await apiPost({action:'delete_homework',id});
-  DATA.homework=DATA.homework.filter(x=>x.id!=id);
-  renderHw();toast('Удалено');
-}
-
-/* ================= BANNER ================= */
-function renderBanner(){
-  const b=(DATA.banner&&DATA.banner[0])||{title:'NovaClass',sub:'Добро пожаловать',btnText:'Начать',bgFrom:'#16a34a',bgTo:'#22c55e',enabled:true};
-  const sc=DATA.siteControl||{};
-  $('p-banner').innerHTML=`
-    <div class="card hero" style="background:linear-gradient(135deg,${b.bgFrom||'#16a34a'},${b.bgTo||'#22c55e'})">
-      <div style="font-size:22px;font-weight:700">${b.title||''}</div>
-      <div style="opacity:.9;font-size:13px;margin-top:4px">${b.sub||''}</div>
-    </div>
-    <div class="card">
-      <div style="font-weight:700;margin-bottom:12px">Баннер</div>
-      <input id="b_title" class="input" placeholder="Заголовок" value="${b.title||''}">
-      <input id="b_sub" class="input" placeholder="Подзаголовок" value="${b.sub||''}">
-      <input id="b_btn" class="input" placeholder="Кнопка" value="${b.btnText||''}">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:9px">
-        <input id="b_c1" type="color" class="input" value="${b.bgFrom||'#16a34a'}" style="padding:4px;height:44px">
-        <input id="b_c2" type="color" class="input" value="${b.bgTo||'#22c55e'}" style="padding:4px;height:44px">
-      </div>
-      <label style="display:flex;gap:8px;align-items:center;font-size:13px;margin-bottom:10px">
-        <input id="b_en" type="checkbox" ${b.enabled!==false?'checked':''}> Показывать баннер
-      </label>
-      <button class="btn primary" style="width:100%;justify-content:center" onclick="saveBanner()">
-        <span class="msr" style="font-size:16px">save</span> Сохранить баннер
-      </button>
-    </div>
-    <div class="card">
-      <div style="font-weight:700;margin-bottom:12px">Управление сайтом</div>
-      <label style="display:flex;gap:8px;align-items:center;font-size:13px;margin-bottom:12px">
-        <input id="maint" type="checkbox" ${sc.maintenance?'checked':''} onchange="toggleMaint()"> Техобслуживание
-      </label>
-      <div style="display:flex;gap:8px;align-items:center">
-        <input id="mainColor" type="color" value="${sc.primaryColor||'#16a34a'}" class="input" style="width:64px;padding:4px;height:44px;margin:0">
-        <button class="btn primary" onclick="saveColor()">Сохранить цвет</button>
+      <div class="server-metrics">
+        <div><div class="server-metric-val">${lastPing>=0?lastPing:'—'}</div><div class="server-metric-lbl">ms</div></div>
       </div>
     </div>
-    <div class="card">
-      <div style="font-weight:700;margin-bottom:12px">Рассылка всем</div>
-      <textarea id="bc_text" class="input" placeholder="Сообщение всем пользователям..."></textarea>
-      <button class="btn primary" style="width:100%;justify-content:center" onclick="broadcast()">
-        <span class="msr" style="font-size:16px">campaign</span> Отправить всем
-      </button>
-    </div>`;
-}
-async function saveBanner(){
-  const o={title:$('b_title').value,sub:$('b_sub').value,btnText:$('b_btn').value,bgFrom:$('b_c1').value,bgTo:$('b_c2').value,enabled:$('b_en').checked};
-  const r=await apiPost({action:'save_banner',banner:o});
-  if(r.status==='ok'){DATA.banner=[o];renderBanner();toast('Сохранено');}
-  else toast('Ошибка: '+(r.message||''));
-}
-async function toggleMaint(){
-  const v=$('maint').checked;
-  await apiPost({action:'save_settings',settings:{maintenance:v}});
-  DATA.siteControl.maintenance=v;
-  toast(v?'Техобслуживание включено':'Выключено');
-}
-async function saveColor(){
-  const c=$('mainColor').value;
-  await apiPost({action:'save_settings',settings:{primaryColor:c}});
-  DATA.siteControl.primaryColor=c;
-  document.documentElement.style.setProperty('--primary',c);
-  toast('Цвет сохранён');
-}
-async function broadcast(){
-  const t=$('bc_text').value.trim();
-  if(!t){toast('Введите текст');return;}
-  if(!confirm('Отправить всем?'))return;
-  const r=await apiPost({action:'broadcast_message',text:t});
-  if(r.status==='ok'){$('bc_text').value='';toast('Отправлено');}
-  else toast('Ошибка: '+(r.message||''));
+
+    <div class="stitle"><svg class="ui-icon"><use href="#i-monitor"/></svg>Метрики сервера<span class="line"></span></div>
+    <div class="stats">
+      <div class="stat" style="--i:0"><div class="stat-top"><div class="stat-icon green"><svg class="ui-icon"><use href="#i-check"/></svg></div><div class="stat-lbl">Статус</div></div><div class="stat-val" style="font-size:22px">${ok?'Online':'Offline'}</div><div class="stat-sub green">Работает</div></div>
+      <div class="stat" style="--i:1"><div class="stat-top"><div class="stat-icon blue"><svg class="ui-icon"><use href="#i-clock"/></svg></div><div class="stat-lbl">Отклик</div></div><div class="stat-val">${lastPing>=0?lastPing:'—'}</div><div class="stat-sub">миллисекунд</div></div>
+      <div class="stat" style="--i:2"><div class="stat-top"><div class="stat-icon purple"><svg class="ui-icon"><use href="#i-database"/></svg></div><div class="stat-lbl">Хранилище</div></div><div class="stat-val">${USERS.length}</div><div class="stat-sub">записей в users</div></div>
+      <div class="stat" style="--i:3"><div class="stat-top"><div class="stat-icon cyan"><svg class="ui-icon"><use href="#i-users"/></svg></div><div class="stat-lbl">Сессий</div></div><div class="stat-val">${Object.keys(ONLINE).length}</div><div class="stat-sub">активных сессий</div></div>
+    </div>
+
+    <div class="stitle"><svg class="ui-icon"><use href="#i-check"/></svg>Доступные эндпоинты<span class="line"></span></div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Действие</th><th>Описание</th><th>Статус</th></tr></thead>
+        <tbody>
+          <tr><td><b>ping</b></td><td>Проверка связи</td><td><span class="badge badge-online">OK</span></td></tr>
+          <tr><td><b>login / register</b></td><td>Аутентификация</td><td><span class="badge badge-online">OK</span></td></tr>
+          <tr><td><b>users_list</b></td><td>Список пользователей</td><td><span class="badge badge-online">OK</span></td></tr>
+          <tr><td><b>set_role</b></td><td>Смена роли</td><td><span class="badge badge-online">OK</span></td></tr>
+          <tr><td><b>delete_user</b></td><td>Удаление</td><td><span class="badge badge-online">OK</span></td></tr>
+          <tr><td><b>get_sched / save_sched</b></td><td>Расписание</td><td><span class="badge badge-online">OK</span></td></tr>
+          <tr><td><b>grades_get / set</b></td><td>Оценки</td><td><span class="badge badge-online">OK</span></td></tr>
+          <tr><td><b>tree_get / save / admin</b></td><td>Конкурс ёлочек</td><td><span class="badge badge-online">OK</span></td></tr>
+          <tr><td><b>heartbeat / online_list</b></td><td>Мониторинг</td><td><span class="badge badge-online">OK</span></td></tr>
+          <tr><td><b>offline</b></td><td>Выход</td><td><span class="badge badge-online">OK</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  `;
 }
 
-/* ================= MODAL ================= */
-function showModal(html){$('modalBody').innerHTML=html;$('modal').classList.add('show');}
-function closeModal(){$('modal').classList.remove('show');}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+/* ============= PAGE: USERS ============= */
+function pgUsers(){
+  return `
+    <div class="bar">
+      <div class="search"><input type="text" id="uSearch" placeholder="Поиск по имени или email..."><svg class="ui-icon"><use href="#i-search"/></svg></div>
+      <div class="seg" id="uSeg">
+        <button class="active" data-f="all">Все</button>
+        <button data-f="online">Онлайн</button>
+        <button data-f="Ученик">Ученики</button>
+        <button data-f="Учитель">Учителя</button>
+        <button data-f="Администратор">Админы</button>
+      </div>
+      <button class="tb-btn primary" id="addUserBtn"><svg class="ui-icon"><use href="#i-plus"/></svg>Добавить</button>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl" id="usersTable">
+        <thead>
+          <tr>
+            <th>Пользователь</th>
+            <th>Логин</th>
+            <th>Роль</th>
+            <th>Статус</th>
+            <th style="text-align:right">Действия</th>
+          </tr>
+        </thead>
+        <tbody id="usersTbody"></tbody>
+      </table>
+    </div>
+  `;
+}
 
-/* ================= START ================= */
-setTimeout(()=>{
-  if(sessionStorage.getItem('nc_admin')){
-    $('auth').style.display='none';
-    $('app').style.display='block';
-    buildNav();
-    loadTheme();
-    init();
-  }else{
-    $('auth').style.display='flex';
-    $('loader').classList.add('hide');
-    $('loader').style.display='none';
+function renderUsersTable(){
+  const tb=$('usersTbody');if(!tb)return;
+  const search=($('uSearch')?$('uSearch').value:'').toLowerCase().trim();
+  const filter=document.querySelector('#uSeg button.active')?.dataset.f||'all';
+  let list=USERS.slice();
+  if(filter==='online') list=list.filter(u=>getStatus(u.email).cls==='online');
+  else if(filter!=='all') list=list.filter(u=>u.role===filter);
+  if(search) list=list.filter(u=>(u.name||'').toLowerCase().includes(search)||(u.email||'').toLowerCase().includes(search));
+  list.sort((a,b)=>{const r={online:0,recent:1,offline:2,unknown:3};return (r[getStatus(a.email).cls]||3)-(r[getStatus(b.email).cls]||3)});
+
+  if(!list.length){tb.innerHTML='<tr><td colspan="5"><div class="empty"><svg class="ui-icon"><use href="#i-users"/></svg><h3>Ничего не найдено</h3></div></td></tr>';return}
+
+  tb.innerHTML=list.map(u=>{
+    const L=(u.name||u.email||'?')[0].toUpperCase();
+    const st=getStatus(u.email);
+    const role=u.role||'Ученик';
+    const isMe=String(u.email).toLowerCase()===String(ME.email).toLowerCase();
+    const isCreator=String(u.email).toLowerCase()==='maksimsuhomlinov37@gmail.com';
+    const canDel=!isMe&&!isCreator;
+    return `<tr>
+      <td><div class="usr-cell"><div class="ava ${st.cls}">${esc(L)}</div><div><div class="usr-name">${esc(u.name||'—')}${isMe?' <small style="color:var(--muted)">(вы)</small>':''}</div></div></div></td>
+      <td><div class="usr-mail">${esc(u.email||'')}</div></td>
+      <td><span class="badge badge-${ROLE_CLS[role]||'student'}">${esc(ROLE_LBL[role]||role)}</span></td>
+      <td>${st.cls==='online'?'<span class="badge badge-online">в сети</span>':'<span class="badge badge-offline">'+esc(st.lbl)+'</span>'}</td>
+      <td style="text-align:right;white-space:nowrap">
+        <button class="icon-btn" data-act="edit" data-email="${esc(u.email)}"><svg class="ui-icon"><use href="#i-edit"/></svg></button>
+        ${canDel?'<button class="icon-btn dngr" data-act="del" data-email="'+esc(u.email)+'"><svg class="ui-icon"><use href="#i-trash"/></svg></button>':''}
+      </td>
+    </tr>`;
+  }).join('');
+
+  tb.querySelectorAll('[data-act]').forEach(b=>{
+    b.onclick=()=>{
+      if(b.dataset.act==='edit') openUserModal(b.dataset.email);
+      if(b.dataset.act==='del') delUser(b.dataset.email);
+    };
+  });
+}
+
+/* ============= PAGE: SCHEDULE ============= */
+async function pgSchedule(){
+  const d=today();
+  await loadScheduleForDate(d);
+  const lessons=SCHEDULE_DATA[d]||[];
+  return `
+    <div class="bar">
+      <input type="date" id="schedDate" value="${d}" style="padding:10px 14px;border:1px solid var(--border);border-radius:12px;background:var(--card);font-family:inherit;font-size:13px;font-weight:700;color:var(--text)">
+      <div style="flex:1"></div>
+      <span class="tb-chip blue"><svg class="ui-icon"><use href="#i-cal"/></svg>Уроков: ${lessons.length}</span>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>№</th><th>Время</th><th>Предмет</th><th>Учитель</th><th>Кабинет</th><th>ДЗ</th><th>Статус</th></tr></thead>
+        <tbody>
+          ${lessons.length?lessons.map(l=>`
+            <tr>
+              <td><b>${esc(l.lessonNum||'—')}</b></td>
+              <td>${esc(l.time||'')}</td>
+              <td><b>${esc(l.subject||'')}</b>${l.sor?' <span class="badge badge-online">СОР</span>':''}${l.soch?' <span class="badge badge-online" style="background:var(--purple-light);color:var(--purple)">СОЧ</span>':''}</td>
+              <td>${esc(l.teacher||'')}</td>
+              <td>${esc(l.room||'')}</td>
+              <td>${l.homework?esc(l.homework.slice(0,40))+(l.homework.length>40?'...':''):'—'}</td>
+              <td>${l.cancelled?'<span class="badge badge-admin">Отменён</span>':'<span class="badge badge-online">Активен</span>'}</td>
+            </tr>
+          `).join(''):'<tr><td colspan="7"><div class="empty"><svg class="ui-icon"><use href="#i-cal"/></svg><h3>Уроков на этот день нет</h3></div></td></tr>'}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="stitle"><svg class="ui-icon"><use href="#i-book"/></svg>Домашние задания<span class="line"></span></div>
+    <div class="row-list">
+      ${lessons.filter(l=>l.homework).length?lessons.filter(l=>l.homework).map((l,i)=>`
+        <div class="row-item" style="--i:${i}">
+          <div class="row-icon" style="background:var(--accent-light);color:var(--accent)"><svg class="ui-icon"><use href="#i-homework"/></svg></div>
+          <div class="row-info">
+            <div class="row-title">${esc(l.subject||'')} · Урок ${esc(l.lessonNum||'')}</div>
+            <div class="row-sub">${esc(l.homework||'')}</div>
+          </div>
+          <span class="badge badge-student">${esc(l.time||'')}</span>
+        </div>
+      `).join(''):'<div class="empty"><svg class="ui-icon"><use href="#i-homework"/></svg><h3>Домашних заданий нет</h3></div>'}
+    </div>
+  `;
+}
+
+/* ============= PAGE: GRADES ============= */
+async function pgGrades(){
+  await loadGrades();
+  const byDate={};
+  GRADES_DATA.forEach(g=>{
+    if(!byDate[g.date]) byDate[g.date]={count:0,sum:0,dates:[]};
+    byDate[g.date].count++;
+    if(typeof g.grade==='number'){byDate[g.date].sum+=g.grade;byDate[g.date].dates.push(g.grade)}
+  });
+  const sortedDates=Object.keys(byDate).sort().reverse();
+
+  let totalGrades=0,sumGrades=0,avgAll=0;
+  GRADES_DATA.forEach(g=>{if(typeof g.grade==='number'){totalGrades++;sumGrades+=g.grade}});
+  if(totalGrades) avgAll=(sumGrades/totalGrades).toFixed(2);
+
+  return `
+    <div class="stats">
+      <div class="stat" style="--i:0"><div class="stat-top"><div class="stat-icon blue"><svg class="ui-icon"><use href="#i-grades"/></svg></div><div class="stat-lbl">Всего оценок</div></div><div class="stat-val">${totalGrades}</div><div class="stat-sub">за всё время</div></div>
+      <div class="stat" style="--i:1"><div class="stat-top"><div class="stat-icon green"><svg class="ui-icon"><use href="#i-trending"/></svg></div><div class="stat-lbl">Средняя</div></div><div class="stat-val">${avgAll||'—'}</div><div class="stat-sub green">по всем ученикам</div></div>
+      <div class="stat" style="--i:2"><div class="stat-top"><div class="stat-icon orange"><svg class="ui-icon"><use href="#i-cal"/></svg></div><div class="stat-lbl">Дней с оценками</div></div><div class="stat-val">${sortedDates.length}</div><div class="stat-sub">уникальных дат</div></div>
+      <div class="stat" style="--i:3"><div class="stat-top"><div class="stat-icon purple"><svg class="ui-icon"><use href="#i-users"/></svg></div><div class="stat-lbl">Учеников</div></div><div class="stat-val">${new Set(GRADES_DATA.map(g=>g.email)).size}</div><div class="stat-sub">с оценками</div></div>
+    </div>
+
+    <div class="stitle"><svg class="ui-icon"><use href="#i-cal"/></svg>Последние дни с оценками<span class="line"></span></div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Дата</th><th>Оценок</th><th>Средний балл</th><th>Прогресс</th></tr></thead>
+        <tbody>
+          ${sortedDates.length?sortedDates.slice(0,15).map(d=>{
+            const info=byDate[d];
+            const avg=info.dates.length?(info.dates.reduce((a,b)=>a+b,0)/info.dates.length).toFixed(2):'—';
+            const pct=info.dates.length?Math.min(100,(avg/10)*100):0;
+            return `<tr>
+              <td><b>${esc(d)}</b></td>
+              <td>${info.count}</td>
+              <td><b style="color:var(--brand)">${avg}</b></td>
+              <td><div style="background:var(--section);height:8px;border-radius:4px;overflow:hidden;max-width:200px"><div style="width:${pct}%;height:100%;background:linear-gradient(90deg,#60A5FA,#2563EB);border-radius:4px"></div></div></td>
+            </tr>`;
+          }).join(''):'<tr><td colspan="4"><div class="empty"><svg class="ui-icon"><use href="#i-grades"/></svg><h3>Оценок пока нет</h3></div></td></tr>'}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+/* ============= PAGE: REPORTS ============= */
+function pgReports(){
+  const roles={};USERS.forEach(u=>{roles[u.role||'Ученик']=(roles[u.role||'Ученик']||0)+1});
+  const total=USERS.length;
+  const roleRows=Object.keys(roles).sort((a,b)=>roles[b]-roles[a]).map(r=>{
+    const pct=total?Math.round((roles[r]/total)*100):0;
+    return `<tr>
+      <td><span class="badge badge-${ROLE_CLS[r]||'student'}">${esc(ROLE_LBL[r]||r)}</span></td>
+      <td><b>${roles[r]}</b></td>
+      <td>${pct}%</td>
+      <td><div style="background:var(--section);height:8px;border-radius:4px;overflow:hidden;max-width:300px"><div style="width:${pct}%;height:100%;background:linear-gradient(90deg,#60A5FA,#2563EB);border-radius:4px"></div></div></td>
+    </tr>`;
+  }).join('');
+
+  const domains={};USERS.forEach(u=>{const d=String(u.email||'').split('@')[1]||'неизвестно';domains[d]=(domains[d]||0)+1});
+  const domainRows=Object.keys(domains).sort((a,b)=>domains[b]-domains[a]).map(d=>`<tr><td><b>@${esc(d)}</b></td><td>${domains[d]}</td></tr>`).join('');
+
+  return `
+    <div class="stats">
+      <div class="stat" style="--i:0"><div class="stat-top"><div class="stat-icon blue"><svg class="ui-icon"><use href="#i-users"/></svg></div><div class="stat-lbl">Всего</div></div><div class="stat-val">${total}</div><div class="stat-sub">аккаунтов</div></div>
+      <div class="stat" style="--i:1"><div class="stat-top"><div class="stat-icon green"><svg class="ui-icon"><use href="#i-account"/></svg></div><div class="stat-lbl">Учеников</div></div><div class="stat-val">${roles['Ученик']||0}</div><div class="stat-sub">основная часть</div></div>
+      <div class="stat" style="--i:2"><div class="stat-top"><div class="stat-icon orange"><svg class="ui-icon"><use href="#i-homework"/></svg></div><div class="stat-lbl">Учителей</div></div><div class="stat-val">${roles['Учитель']||0}</div><div class="stat-sub">преподаватели</div></div>
+      <div class="stat" style="--i:3"><div class="stat-top"><div class="stat-icon red"><svg class="ui-icon"><use href="#i-key"/></svg></div><div class="stat-lbl">Админов</div></div><div class="stat-val">${(roles['Администратор']||0)+(roles['Создатель']||0)}</div><div class="stat-sub">управление</div></div>
+    </div>
+
+    <div class="stitle"><svg class="ui-icon"><use href="#i-chart"/></svg>Распределение по ролям<span class="line"></span></div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Роль</th><th>Количество</th><th>Доля</th><th>Визуализация</th></tr></thead>
+        <tbody>${roleRows||'<tr><td colspan="4">Нет данных</td></tr>'}</tbody>
+      </table>
+    </div>
+
+    <div class="stitle"><svg class="ui-icon"><use href="#i-database"/></svg>По доменам email<span class="line"></span></div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Домен</th><th>Пользователей</th></tr></thead>
+        <tbody>${domainRows||'<tr><td colspan="2">Нет данных</td></tr>'}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+/* ============= PAGE: TREE ============= */
+async function pgTree(){
+  let submissions=[];
+  try{const r=await api({action:'tree_get',requester:ME.email});if(r&&r.status==='ok')submissions=r.submissions||[]}catch(e){}
+  const approved=submissions.filter(s=>s.status==='approved');
+  const pending=submissions.filter(s=>s.status==='pending'||!s.status);
+  return `
+    <div class="stats">
+      <div class="stat" style="--i:0"><div class="stat-top"><div class="stat-icon blue"><svg class="ui-icon"><use href="#i-trophy"/></svg></div><div class="stat-lbl">Всего заявок</div></div><div class="stat-val">${submissions.length}</div></div>
+      <div class="stat" style="--i:1"><div class="stat-top"><div class="stat-icon green"><svg class="ui-icon"><use href="#i-check"/></svg></div><div class="stat-lbl">Одобрено</div></div><div class="stat-val">${approved.length}</div></div>
+      <div class="stat" style="--i:2"><div class="stat-top"><div class="stat-icon orange"><svg class="ui-icon"><use href="#i-clock"/></svg></div><div class="stat-lbl">Ожидает</div></div><div class="stat-val">${pending.length}</div></div>
+    </div>
+
+    <div class="stitle"><svg class="ui-icon"><use href="#i-trophy"/></svg>Победители<span class="line"></span></div>
+    <div class="row-list">
+      ${approved.sort((a,b)=>(+a.place||99)-(+b.place||99)).map((s,i)=>{
+        const place=s.place||'—';
+        const bg=place===1||place==='1'?'linear-gradient(135deg,#FBBF24,#F59E0B)':place===2||place==='2'?'linear-gradient(135deg,#CBD5E1,#94A3B8)':place===3||place==='3'?'linear-gradient(135deg,#FB923C,#EA580C)':'linear-gradient(135deg,#3B82F6,#2563EB)';
+        return `<div class="row-item" style="--i:${i}">
+          <div class="row-icon" style="background:${bg};color:#fff;font-weight:700">${esc(place)}</div>
+          <div class="row-info">
+            <div class="row-title">${esc(s.name||s.email||'—')}</div>
+            <div class="row-sub">
+              <span><svg class="ui-icon"><use href="#i-email"/></svg>${esc(s.email||'')}</span>
+              <span><svg class="ui-icon"><use href="#i-check"/></svg>Место ${esc(place)}</span>
+            </div>
+          </div>
+          <span class="badge badge-teacher">Победитель</span>
+        </div>`;
+      }).join('')||'<div class="empty"><svg class="ui-icon"><use href="#i-trophy"/></svg><h3>Победителей нет</h3></div>'}
+    </div>
+
+    <div class="stitle"><svg class="ui-icon"><use href="#i-clock"/></svg>Ожидают проверки<span class="line"></span></div>
+    <div class="row-list">
+      ${pending.map((s,i)=>`
+        <div class="row-item" style="--i:${i}">
+          <div class="row-icon" style="background:var(--warn-light);color:var(--warn)"><svg class="ui-icon"><use href="#i-clock"/></svg></div>
+          <div class="row-info">
+            <div class="row-title">${esc(s.name||s.email||'—')}</div>
+            <div class="row-sub"><span><svg class="ui-icon"><use href="#i-email"/></svg>${esc(s.email||'')}</span></div>
+          </div>
+          <span class="badge badge-moderator">Ожидает</span>
+        </div>
+      `).join('')||'<div class="empty"><svg class="ui-icon"><use href="#i-check"/></svg><h3>Все проверены</h3></div>'}
+    </div>
+  `;
+}
+
+/* ============= PAGE: SETTINGS ============= */
+function pgSettings(){
+  const theme=document.documentElement.getAttribute('data-theme');
+  return `
+    <div class="stitle"><svg class="ui-icon"><use href="#i-settings"/></svg>Общие настройки<span class="line"></span></div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <tbody>
+          <tr><td><b>API Endpoint</b></td><td style="font-family:monospace;font-size:11px;word-break:break-all">${GAS_URL.slice(0,60)}...</td></tr>
+          <tr><td><b>Версия</b></td><td>API v8 · CRUD · FULL</td></tr>
+          <tr><td><b>Версия админки</b></td><td>1.0</td></tr>
+          <tr><td><b>Пользователей</b></td><td>${USERS.length}</td></tr>
+          <tr><td><b>Активных сессий</b></td><td>${Object.keys(ONLINE).length}</td></tr>
+          <tr><td><b>Обновлено</b></td><td>${new Date().toLocaleString('ru-RU')}</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="stitle"><svg class="ui-icon"><use href="#i-theme"/></svg>Тема оформления<span class="line"></span></div>
+    <div class="bar">
+      <button class="tb-btn ${theme==='light'?'primary':''}" data-theme-set="light"><svg class="ui-icon"><use href="#i-check"/></svg>Светлая</button>
+      <button class="tb-btn ${theme==='dark'?'primary':''}" data-theme-set="dark"><svg class="ui-icon"><use href="#i-check"/></svg>Тёмная</button>
+      <button class="tb-btn ${theme==='winter'?'primary':''}" data-theme-set="winter"><svg class="ui-icon"><use href="#i-check"/></svg>Зимняя</button>
+    </div>
+
+    <div class="stitle"><svg class="ui-icon"><use href="#i-alert"/></svg>Опасная зона<span class="line"></span></div>
+    <div class="row-list">
+      <div class="row-item">
+        <div class="row-icon" style="background:var(--warn-light);color:var(--warn)"><svg class="ui-icon"><use href="#i-refresh"/></svg></div>
+        <div class="row-info">
+          <div class="row-title">Очистить кэш</div>
+          <div class="row-sub">Сбросить локальные данные браузера</div>
+        </div>
+        <button class="tb-btn" id="clearCacheBtn">Очистить</button>
+      </div>
+      <div class="row-item">
+        <div class="row-icon" style="background:var(--err-light);color:var(--err)"><svg class="ui-icon"><use href="#i-logout"/></svg></div>
+        <div class="row-info">
+          <div class="row-title">Выйти из админки</div>
+          <div class="row-sub">Завершить сессию</div>
+        </div>
+        <button class="tb-btn" id="logoutBtn2" style="background:var(--err);color:#fff;border-color:transparent"><svg class="ui-icon" style="stroke:#fff"><use href="#i-logout"/></svg>Выйти</button>
+      </div>
+    </div>
+  `;
+}
+
+/* ============= BIND EVENTS ============= */
+function bindPageEvents(p){
+  if(p==='users'){
+    $('uSearch')?.addEventListener('input',renderUsersTable);
+    document.querySelectorAll('#uSeg button').forEach(b=>{
+      b.onclick=()=>{document.querySelectorAll('#uSeg button').forEach(x=>x.classList.toggle('active',x===b));renderUsersTable()};
+    });
+    $('addUserBtn')?.addEventListener('click',()=>openUserModal(null));
+    renderUsersTable();
   }
-},300);
+  if(p==='schedule'){
+    $('schedDate')?.addEventListener('change',async(e)=>{
+      await loadScheduleForDate(e.target.value);
+      renderPage('schedule');
+    });
+  }
+  if(p==='settings'){
+    document.querySelectorAll('[data-theme-set]').forEach(b=>{
+      b.onclick=()=>{
+        const t=b.dataset.themeSet;
+        document.documentElement.setAttribute('data-theme',t);
+        try{localStorage.setItem('nc_theme',t)}catch(e){}
+        renderPage('settings');
+      };
+    });
+    $('clearCacheBtn')?.addEventListener('click',()=>{
+      try{['nc_lessons_cache_v1','nc_hw_cache_v1','nc_users_cache_v1'].forEach(k=>localStorage.removeItem(k))}catch(e){}
+      toast('Кэш очищен','ok');
+    });
+    $('logoutBtn2')?.addEventListener('click',doLogout);
+  }
+}
+
+/* ============= USER MODAL ============= */
+function openUserModal(email){
+  EDIT_EMAIL=email;
+  if(email){
+    const u=USERS.find(x=>x.email===email);
+    if(!u)return;
+    $('umTitle').innerHTML='<svg class="ui-icon"><use href="#i-edit"/></svg>Редактировать';
+    $('uName').value=u.name||'';
+    $('uEmail').value=u.email||'';
+    $('uEmail').disabled=true;
+    $('uPass').value='';
+    $('passWrap').style.display='none';
+    $('uRole').value=u.role||'Ученик';
+    const isC=String(email).toLowerCase()==='maksimsuhomlinov37@gmail.com';
+    $('uRole').disabled=isC;
+  } else {
+    $('umTitle').innerHTML='<svg class="ui-icon"><use href="#i-plus"/></svg>Добавить пользователя';
+    $('uName').value='';
+    $('uEmail').value='';
+    $('uEmail').disabled=false;
+    $('uPass').value='';
+    $('passWrap').style.display='';
+    $('uRole').value='Ученик';
+    $('uRole').disabled=false;
+  }
+  $('umErr').style.display='none';
+  $('userModal').classList.add('on');
+  setTimeout(()=>$('uName').focus(),100);
+}
+$('umClose').onclick=()=>$('userModal').classList.remove('on');
+$('umCancel').onclick=()=>$('userModal').classList.remove('on');
+$('userModal').onclick=e=>{if(e.target===$('userModal'))$('userModal').classList.remove('on')};
+
+$('umSave').onclick=async()=>{
+  const name=$('uName').value.trim();
+  const email=$('uEmail').value.trim().toLowerCase();
+  const pass=$('uPass').value;
+  const role=$('uRole').value;
+  if(!name){$('umErr').textContent='Введите имя';$('umErr').style.display='block';return}
+  if(!email){$('umErr').textContent='Введите email';$('umErr').style.display='block';return}
+  $('umSave').disabled=true;
+  try{
+    if(!EDIT_EMAIL){
+      if(pass.length<6){$('umErr').textContent='Пароль минимум 6 символов';$('umErr').style.display='block';$('umSave').disabled=false;return}
+      const r=await api({action:'register',email,pass,name});
+      if(!r||r.status!=='ok')throw new Error((r&&r.message)||'Ошибка');
+      if(role!=='Ученик'){try{await api({action:'set_role',requester:ME.email,email,role})}catch(e){}}
+      toast('Добавлено','ok');
+    } else {
+      const u=USERS.find(x=>x.email===EDIT_EMAIL);
+      if(name!==(u?u.name:'')){await api({action:'update_profile',requester:ME.email,oldEmail:EDIT_EMAIL,email:EDIT_EMAIL,name})}
+      if(role!==(u?u.role:'')){await api({action:'set_role',requester:ME.email,email:EDIT_EMAIL,role})}
+      toast('Сохранено','ok');
+    }
+    $('userModal').classList.remove('on');
+    await loadUsers();renderPage('users');
+  }catch(e){$('umErr').textContent=e.message;$('umErr').style.display='block'}
+  finally{$('umSave').disabled=false}
+};
+
+async function delUser(email){
+  if(!confirm('Удалить '+email+'?'))return;
+  try{
+    const r=await api({action:'delete_user',requester:ME.email,email});
+    if(!r||r.status!=='ok')throw new Error((r&&r.message)||'Ошибка');
+    toast('Удалено','ok');await loadUsers();renderPage('users');
+  }catch(e){toast(e.message,'err')}
+}
+
+/* ============= LOGOUT ============= */
+async function doLogout(){
+  if(!confirm('Выйти из админ-панели?'))return;
+  try{await api({action:'offline',requester:ME.email})}catch(e){}
+  clearSession();
+  if(refreshTimer)clearInterval(refreshTimer);
+  if(pingTimer)clearInterval(pingTimer);
+  location.reload();
+}
+$('logoutBtn').onclick=doLogout;
+
+/* ============= REFRESH ============= */
+$('refreshBtn').onclick=async()=>{
+  await pingServer();await loadUsers();await loadOnline();
+  renderPage(currentPage);
+  toast('Обновлено','ok');
+};
+
+/* ============= AUTH ============= */
+$('authBtn').onclick=async()=>{
+  const e=$('authEmail').value.trim().toLowerCase(),p=$('authPass').value;
+  if(!e||!p){$('authErr').textContent='Заполните поля';$('authErr').style.display='block';return}
+  $('authBtn').disabled=true;
+  try{
+    const r=await api({action:'login',email:e,pass:p});
+    if(!r||r.status!=='ok')throw new Error((r&&r.message)||'Ошибка входа');
+    const u=r.user||{};
+    if(['администратор','создатель','директор'].indexOf(String(u.role||'').toLowerCase())===-1)throw new Error('Нет доступа');
+    ME=u;saveSession(u);start();
+  }catch(err){$('authErr').textContent=err.message;$('authErr').style.display='block'}
+  finally{$('authBtn').disabled=false}
+};
+$('authPass').addEventListener('keydown',e=>{if(e.key==='Enter')$('authBtn').click()});
+
+/* ============= START ============= */
+async function start(){
+  $('authScreen').style.display='none';
+  $('app').style.display='flex';
+  const nm=ME.name||ME.email||'Админ';
+  $('sbAva').textContent=nm[0].toUpperCase();
+  $('sbName').textContent=nm;
+  $('sbRole').textContent=ROLE_LBL[ME.role]||ME.role||'Администратор';
+
+  await pingServer();
+  await loadUsers();
+  await loadOnline();
+  updateChips();
+  navigate('dashboard');
+
+  if(refreshTimer)clearInterval(refreshTimer);
+  refreshTimer=setInterval(async()=>{
+    await pingServer();await loadOnline();updateChips();
+    if(currentPage==='dashboard'){renderPage('dashboard')}
+  },15000);
+}
+
+function updateChips(){
+  let online=0;Object.values(ONLINE).forEach(r=>{if(r.status==='online')online++});
+  $('chipOnlineCount').textContent=online;
+  $('chipTotalCount').textContent=USERS.length;
+  $('badgeUsers').textContent=USERS.length;
+}
+
+/* ============= INIT ============= */
+(async function(){
+  const s=getSession();
+  if(s&&s.email){
+    try{
+      const r=await api({action:'users_list',requester:s.email});
+      if(r&&r.status==='ok'){ME=s;start();return}
+    }catch(e){}
+    clearSession();
+  }
+})();
 </script>
 </body>
 </html>
