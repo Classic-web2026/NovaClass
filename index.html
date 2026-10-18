@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,viewport-fit=cover">
-<title>❄ NovaClass · Год Красной Огненной Козы</title>
+<title>NovaClass</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;700;800&display=swap" rel="stylesheet">
 <script>
 (function(){try{var s=localStorage.getItem('nc_season')||'winter';var t=localStorage.getItem('nc_theme')||'light';document.documentElement.setAttribute('data-theme',s==='winter'?'winter':t);document.documentElement.lang=localStorage.getItem('nc_lang')||'ru';}catch(e){}})();
@@ -769,9 +769,8 @@ html[data-theme="dark"] .participant.place-3{background:linear-gradient(135deg,r
 }
 .topbar.bar-hidden{opacity:0;transform:translateY(-12px);pointer-events:none;}
 .mobile-bottom.bar-hidden{opacity:0;transform:translateY(20px);pointer-events:none;}
-.m3-bar{width:min(240px,70vw);display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:ncFadeIn .55s ease .5s forwards}
+.m3-bar{width:min(240px,70vw);opacity:0;animation:ncFadeIn .55s ease .3s forwards}
 .m3-bar svg{width:100%}
-.m3-pct{font:800 12px/1 'Nunito',sans-serif;letter-spacing:.6px;color:var(--accent-dark)}
 .btn:disabled .ui-icon{display:none}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
@@ -832,9 +831,7 @@ html[data-theme="dark"] .participant.place-3{background:linear-gradient(135deg,r
 </svg>
 
 <div id="loader">
-  <div class="nc-loader-greet">❄ Добро пожаловать ❄</div>
   <div id="m3Load"></div>
-  <div class="nc-loader-sub">Готовим всё для приятной работы</div>
   <div class="m3-bar" id="m3Bar"></div>
 </div>
 
@@ -1384,20 +1381,28 @@ if(_accSaveEl){_accSaveEl.addEventListener('click',async(e)=>{e.stopImmediatePro
 <!-- ===== Новый скрипт красивых лоадеров (M3) ===== -->
 <script>
 (function(){
-var NS="http://www.w3.org/2000/svg",TAU=Math.PI*2,run=[],LV=0,pct;
+var NS="http://www.w3.org/2000/svg",TAU=Math.PI*2,run=[],LV=0;
 var RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+var $=function(i){return document.getElementById(i)};
 function el(n,a){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);return e}
 function sm(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x)}
+/* волна держится до 70%, дальше плавно выпрямляется в ровную линию к 100% */
+function flat(v){return v<.7?1:1-sm((v-.7)/.3)}
+
 function lin(T,get){
-var A=Math.min(3,T*.4),W=240,H=T+2*A,h=T/2,g=4;
+var Am=Math.min(3,T*.4),W=240,H=T+2*Am,h=T/2,g=4;
 var s=el('svg',{viewBox:'0 0 '+W+' '+H,role:'progressbar','aria-label':'Загрузка'});s.style.overflow='visible';
 var tr=el('path',{fill:'none',stroke:'var(--accent-soft)','stroke-width':T,'stroke-linecap':'round'}),
 ac=el('path',{fill:'none',stroke:'var(--accent)','stroke-width':T,'stroke-linecap':'round','stroke-linejoin':'round'}),
 dt=el('circle',{r:2,cy:H/2,cx:W-h,fill:'var(--accent)'});
 s.appendChild(tr);s.appendChild(ac);s.appendChild(dt);
-function ln(a,b,w,ph){a+=h;b-=h;if(b<=a)return'';if(!w)return'M'+a+' '+H/2+'L'+b+' '+H/2;var d='',x;for(x=a;x<=b;x+=2)d+=(x==a?'M':'L')+x.toFixed(1)+' '+(H/2+A*Math.sin(TAU*x/40-ph)).toFixed(2);return d+'L'+b+' '+(H/2+A*Math.sin(TAU*b/40-ph)).toFixed(2)}
-run.push({n:s,f:function(t){var p=get()*W;if(p>T+1){ac.setAttribute('d',ln(0,p,1,t/350));tr.setAttribute('d',ln(p+g,W,0,0))}else{ac.setAttribute('d','');tr.setAttribute('d',ln(0,W,0,0))}dt.style.display=p>W-T-4?'none':''}});
+function ln(a,b,A,ph){a+=h;b-=h;if(b<=a)return'';if(A<.05)return'M'+a+' '+H/2+'L'+b+' '+H/2;var d='',x;for(x=a;x<=b;x+=2)d+=(x==a?'M':'L')+x.toFixed(1)+' '+(H/2+A*Math.sin(TAU*x/40-ph)).toFixed(2);return d+'L'+b+' '+(H/2+A*Math.sin(TAU*b/40-ph)).toFixed(2)}
+run.push({n:s,f:function(t){var v=get(),A=Am*flat(v),p=v*W;
+if(p>T+1){ac.setAttribute('d',ln(0,p,A,t/350));tr.setAttribute('d',ln(p+g,W,0,0))}
+else{ac.setAttribute('d','');tr.setAttribute('d',ln(0,W,0,0))}
+dt.style.display=p>W-T-4?'none':''}});
 return s}
+
 var SH=[[5,.14],[9,.08],[4,.16],[2,.22],[12,.05],[3,.18],[7,.12]];
 function rad(i,th){var q=SH[i%7];return Math.cos(q[0]*th)*q[1]+1}
 function load(size,cont,col){
@@ -1406,23 +1411,33 @@ if(cont)s.appendChild(el('circle',{cx:24,cy:24,r:24,fill:'var(--accent-soft)'}))
 var p=el('path',{fill:col||(cont?'var(--accent-dark)':'var(--accent)')});s.appendChild(p);var R=cont?12.5:19;
 run.push({n:s,f:function(t){var i=Math.floor(t/700),k=sm((t%700)/700*1.5),rot=t/1000*1.6+i*.9,d='',th;for(th=0;th<TAU+.01;th+=.06){var r=((1-k)*rad(i,th)+k*rad(i+1,th))/1.22*R,a=th+rot;d+=(th?'L':'M')+(24+r*Math.cos(a)).toFixed(2)+' '+(24+r*Math.sin(a)).toFixed(2)}p.setAttribute('d',d+'Z')}});
 return s}
-var $=function(i){return document.getElementById(i)};
-/* стартовый экран */
+
+/* стартовый экран: только индикатор и полоса */
 if($('m3Load'))$('m3Load').appendChild(load(72,1));
-if($('m3Bar')){$('m3Bar').appendChild(lin(8,function(){return LV}));pct=document.createElement('div');pct.className='m3-pct';pct.textContent='0%';$('m3Bar').appendChild(pct)}
+if($('m3Bar'))$('m3Bar').appendChild(lin(8,function(){return LV}));
+
 /* загрузка файла в форме урока */
 var fill=$('attachProgressFill');
-if(fill&&fill.parentNode){var tk=fill.parentNode,uw=document.createElement('div');uw.style.margin='4px 0 10px';uw.appendChild(lin(6,function(){return(parseFloat(fill.style.width)||0)/100}));tk.style.display='none';tk.parentNode.insertBefore(uw,tk)}
+if(fill&&fill.parentNode){var tk=fill.parentNode,uw=document.createElement('div');uw.style.margin='4px 0 10px';
+uw.appendChild(lin(6,function(){return(parseFloat(fill.style.width)||0)/100}));
+tk.style.display='none';tk.parentNode.insertBefore(uw,tk)}
+
 /* кнопки «Войти» и «Создать аккаунт» */
 ['loginBtn','regBtn'].forEach(function(id){var b=$(id);if(!b)return;
 new MutationObserver(function(){var s=b.querySelector('.m3-spin');
 if(b.disabled&&!s){var x=load(22,0,'#fff');x.classList.add('m3-spin');b.insertBefore(x,b.firstChild)}
 else if(!b.disabled&&s)s.remove()}).observe(b,{attributes:true,attributeFilter:['disabled']})});
-/* цикл */
+
+/* название вкладки: вход — Login - Nova, регистрация — Login - Class, внутри сайта — NovaClass */
+function title(){var app=$('appView'),tabs=$('tabs');
+document.title=(app&&!app.classList.contains('hidden'))?'NovaClass':((tabs&&tabs.dataset.active==='reg')?'Login - Class':'Login - Nova')}
+['tabs','appView','authView'].forEach(function(id){var e=$(id);if(e)new MutationObserver(title).observe(e,{attributes:true,attributeFilter:['class','data-active']})});
+title();
+
+/* цикл анимации: значение полосы = время с showLoader() / LOADER_MIN_MS */
 function frame(t){
 var e=typeof _loaderAt==='number'?Date.now()-_loaderAt:0,m=typeof LOADER_MIN_MS==='number'?LOADER_MIN_MS:3000;
 LV=e>=m?1:.03+.97*sm(e/m);
-if(pct){var q=Math.round(LV*100)+'%';if(pct.textContent!==q)pct.textContent=q}
 for(var i=run.length-1;i>=0;i--){var r=run[i];if(!r.n.isConnected){run.splice(i,1);continue}if(r.n.getBoundingClientRect().width>0)r.f(t)}
 if(!RM)requestAnimationFrame(frame)}
 if(RM)frame(2000);else requestAnimationFrame(frame);
