@@ -56,6 +56,15 @@ body{font-family:'Nunito',system-ui,-apple-system,sans-serif;background:var(--bg
 .role-badge.admin{background:#FEE2E2;color:#991B1B}
 .role-badge.creator{background:var(--p);color:var(--onp)}
 
+/* OFFLINE BANNER */
+#offlineOverlay{position:fixed;inset:0;z-index:999999;background:rgba(15,23,42,.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity .3s var(--e)}
+#offlineOverlay.show{display:flex;opacity:1}
+.offline-card{background:var(--bg);border-radius:32px;padding:40px;max-width:440px;width:100%;text-align:center;box-shadow:0 24px 48px -12px rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.1);transform:translateY(20px);transition:transform .4s var(--sp)}
+#offlineOverlay.show .offline-card{transform:translateY(0)}
+.offline-card svg{width:120px;height:120px;margin-bottom:20px;color:var(--p)}
+.offline-card h2{font-size:22px;font-weight:800;color:var(--on);margin-bottom:8px}
+.offline-card p{font-size:15px;color:var(--onv);font-weight:600}
+
 /* M3 LOADER */
 #loader{position:fixed;inset:0;z-index:100000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;transition:opacity .35s ease;overflow:hidden;padding:24px}
 #loader.fade-out{opacity:0;pointer-events:none}
@@ -200,28 +209,28 @@ html[data-theme="dark"] .page-pane{border-color:rgba(255,255,255,0.03)}
 .banner .ui-icon{color:currentColor;width:32px;height:32px}
 .banner-title{font-size:clamp(18px,2vw,22px);font-weight:800}
 
-/* FIRM WEEK PANEL */
-.week-wrap{display:flex;flex-direction:column;margin-bottom:24px;border-radius:28px}
-.week-panel{width:100%;border-radius:28px;background:linear-gradient(135deg,var(--p),var(--p-ink));display:flex;flex-direction:column;overflow:visible;position:relative;box-shadow:0 12px 24px -10px rgba(37,99,235,.4)}
+/* SCHEDULE TABS (MERGED DESIGN) */
+.schedule-tabs-container{display:flex;flex-direction:column;margin-bottom:0;border-radius:28px 28px 0 0;overflow:hidden;background:linear-gradient(135deg,var(--p),var(--p-ink))}
 .wp-head{display:flex;align-items:center;justify-content:center;gap:16px;padding:16px 20px 12px}
 .wp-title{color:var(--onp);font-size:15px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;flex:1;text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
 .wp-title .ui-icon{width:20px;height:20px;opacity:.85;stroke:currentColor}
-.wp-body{display:flex;align-items:center;padding:0 16px 16px;gap:12px}
-.wp-arrow{flex-shrink:0;width:44px;height:44px;border-radius:50%;border:none;background:rgba(255,255,255,.15);color:var(--onp);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s var(--sp);font-size:20px;font-weight:800}
+.wp-body{display:flex;align-items:flex-end;padding:0 16px;gap:12px}
+.wp-arrow{flex-shrink:0;width:44px;height:44px;border-radius:50%;border:none;background:rgba(255,255,255,.15);color:var(--onp);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s var(--sp);font-size:20px;font-weight:800;margin-bottom:8px}
 .wp-arrow:hover{background:rgba(255,255,255,.25)}
 .wp-arrow:active{transform:scale(.9)}
 .wp-days{flex:1;display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-.wp-day{border:none;background:transparent;color:var(--onp);font-family:inherit;cursor:pointer;border-radius:20px;padding:12px 6px;display:flex;align-items:center;justify-content:center;text-align:center;transition:background .2s var(--e),color .2s var(--e)}
-.wp-day:hover{background:rgba(255,255,255,.14)}
-.wp-day.active{background:var(--bg);color:var(--p-ink)}
+.wp-day{border:none;background:transparent;color:var(--onp);font-family:inherit;cursor:pointer;border-radius:16px 16px 0 0;padding:14px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;transition:all .2s var(--e);font-weight:800;font-size:13px;letter-spacing:.5px;text-transform:uppercase;opacity:0.8}
+.wp-day:hover{background:rgba(255,255,255,.14);opacity:1}
+.wp-day.active{background:var(--bg);color:var(--p-ink);opacity:1;box-shadow:0 -4px 12px rgba(0,0,0,0.1)}
 .wp-day.today .wp-day-name::after{content:'';display:block;width:6px;height:6px;background:#FBBF24;border-radius:50%;margin:6px auto 0}
 .wp-day.active.today .wp-day-name::after{background:var(--p)}
-.wp-day-name{font-size:12px;font-weight:800;letter-spacing:.4px;text-transform:uppercase}
-.wp-date-info{background:var(--bg);color:var(--on);margin:0 16px 16px;padding:12px;border-radius:16px;text-align:center;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 12px -2px rgba(0,0,0,.1)}
-.wp-date-info .rel{color:var(--ol);font-weight:800}
+
+.schedule-content-area{background:var(--bg);border-radius:0 0 28px 28px;padding:0 24px 24px;box-shadow:var(--shadow);margin-bottom:24px}
+.wp-date-info{background:var(--s1);color:var(--on);margin-bottom:24px;padding:14px;border-radius:16px;text-align:center;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--s3)}
+.wp-date-info .rel{color:var(--p);font-weight:800}
 
 /* M3 Cards */
-.lessons-list{display:flex;flex-direction:column;gap:12px;margin-top:20px}
+.lessons-list{display:flex;flex-direction:column;gap:12px}
 .lesson-row{display:flex;align-items:flex-start;gap:20px;background:var(--s1);border-radius:24px;padding:20px 24px;transition:all .3s var(--sp);content-visibility:auto;contain-intrinsic-size:auto 90px;border:2px solid transparent}
 .lesson-row:hover{transform:translateY(-2px);box-shadow:0 8px 24px -6px rgba(37,99,235,.15);background:var(--bg);border-color:var(--s3)}
 .lesson-row.cancelled{background:#FEE2E2;opacity:.92;border-color:transparent}
@@ -261,6 +270,50 @@ html[data-theme="dark"] .page-pane{border-color:rgba(255,255,255,0.03)}
 .lesson-att-chip:hover{background:var(--sc);transform:translateY(-1px);border-color:var(--p)}
 .lesson-att-chip .ui-icon{width:18px;height:18px;color:var(--p)}
 .lesson-att-chip span:not(.ui-icon){overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Diary M3 */
+.diary-banner{background:linear-gradient(135deg,var(--p),var(--p-ink));border-radius:28px;padding:32px;display:flex;align-items:center;gap:32px;color:var(--onp);margin-bottom:24px;position:relative;overflow:hidden;box-shadow:0 12px 24px -10px rgba(37,99,235,.4)}
+.diary-circle{position:relative;width:140px;height:140px;flex-shrink:0;z-index:1}
+.diary-circle svg{width:100%;height:100%;transform:rotate(-90deg)}
+.diary-circle circle{fill:none;stroke-width:12;stroke-linecap:round}
+.dc-bg{stroke:rgba(255,255,255,.2)}
+.dc-fill{stroke:currentColor;transition:stroke-dasharray .6s var(--e)}
+.dc-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.dc-value{font-size:32px;font-weight:800;letter-spacing:-1px}
+.dc-label{font-size:10px;opacity:.8;text-transform:uppercase;letter-spacing:1px;font-weight:800}
+.diary-title-wrap{display:flex;flex-direction:column;gap:6px;position:relative;z-index:1}
+.diary-title{font-size:28px;font-weight:800;letter-spacing:-.3px}
+.diary-sub{font-size:14px;opacity:.9;font-weight:700}
+.diary-score{margin-left:auto;text-align:right;position:relative;z-index:1}
+.diary-score-value{font-size:56px;font-weight:800;line-height:1;letter-spacing:-2px}
+.diary-score-value .sep{opacity:.5;margin:0 4px}
+.diary-score-value .max{font-size:28px;opacity:.7}
+.diary-score-label{font-size:11px;opacity:.8;text-transform:uppercase;letter-spacing:1.5px;font-weight:800;margin-top:6px}
+
+.day-block{background:var(--s1);border-radius:24px;padding:24px 28px;box-shadow:var(--shadow);margin-bottom:16px;content-visibility:auto;contain-intrinsic-size:auto 200px}
+.day-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px}
+.day-date{font-size:15px;font-weight:800;color:var(--onv);text-transform:uppercase;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.day-weekday{font-size:12px;color:var(--onv);opacity:.7;text-transform:none;font-weight:700}
+.day-grid{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:start}
+.lessons-col{display:flex;flex-direction:column;gap:10px}
+.diary-lesson{display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--bg);border-radius:16px;padding:16px 20px;transition:all .2s var(--sp);border:1px solid var(--s3)}
+.diary-lesson:hover{transform:translateX(4px);border-color:var(--ol)}
+.diary-lesson-info{flex:1;min-width:0}
+.diary-lesson-subject{font-size:14.5px;font-weight:800;color:var(--on);margin-bottom:4px}
+.diary-lesson-meta{font-size:12px;color:var(--onv);display:flex;gap:12px;flex-wrap:wrap;font-weight:600}
+.diary-lesson-meta span{display:inline-flex;align-items:center;gap:4px}
+.diary-lesson-meta .ui-icon{width:14px;height:14px}
+.diary-grade{flex-shrink:0;width:48px;height:48px;border-radius:16px;background:var(--s2);color:var(--onv);font-weight:800;font-size:18px;display:inline-flex;align-items:center;justify-content:center}
+.diary-grade.filled{color:#fff}
+.diary-grade.g1,.diary-grade.g2,.diary-grade.g3,.diary-grade.g4{background:#DC2626}
+.diary-grade.g5,.diary-grade.g6{background:#EA580C}
+.diary-grade.g7,.diary-grade.g8{background:#EAB308}
+.diary-grade.g9,.diary-grade.g10{background:#16A34A}
+.day-total{flex-shrink:0;min-width:110px;padding:16px 20px;border-radius:20px;background:var(--p);color:var(--onp);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;box-shadow:0 4px 12px -2px rgba(37,99,235,.3)}
+.day-total-label{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;opacity:.85;font-weight:800}
+.day-total-value{font-size:32px;font-weight:800;line-height:1;letter-spacing:-1px}
+.day-total-value.empty{opacity:.5;font-size:22px}
+.day-total-sub{font-size:10px;opacity:.75;font-weight:700}
 
 /* Mgmt / Dates */
 .date-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:24px}
@@ -311,7 +364,48 @@ html[data-theme="dark"] .page-pane{border-color:rgba(255,255,255,0.03)}
 .u-del:hover{background:#FEE2E2;color:#EF4444;border-color:#FECACA}
 .u-del:active{transform:scale(.9)}
 
-/* MODALS (Glassmorphism) */
+.pop-overlay{position:fixed;inset:0;z-index:199;background:transparent;display:none}
+.pop-overlay.open{display:block}
+.popover{position:absolute;z-index:200;width:320px;background:var(--bg);border-radius:24px;box-shadow:var(--shadow-lg);padding:20px;opacity:0;transform:scale(.94) translateY(-6px);pointer-events:none;transition:all .3s var(--sp);border:1px solid var(--s3)}
+.popover.open{opacity:1;transform:scale(1) translateY(0);pointer-events:auto}
+.pop-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding-bottom:14px;margin-bottom:16px;position:relative}
+.pop-head::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--s3)}
+.pop-title{font-size:15px;font-weight:800;color:var(--on);line-height:1.3}
+.pop-sub{font-size:11.5px;color:var(--onv);margin-top:4px;font-weight:700}
+.pop-close{width:32px;height:32px;border-radius:50%;border:1px solid var(--s3);background:var(--bg);color:var(--onv);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s var(--e)}
+.pop-close:hover{background:#FEE2E2;color:#EF4444;border-color:#FECACA}
+.pop-label{font-size:11px;font-weight:800;color:var(--onv);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;display:block}
+.status-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.status-btn{padding:12px 10px;border:1px solid var(--s3);background:var(--bg);border-radius:var(--rt);font-family:inherit;font-size:13.5px;font-weight:800;color:var(--onv);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s var(--sp)}
+.status-btn:hover{transform:scale(1.02);border-color:var(--ol)}
+.status-btn.active[data-status="ЕСТЬ"]{background:#16A34A;color:#fff;border-color:transparent}
+.status-btn.active[data-status="Н"]{background:#EF4444;color:#fff;border-color:transparent}
+.grades-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:20px}
+.grade-btn{aspect-ratio:1;border-radius:var(--rb);border:none;color:#fff;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:transform .2s var(--sp)}
+.grade-btn:hover{transform:scale(1.08)}
+.grade-btn.selected{box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--p)}
+.grade-1,.grade-2,.grade-3,.grade-4{background:#DC2626}
+.grade-5,.grade-6{background:#EA580C}
+.grade-7,.grade-8{background:#EAB308}
+.grade-9,.grade-10{background:#16A34A}
+.pop-actions{display:flex;gap:10px}
+.pop-actions button{flex:1;padding:12px;border-radius:var(--rt);border:none;font-family:inherit;font-size:13.5px;font-weight:800;cursor:pointer;transition:all .2s var(--sp)}
+.pop-actions button:active{transform:scale(.96)}
+.btn-clear{background:var(--s2);color:var(--onv)}
+.btn-clear:hover{background:#FEE2E2;color:#EF4444}
+.btn-save{background:var(--p);color:var(--onp)}
+.btn-save:hover{background:var(--p-ink);box-shadow:var(--shadow-md)}
+
+.ctx-menu{position:fixed;z-index:500;background:var(--bg);border-radius:20px;box-shadow:var(--shadow-lg);padding:8px;min-width:240px;opacity:0;transform:scale(.94);pointer-events:none;transition:all .3s var(--sp);transform-origin:top left;border:1px solid var(--s3)}
+.ctx-menu.open{opacity:1;transform:scale(1);pointer-events:auto}
+.ctx-item{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:var(--ri);color:var(--on);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;text-align:left;width:100%;border:none;background:transparent;transition:background .2s var(--e)}
+.ctx-item:hover{background:var(--s2)}
+.ctx-item.danger{color:#EF4444}
+.ctx-item.danger:hover{background:#FEE2E2}
+.ctx-divider{height:1px;background:var(--s3);margin:6px 8px}
+.ctx-title{font-size:11px;font-weight:800;color:var(--onv);text-transform:uppercase;letter-spacing:.6px;padding:8px 14px 4px}
+
+/* MODALS */
 .modal-backdrop{position:fixed;inset:0;z-index:100;background:rgba(15,23,42,.4);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .3s var(--e)}
 .modal-backdrop.show{display:flex;opacity:1}
 .modal{width:100%;max-width:560px;background:var(--bg);border-radius:28px;box-shadow:0 24px 48px -12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2);max-height:92vh;overflow-y:auto;position:relative;transform:scale(.95);transition:transform .3s var(--sp);border:1px solid rgba(255,255,255,0.4)}
@@ -571,10 +665,21 @@ html[data-theme="dark"] .modal{border-color:rgba(255,255,255,0.1);background:rgb
   .school-card{padding:12px}
   .school-details{flex-direction:column;gap:4px}
   .school-actions{flex-direction:column}
-  .wp-body{padding:0 8px 12px;gap:6px}
-  .wp-arrow{width:36px;height:36px;font-size:16px}
-  .wp-day{padding:8px 2px;border-radius:12px}
-  .wp-day-name{font-size:10px}
+  .wp-body{padding:0 8px;gap:4px}
+  .wp-arrow{width:36px;height:36px;font-size:16px;margin-bottom:4px}
+  .wp-day{padding:10px 2px;border-radius:12px 12px 0 0;font-size:11px}
+  .schedule-content-area{padding:0 16px 16px}
+  .day-grid{grid-template-columns:1fr}
+  .day-total{width:100%;flex-direction:row;justify-content:center;gap:12px;padding:12px}
+  .diary-score{display:none}
+  .diary-banner{justify-content:center;text-align:center;padding:24px;gap:20px}
+  .diary-title-wrap{align-items:center}
+  .diary-circle{width:100px;height:100px}
+  .dc-value{font-size:24px}
+  .dc-label{font-size:9px}
+  .day-date{font-size:13px}
+  .diary-lesson{padding:12px 14px}
+  .diary-lesson-subject{font-size:13.5px}
 }
 @media (max-width:640px){.user-dropdown{width:calc(100vw - 40px);right:-10px;max-width:340px}}
 .topbar.bar-hidden{opacity:0;transform:translateY(-12px);pointer-events:none}
@@ -587,6 +692,21 @@ html[data-theme="dark"] .modal{border-color:rgba(255,255,255,0.1);background:rgb
 </style>
 </head>
 <body>
+
+<!-- OFFLINE BANNER -->
+<div id="offlineOverlay">
+  <div class="offline-card">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+      <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+      <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+      <line x1="12" y1="20" x2="12.01" y2="20"></line>
+      <line x1="2" y1="2" x2="22" y2="22"></line>
+    </svg>
+    <h2 id="offlineTitle">Нет подключения к интернету</h2>
+    <p id="offlineSub">Пожалуйста, проверьте ваше соединение и попробуйте снова.</p>
+  </div>
+</div>
 
 <!-- LOADER (Морф сверху, полоса снизу) -->
 <div id="loader">
@@ -870,7 +990,8 @@ const TRANSLATIONS = {
     journal: 'Журнал оценок', ministry: 'Министерство образования', grades_mgmt: 'Управление оценками', stats: 'Статистика', schools: 'Школы', system_status: 'Статус системы', active_users: 'Активные пользователи', total_lessons: 'Всего уроков', avg_grade: 'Средний балл', online: 'Онлайн', database: 'База данных', api: 'API Сервера', stable: 'Стабильно',
     add_school: 'Добавить школу', school_name: 'Название школы', address: 'Адрес', director: 'Директор', students_count: 'Учеников',
     vacations: 'Каникулы', add_vacation: 'Добавить каникулы', vacation_name: 'Название', start_date: 'Начало', end_date: 'Конец', 
-    vacation_banner_title: 'Ура, каникулы!', vacation_banner_sub: 'Отдыхайте, набирайтесь сил и хорошо проводите время!', news: 'Новости'
+    vacation_banner_title: 'Ура, каникулы!', vacation_banner_sub: 'Отдыхайте, набирайтесь сил и хорошо проводите время!', news: 'Новости',
+    avg_score: 'Средняя', total_score: 'Общий балл', total: 'Итог', day: 'за день', no_grades: 'нет оценок'
   },
   en: {
     menu_home: 'Home', menu_schedule: 'Schedule', menu_homework: 'Homework', menu_diary: 'Diary', 
@@ -893,7 +1014,8 @@ const TRANSLATIONS = {
     journal: 'Grades Journal', ministry: 'Ministry of Education', grades_mgmt: 'Grades Management', stats: 'Statistics', schools: 'Schools', system_status: 'System Status', active_users: 'Active Users', total_lessons: 'Total Lessons', avg_grade: 'Average Grade', online: 'Online', database: 'Database', api: 'Server API', stable: 'Stable',
     add_school: 'Add School', school_name: 'School Name', address: 'Address', director: 'Director', students_count: 'Students',
     vacations: 'Vacations', add_vacation: 'Add Vacation', vacation_name: 'Name', start_date: 'Start', end_date: 'End',
-    vacation_banner_title: 'Hooray, vacations!', vacation_banner_sub: 'Rest, gain strength and have a good time!', news: 'News'
+    vacation_banner_title: 'Hooray, vacations!', vacation_banner_sub: 'Rest, gain strength and have a good time!', news: 'News',
+    avg_score: 'Average', total_score: 'Total Score', total: 'Total', day: 'per day', no_grades: 'no grades'
   },
   kz: {
     menu_home: 'Басты бет', menu_schedule: 'Кесте', menu_homework: 'Үй тапсырмасы', menu_diary: 'Күнделік', 
@@ -916,7 +1038,8 @@ const TRANSLATIONS = {
     journal: 'Бағалар журналы', ministry: 'Білім министрлігі', grades_mgmt: 'Бағаларды басқару', stats: 'Статистика', schools: 'Мектептер', system_status: 'Жүйе мәртебесі', active_users: 'Белсенді қолданушылар', total_lessons: 'Барлық сабақтар', avg_grade: 'Орташа баға', online: 'Желіде', database: 'Дерекқор', api: 'Сервер API', stable: 'Тұрақты',
     add_school: 'Мектеп қосу', school_name: 'Мектеп атауы', address: 'Мекенжай', director: 'Директор', students_count: 'Оқушылар',
     vacations: 'Демалыс', add_vacation: 'Демалыс қосу', vacation_name: 'Атауы', start_date: 'Басталуы', end_date: 'Аяқталуы',
-    vacation_banner_title: 'Ура, демалыс!', vacation_banner_sub: 'Демалыңыз, күш жинаңыз және жақсы уақыт өткізіңіз!', news: 'Жаңалықтар'
+    vacation_banner_title: 'Ура, демалыс!', vacation_banner_sub: 'Демалыңыз, күш жинаңыз және жақсы уақыт өткізіңіз!', news: 'Жаңалықтар',
+    avg_score: 'Орташа', total_score: 'Жалпы балл', total: 'Қорытынды', day: 'күніне', no_grades: 'бағалар жоқ'
   }
 };
 
@@ -956,6 +1079,10 @@ function applyTranslations() {
   }
   const loginEmail = $('loginEmail');
   if(loginEmail) loginEmail.placeholder = currentLang === 'en' ? 'e.g. maksim' : (currentLang === 'kz' ? 'мысалы: maksim' : 'например: maksim');
+  
+  $('offlineTitle').textContent = currentLang === 'en' ? 'No internet connection' : (currentLang === 'kz' ? 'Интернет байланысы жоқ' : 'Нет подключения к интернету');
+  $('offlineSub').textContent = currentLang === 'en' ? 'Please check your connection and try again.' : (currentLang === 'kz' ? 'Қосылымды тексеріп, қайталап көріңіз.' : 'Пожалуйста, проверьте ваше соединение и попробуйте снова.');
+  
   rebuildMenu();
 }
 
@@ -1191,7 +1318,7 @@ function initAllSelects(){const r=getCustomRefs();CustomSelect.init($('csLessonN
 function setSelectValue(id,v){const w=$(id);if(w&&w._cs)w._cs.setSilent(v);}
 function getSelectValue(id){const w=$(id);return w?(w.dataset.value||''):'';}
 async function fetchSched(date,user,force){if(!force&&prefetched.scheduleByDate[date]!==undefined)return prefetched.scheduleByDate[date];if(inflight.has(date))return inflight.get(date);const p=jsonp({action:'get_sched',requester:user.email,date}).then(res=>{if(res&&res.status==='ok'){const lessons=filterByDate(res.lessons,date).map(l=>Object.assign({},l,{attachments:normalizeAttachments(l.attachments)}));prefetched.scheduleByDate[date]=lessons;saveCacheJson(LESSONS_CACHE_KEY,prefetched.scheduleByDate);return lessons;}if(prefetched.scheduleByDate[date]===undefined){prefetched.scheduleByDate[date]=[];saveCacheJson(LESSONS_CACHE_KEY,prefetched.scheduleByDate);}return prefetched.scheduleByDate[date];}).catch(e=>{if(prefetched.scheduleByDate[date]===undefined)prefetched.scheduleByDate[date]=[];throw e;}).finally(()=>inflight.delete(date));inflight.set(date,p);return p;}
-async function prefetchAll(user){if(!user||!user.email)return;const mon=mondayOf(new Date(selectedDate+'T00:00:00'));const dates=[];for(let w=-1;w<=1;w++)for(let i=0;i<5;i++){const d=new Date(mon);d.setDate(mon.getDate()+w*7+i);dates.push(isoOfDate(d));}const jobs=dates.map(date=>fetchSched(date,user,true).catch(()=>{}));jobs.push(jsonp({action:'hw_status',requester:user.email}).then(hr=>{if(hr&&hr.status==='ok'){prefetched.hwStatuses=hr.statuses||{};saveCacheJson(HW_CACHE_KEY,prefetched.hwStatuses);}}).catch(()=>{}));jobs.push(jsonp({action:'users_list',requester:user.email}).then(ur=>{if(ur&&ur.status==='ok'){prefetched.users=ur.users||[];saveCacheJson(USERS_CACHE_KEY,prefetched.users);}}).catch(()=>{}));jobs.push(pullGradesFromServer(user).catch(()=>{}));await Promise.all(jobs);}
+async function prefetchAll(user){if(!user||!user.email)return;const mon=mondayOf(new Date(selectedDate+'T00:00:00'));const dates=[];for(let w=-1;w<=1;w++)for(let i=0;i<5;i++){const d=new Date(mon);d.setDate(mon.getDate()+w*7+i);dates.push(isoOfDate(d));}const jobs=dates.map(date=>fetchSched(date,user,true).catch(()=>{}));jobs.push(jsonp({action:'hw_status',requester:user.email}).then(hr=>{if(hr&&hr.status==='ok'){prefetched.hwStatuses=hr.statuses||{};saveCacheJson(HW_CACHE_KEY,prefetched.hwStatuses);}}).catch(()=>{}));jobs.push(jsonp({action:'users_list',requester:user.email}).then(ur=>{if(ur&&ur.status==='ok'){prefetched.users=ur.users||[];saveCacheJson(USERS_CACHE_KEY,prefetched.users);}}).catch(()=>{}));jobs.push(pullGradesFromServer(user).catch(()=>{}));jobs.push(jsonp({action:'schools_get',requester:user.email}).then(ur=>{if(ur&&ur.status==='ok'){prefetched.schools=ur.schools||[];saveCacheJson(SCHOOLS_KEY,prefetched.schools);}}).catch(()=>{}));jobs.push(jsonp({action:'vacations_get',requester:user.email}).then(ur=>{if(ur&&ur.status==='ok'){prefetched.vacations=ur.vacations||[];saveCacheJson(VACATIONS_KEY,prefetched.vacations);}}).catch(()=>{}));await Promise.all(jobs);}
 function prefetchWeek(user,baseDate){if(!user||!user.email)return;const mon=mondayOf(new Date(baseDate+'T00:00:00'));for(let i=0;i<5;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);const iso=isoOfDate(d);if(prefetched.scheduleByDate[iso]===undefined)fetchSched(iso,user,true).catch(()=>{});}}
 const Account=(function(){function loadAvatar(){try{return localStorage.getItem(AVATAR_KEY)||'';}catch(e){return'';}}function saveAvatar(u){try{localStorage.setItem(AVATAR_KEY,u);}catch(e){}}function applyAvatar(){const url=loadAvatar();const u=getCurrentUser();const letter=u?(u.name||u.email||'П').charAt(0).toUpperCase():'П';document.querySelectorAll('[data-user-ava]').forEach(el=>{if(url){el.style.backgroundImage=`url(${url})`;el.style.backgroundSize='cover';el.style.backgroundPosition='center';el.textContent='';}else{el.style.backgroundImage='';el.textContent=letter;}});}function handleFile(input){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{saveAvatar(e.target.result);applyAvatar();showToast(currentLang==='en'?'Photo updated':'Фото обновлено');};r.readAsDataURL(f);input.value='';}function fillFields(){const u=getCurrentUser();if(!u)return;const name=u.name||(u.email?u.email.split('@')[0]:'');['accName','accName2'].forEach(id=>{const el=$(id);if(el)el.value=name;});['accEmail','accEmail2'].forEach(id=>{const el=$(id);if(el)el.value=u.email||'';});applyAvatar();}async function saveProfile(){const u=getCurrentUser();if(!u)return;const nn=($('accName')&&$('accName').value.trim())||u.name||'';let neRaw=($('accEmail')&&$('accEmail').value.trim())||u.email||'';const oe=u.email;if(!nn||!neRaw){showToast(currentLang==='en'?'Fill fields':'Заполните поля');return false;}
     let ne=String(neRaw).toLowerCase();
@@ -1606,24 +1733,23 @@ function lessonRowHTML(l,mode,hwStatuses,i){
 
 function weekPanelHTML(){
   const mon=currentMonday();const ai=dowIdx(selectedDate);const ti=todayISO();
-  const locM = getLocalizedMonths();
-  const ml=locM.nom[mon.getMonth()].toUpperCase()+' '+mon.getFullYear();
-  const dn=currentLang==='en'?['MON','TUE','WED','THU','FRI']:(currentLang==='kz'?['ДС','СС','СР','БС','ЖМ']:['ПН','ВТ','СР','ЧТ','ПТ']);
+  const dn=currentLang==='en'?['MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY']:(currentLang==='kz'?['ДҮЙСЕНБІ','СЕЙСЕНБІ','СӘРСЕНБІ','БЕЙСЕНБІ','ЖҰМА']:['ПОНЕДЕЛЬНИК','ВТОРНИК','СРЕДА','ЧЕТВЕРГ','ПЯТНИЦА']);
   const days=[];
   for(let i=0;i<5;i++){
     const d=new Date(mon);d.setDate(mon.getDate()+i);const iso=isoOfDate(d);
     days.push(`<button class="wp-day ${i===ai?'active':''} ${iso===ti?'today':''}" data-day="${i}"><span class="wp-day-name">${dn[i]}</span></button>`);
   }
   
-  return `<div class="week-wrap"><div class="week-panel">
-    <div class="wp-head"><div class="wp-title" id="wpTitle">${ic('icon-calendar','sm')}<span>${ml}</span></div></div>
+  return `<div class="schedule-tabs-container">
+    <div class="wp-head"><div class="wp-title" id="wpTitle">${ic('icon-calendar','sm')}<span>${getLocalizedMonths().nom[mon.getMonth()].toUpperCase()+' '+mon.getFullYear()}</span></div></div>
     <div class="wp-body">
       <button class="wp-arrow" id="wpPrev" type="button">‹</button>
       <div class="wp-days">${days.join('')}</div>
       <button class="wp-arrow" id="wpNext" type="button">›</button>
     </div>
-    <div class="wp-date-info">${getRelativeDate(selectedDate)}</div>
-  </div></div>`;
+  </div>
+  <div class="schedule-content-area">
+    <div class="wp-date-info">${getRelativeDate(selectedDate)}</div>`;
 }
 
 function bindWeekPanel(){
@@ -1739,7 +1865,7 @@ function getDiaryBlocksHTML(data) {
       
       return `<div class="day-block">
           <div class="day-head">
-              <div class="day-date">${esc(info)}<span class="day-weekday">${esc(wd)}</span></div>
+              <div class="day-date">${esc(info)} <span class="day-weekday">${esc(wd)}</span></div>
           </div>
           <div class="day-grid">
               <div class="lessons-col">${lh}</div>
@@ -2104,7 +2230,18 @@ const _origBindPage = bindPage;
 bindPage = function(key){_origBindPage(key);if(key==='homework') bindHwCheckboxes();if(key==='ministry') { bindSchoolModal(); bindVacationModal(); }};
 const _accSaveEl=$('accSave');
 if(_accSaveEl){_accSaveEl.addEventListener('click',async(e)=>{e.stopImmediatePropagation();await Account.saveProfile();},true);}
-(async function init(){try{requestAnimationFrame(fitFormHeight);initAllSelects();buildGradesGrid();Theme.init();I18N.init();UserMenu.init();Account.init();Account.applyAvatar();const s=getSession();if(s&&s.user){showLoader();$('authView').classList.add('hidden');$('appView').classList.remove('hidden');applyUserToUI();rebuildMenu();renderPage('home');requestAnimationFrame(()=>{$('appView').classList.add('ready');moveIndicator();});hideLoader();prefetchAll(s.user).then(()=>{if(['schedule','homework','diary','users','journal','ministry'].includes(currentPage))refreshCurrentPage();}).catch(()=>{});}else{showLoader();hideLoader();$('authView').classList.remove('hidden');}}catch(err){console.error('Init error:',err);hideLoader();$('authView').classList.remove('hidden');}})();
+
+function updateOnlineStatus() {
+  if (!navigator.onLine) {
+    $('offlineOverlay').classList.add('show');
+  } else {
+    $('offlineOverlay').classList.remove('show');
+  }
+}
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+
+(async function init(){try{requestAnimationFrame(fitFormHeight);initAllSelects();buildGradesGrid();Theme.init();I18N.init();UserMenu.init();Account.init();Account.applyAvatar();updateOnlineStatus();const s=getSession();if(s&&s.user){showLoader();$('authView').classList.add('hidden');$('appView').classList.remove('hidden');applyUserToUI();rebuildMenu();renderPage('home');requestAnimationFrame(()=>{$('appView').classList.add('ready');moveIndicator();});hideLoader();prefetchAll(s.user).then(()=>{if(['schedule','homework','diary','users','journal','ministry'].includes(currentPage))refreshCurrentPage();}).catch(()=>{});}else{showLoader();hideLoader();$('authView').classList.remove('hidden');}}catch(err){console.error('Init error:',err);hideLoader();$('authView').classList.remove('hidden');}})();
 </script>
 
 <!-- M3 Loader (Для загрузки сайта) -->
