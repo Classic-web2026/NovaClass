@@ -3,7 +3,7 @@
     var t=localStorage.getItem('nc_theme')||'light';
     if(t==='winter')t='light';
     document.documentElement.setAttribute('data-theme',t);
-    document.documentElement.lang=localStorage.getItem('nc_lang')||'ru';
+    document.documentElement.lang=localStorage.getItem('nc_lang')||'en';
   }catch(e){}
 })();
 
@@ -24,11 +24,11 @@ function setDocTitle(suffix){document.title=suffix?BRAND+' - '+suffix:BRAND;}
 function updateDocTitle(){
   const av=document.getElementById('authView');
   if(!av||!av.classList.contains('hidden')){
-    setDocTitle(isRegisterMode?'Регистрация':'Вход');
+    setDocTitle(currentLang==='en'?(isRegisterMode?'Register':'Login'):(currentLang==='kz'?(isRegisterMode?'Тіркелу':'Кіру'):(isRegisterMode?'Регистрация':'Вход')));
     return;
   }
-  const map={home:'Главная',schedule:'Расписание',homework:'Домашние задания',diary:'Дневник',journal:'Журнал',users:'Пользователи',ministry:'Министерство'};
-  setDocTitle(map[currentPage]||'Главная');
+  const titleKeys={home:'menu_home',schedule:'menu_schedule',homework:'menu_homework',diary:'menu_diary',journal:'menu_journal',users:'menu_users',ministry:'menu_ministry'};
+  setDocTitle(T(titleKeys[currentPage]||'menu_home'));
 }
 
 const ROLES={'Ученик':'student','Модератор':'moderator','Учитель':'teacher','Директор':'director','Администратор':'admin','Создатель':'creator'};
@@ -119,7 +119,7 @@ const TRANSLATIONS = {
   }
 };
 
-let currentLang = localStorage.getItem(LANG_KEY) || 'ru';
+let currentLang = localStorage.getItem(LANG_KEY) || 'en';
 function T(key) { return (TRANSLATIONS[currentLang] && TRANSLATIONS[currentLang][key]) || TRANSLATIONS['ru'][key] || key; }
 function getLocalizedMonths() {
   if(currentLang==='en') return {
@@ -149,9 +149,46 @@ function applyTranslations() {
   if(currentPage && TITLES[currentPage]) $('topbarTitle').textContent = T(TITLES[currentPage]);
   const loginEmail = $('loginEmail');
   if(loginEmail) loginEmail.placeholder = ' ';
+  applyAuthTranslations();
   $('offlineTitle').textContent = currentLang === 'en' ? 'No internet connection' : (currentLang === 'kz' ? 'Интернет байланысы жоқ' : 'Нет подключения к интернету');
   $('offlineSub').textContent = currentLang === 'en' ? 'Please check your connection and try again.' : (currentLang === 'kz' ? 'Қосылымды тексеріп, қайталап көріңіз.' : 'Пожалуйста, проверьте ваше соединение и попробуйте снова.');
   rebuildMenu();
+  updateDocTitle();
+}
+
+const AUTH_TEXT={
+  en:{login:'Login',register:'Register',enterLogin:'Enter your login',enterPassword:'Enter your password',password:'Password',enterFullName:'Enter your first and last name',fullName:'Full name',repeatPassword:'Repeat your password',repeatPasswordShort:'Repeat password',togglePassword:'Toggle password visibility',chooseLanguage:'Choose language',error:'Error'},
+  ru:{login:'Логин',register:'Регистрация',enterLogin:'Введите логин',enterPassword:'Введите пароль',password:'Пароль',enterFullName:'Введите имя и фамилию',fullName:'Имя и фамилия',repeatPassword:'Повторите пароль',repeatPasswordShort:'Повтор пароля',togglePassword:'Показать или скрыть пароль',chooseLanguage:'Выбрать язык',error:'Ошибка'},
+  kz:{login:'Логин',register:'Тіркелу',enterLogin:'Логинді енгізіңіз',enterPassword:'Құпия сөзді енгізіңіз',password:'Құпия сөз',enterFullName:'Аты-жөніңізді енгізіңіз',fullName:'Аты-жөні',repeatPassword:'Құпия сөзді қайталаңыз',repeatPasswordShort:'Құпия сөзді қайталау',togglePassword:'Құпия сөзді көрсету немесе жасыру',chooseLanguage:'Тілді таңдау',error:'Қате'}
+};
+function applyAuthTranslations(){
+  const text=AUTH_TEXT[currentLang]||AUTH_TEXT.en;
+  document.querySelectorAll('[data-auth-text]').forEach(el=>{el.textContent=text[el.dataset.authText]||'';});
+  const title=$('pageTitle');
+  if(title)title.textContent=isRegisterMode?text.register:text.login;
+  const error=$('errBox');
+  if(error&&!error.classList.contains('show'))error.textContent=text.error;
+  const loginText=$('loginBtn')?.querySelector('.btn-text');
+  const registerText=$('btnRegister')?.querySelector('.btn-text');
+  if(loginText)loginText.textContent=text.login;
+  if(registerText)registerText.textContent=text.register;
+  const trigger=$('authLanguageTrigger');
+  const languageName=$('authLanguageName');
+  const languageNames={en:'English',ru:'Русский',kz:'Қазақша'};
+  if(languageName)languageName.textContent=languageNames[currentLang]||languageNames.en;
+  if(trigger)trigger.setAttribute('aria-label',text.chooseLanguage);
+  document.querySelectorAll('[data-auth-lang]').forEach(option=>option.setAttribute('aria-checked',String(option.dataset.authLang===currentLang)));
+  document.querySelectorAll('.pass-icon').forEach(button=>{button.setAttribute('aria-label',text.togglePassword);button.title=text.togglePassword;});
+}
+
+function initAuthLanguage(){
+  const wrap=$('authLanguageWrap'),trigger=$('authLanguageTrigger');
+  if(!wrap||!trigger)return;
+  const setOpen=open=>{wrap.classList.toggle('open',open);trigger.setAttribute('aria-expanded',String(open));};
+  trigger.addEventListener('click',()=>setOpen(!wrap.classList.contains('open')));
+  wrap.querySelectorAll('[data-auth-lang]').forEach(option=>option.addEventListener('click',()=>{I18N.set(option.dataset.authLang);setOpen(false);}));
+  document.addEventListener('click',event=>{if(!wrap.contains(event.target))setOpen(false);});
+  trigger.addEventListener('keydown',event=>{if(event.key==='Escape')setOpen(false);});
 }
 
 function ic(name,cls){return '<svg class="ui-icon'+(cls?' '+cls:'')+'"><use href="#'+name+'"></use></svg>';}
@@ -392,7 +429,6 @@ const UserMenu=(function(){
 
 /* AUTH LOGIC & MORPHING BUTTONS */
 let isRegisterMode=false;
-const pageTitle=$('pageTitle');
 const formsWrap=$('formsWrap');
 const track=$('track');
 const loginEmail=$('loginEmail');
@@ -402,7 +438,6 @@ const regEmail=$('regEmail');
 const regPass=$('regPass');
 const regPass2=$('regPass2');
 
-const bottomButtons=$('bottomButtons');
 const loginBtn=$('loginBtn');
 const btnRegister=$('btnRegister');
 
@@ -415,35 +450,11 @@ function checkFields() {
   });
 }
 
-function checkMergeState() {
-  let isValid = false;
-  if (!isRegisterMode) {
-    isValid = loginEmail.value.trim().length > 0 && loginPass.value.trim().length > 0;
-  } else {
-    isValid = regName.value.trim().length > 0 && 
-              regEmail.value.trim().length > 0 && 
-              regPass.value.trim().length > 0 && 
-              regPass2.value.trim().length > 0;
-  }
-
-  if (isValid) {
-    bottomButtons.classList.add('merged');
-    if (!isRegisterMode) {
-      loginBtn.classList.add('active');
-      btnRegister.classList.remove('active');
-      loginBtn.querySelector('.btn-text').textContent = 'Войти';
-    } else {
-      btnRegister.classList.add('active');
-      loginBtn.classList.remove('active');
-      btnRegister.querySelector('.btn-text').textContent = 'Зарегистрироваться';
-    }
-  } else {
-    bottomButtons.classList.remove('merged');
-    loginBtn.classList.remove('active');
-    btnRegister.classList.remove('active');
-    loginBtn.querySelector('.btn-text').textContent = 'Вход';
-    btnRegister.querySelector('.btn-text').textContent = 'Регистрация';
-  }
+function setAuthButtonState(){
+  loginBtn.classList.toggle('active',!isRegisterMode);
+  btnRegister.classList.toggle('active',isRegisterMode);
+  loginBtn.setAttribute('aria-pressed',String(!isRegisterMode));
+  btnRegister.setAttribute('aria-pressed',String(isRegisterMode));
 }
 
 [loginEmail,loginPass,regName,regEmail,regPass,regPass2].forEach(input => {
@@ -452,7 +463,6 @@ function checkMergeState() {
     checkFields();
     hideErr();
     document.querySelectorAll('.m3-field').forEach(f => f.classList.remove('error'));
-    checkMergeState();
   });
 });
 
@@ -462,41 +472,33 @@ function fitFormHeight() {
 }
 window.addEventListener('resize', fitFormHeight);
 
-loginBtn.addEventListener('click', () => {
-  if (bottomButtons.classList.contains('merged')) {
-    doLogin();
-  } else {
-    isRegisterMode = false;
-    pageTitle.textContent = 'Вход • Login';
+let authSwitchTimer=0;
+function switchAuthMode(register){
+  if(isRegisterMode===register)return;
+  const card=$('authCard');
+  if(authSwitchTimer)clearTimeout(authSwitchTimer);
+  card.classList.remove('is-entering');
+  card.classList.add('is-exiting');
+  authSwitchTimer=setTimeout(()=>{
+    isRegisterMode=register;
+    track.dataset.active=register?'reg':'login';
+    applyAuthTranslations();
+    setAuthButtonState();
     updateDocTitle();
-    animateTitle();
-    track.dataset.active = 'login';
-    fitFormHeight();
     hideErr();
-    checkMergeState();
-  }
-});
-
-btnRegister.addEventListener('click', () => {
-  if (bottomButtons.classList.contains('merged')) {
-    doRegister();
-  } else {
-    isRegisterMode = true;
-    pageTitle.textContent = 'Регистрация • Register';
-    updateDocTitle();
-    animateTitle();
-    track.dataset.active = 'reg';
+    document.querySelectorAll('.m3-field').forEach(field=>field.classList.remove('error'));
+    checkFields();
+    card.classList.remove('is-exiting');
+    void card.offsetWidth;
+    card.classList.add('is-entering');
     fitFormHeight();
-    hideErr();
-    checkMergeState();
-  }
-});
-
-function animateTitle() {
-  pageTitle.style.animation = 'none';
-  void pageTitle.offsetWidth;
-  pageTitle.style.animation = 'fadeUp 0.4s var(--ease-standard) both';
+    authSwitchTimer=setTimeout(()=>{card.classList.remove('is-entering');authSwitchTimer=0;},800);
+  },160);
 }
+
+loginBtn.addEventListener('click',()=>isRegisterMode?switchAuthMode(false):doLogin());
+btnRegister.addEventListener('click',()=>isRegisterMode?doRegister():switchAuthMode(true));
+setAuthButtonState();
 
 function showErr(m){
   const b=$('errBox');
@@ -532,10 +534,10 @@ function togglePass(inputId) {
   const btn = input.parentElement && input.parentElement.querySelector('.pass-icon');
   if (input.type === 'password') {
     input.type = 'text';
-    if(btn) btn.textContent = 'visibility';
+
   } else {
     input.type = 'password';
-    if(btn) btn.textContent = 'visibility_off';
+
   }
 }
 
@@ -611,8 +613,9 @@ function rebuildMenu() {
   let mHtml='';
   const addMenuItem=(page,icon,key)=>{
     const label=T(key),attrs=`aria-label="${esc(label)}" title="${esc(label)}"`;
+    const mobileIcons={home:'nc-icon-home',schedule:'nc-icon-calendar',homework:'nc-icon-homework',diary:'nc-icon-diary',journal:'nc-icon-journal',users:'nc-icon-users',ministry:'nc-icon-school'};
     html+=`<button class="menu-item" data-page="${page}" ${attrs}><svg class="ui-icon" aria-hidden="true"><use href="#${icon}"></use></svg><span class="menu-label">${esc(label)}</span></button>`;
-    mHtml+=`<button class="mb-item" data-page="${page}" ${attrs}><svg class="ui-icon" aria-hidden="true"><use href="#${icon}"></use></svg></button>`;
+    mHtml+=`<button class="mb-item" data-page="${page}" ${attrs}><svg class="ui-icon mb-glyph" aria-hidden="true"><use href="#${mobileIcons[page]||'nc-icon-home'}"></use></svg></button>`;
   };
   addMenuItem('home','icon-home','menu_home');
   addMenuItem('schedule','icon-calendar','menu_schedule');
@@ -624,7 +627,7 @@ function rebuildMenu() {
   mb.innerHTML=html;mB.innerHTML=mHtml;
   if(!['home','schedule','homework','diary','journal','users','ministry'].includes(currentPage))currentPage='home';
   $$('.menu-item').forEach(b=>b.classList.toggle('active',b.dataset.page===currentPage));
-  $$('.mb-item').forEach(b=>b.classList.toggle('active',b.dataset.page===currentPage));
+  $$('.mb-item').forEach(b=>{const active=b.dataset.page===currentPage;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
   moveIndicator();
 }
 function moveIndicator(){const i=$('menuIndicator'),box=$('menuBox');if(!i||!box)return;const a=box.querySelector('.menu-item.active');if(!a){i.classList.remove('ready');return;}i.style.height=a.offsetHeight+'px';i.style.transform='translateY('+a.offsetTop+'px)';i.classList.add('ready');}
@@ -1027,7 +1030,7 @@ window.addEventListener('offline',updateOnlineStatus);
 (async function init(){
   try{
     checkFields();
-    initAllSelects();buildGradesGrid();Theme.init();I18N.init();UserMenu.init();Account.init();Account.applyAvatar();updateOnlineStatus();
+    initAllSelects();buildGradesGrid();Theme.init();I18N.init();initAuthLanguage();UserMenu.init();Account.init();Account.applyAvatar();updateOnlineStatus();
     setTimeout(fitFormHeight, 50);
     const s=getSession();
     if(s&&s.user){
@@ -1043,29 +1046,23 @@ window.addEventListener('offline',updateOnlineStatus);
 })();
 
 (function(){
-var NS="http://www.w3.org/2000/svg",TAU=Math.PI*2,run=[],LV=0;
-var RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+var NS="http://www.w3.org/2000/svg",run=[],LV=0;
 var $=function(i){return document.getElementById(i)};
 function el(n,a){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);return e}
 function sm(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x)}
-function flat(v){return v<.7?1:1-sm((v-.7)/.3)}
 function lin(T,get){
-var Am=Math.min(3,T*.4),W=240,H=T+2*Am,h=T/2,g=4;
-var s=el('svg',{viewBox:'0 0 '+W+' '+H,role:'progressbar','aria-label':'Загрузка'});s.style.overflow='visible';
-var tr=el('path',{fill:'none',stroke:'var(--s3)','stroke-width':T,'stroke-linecap':'round'}),
-ac=el('path',{fill:'none',stroke:'var(--p)','stroke-width':T,'stroke-linecap':'round','stroke-linejoin':'round'}),
-dt=el('circle',{r:2,cy:H/2,cx:W-h,fill:'var(--p)'});
-s.appendChild(tr);s.appendChild(ac);s.appendChild(dt);
-function ln(a,b,A,ph){a+=h;b-=h;if(b<=a)return'';if(A<.05)return'M'+a+' '+H/2+'L'+b+' '+H/2;var d='',x;for(x=a;x<=b;x+=2)d+=(x==a?'M':'L')+x.toFixed(1)+' '+(H/2+A*Math.sin(TAU*x/40-ph)).toFixed(2);return d+'L'+b+' '+(H/2+A*Math.sin(TAU*b/40-ph)).toFixed(2)}
-run.push({n:s,f:function(t){var v=get(),A=Am*flat(v),p=v*W;if(p>T+1){ac.setAttribute('d',ln(0,p,A,t/350));tr.setAttribute('d',ln(p+g,W,0,0))}else{ac.setAttribute('d','');tr.setAttribute('d',ln(0,W,0,0))}dt.style.display=p>W-T-4?'none':''}});
+var s=document.createElement('div'),fill=document.createElement('div');
+s.className='nc-progress-track';s.setAttribute('role','progressbar');s.setAttribute('aria-label',currentLang==='en'?'Loading':'Загрузка');s.setAttribute('aria-valuemin','0');s.setAttribute('aria-valuemax','100');
+fill.className='nc-progress-fill';s.appendChild(fill);
+run.push({n:s,f:function(){var value=Math.max(0,Math.min(1,Number(get())||0)),percent=Math.round(value*100);fill.style.width=percent+'%';s.setAttribute('aria-valuenow',String(percent));}});
 return s}
-var SH=[[5,.14],[9,.08],[4,.16],[2,.22],[12,.05],[3,.18],[7,.12]];
-function rad(i,th){var q=SH[i%7];return Math.cos(q[0]*th)*q[1]+1}
 function load(size,cont,col){
-var s=el('svg',{width:size,height:size,viewBox:'0 0 48 48',role:'progressbar','aria-label':'Загрузка'});s.style.flex='none';
-if(cont)s.appendChild(el('circle',{cx:24,cy:24,r:24,fill:'var(--s3)'}));
-var p=el('path',{fill:col||(cont?'var(--p-ink)':'var(--p)')});s.appendChild(p);var R=cont?12.5:19;
-run.push({n:s,f:function(t){var i=Math.floor(t/700),k=sm((t%700)/700*1.5),rot=t/1000*1.6+i*.9,d='',th;for(th=0;th<TAU+.01;th+=.06){var r=((1-k)*rad(i,th)+k*rad(i+1,th))/1.22*R,a=th+rot;d+=(th?'L':'M')+(24+r*Math.cos(a)).toFixed(2)+' '+(24+r*Math.sin(a)).toFixed(2)}p.setAttribute('d',d+'Z')}});
+var s=el('svg',{width:size,height:size,viewBox:'0 0 48 48',role:'img','aria-label':currentLang==='en'?'Loading':'Загрузка','class':'nc-spinner'});
+s.style.flex='none';
+s.appendChild(el('circle',{cx:24,cy:24,r:20,class:'spinner-track'}));
+var arc=el('circle',{cx:24,cy:24,r:20,class:'spinner-arc','transform':'rotate(-90 24 24)'});
+if(col)arc.style.stroke=col;
+s.appendChild(arc);
 return s}
 if($('m3Load'))$('m3Load').appendChild(load(72,1));
 if($('m3Bar'))$('m3Bar').appendChild(lin(8,function(){return LV}));
@@ -1081,6 +1078,6 @@ function frame(t){
 var e=typeof _loaderAt==='number'?Date.now()-_loaderAt:0,m=typeof LOADER_MIN_MS==='number'?LOADER_MIN_MS:3000;
 LV=e>=m?1:.03+.97*sm(e/m);
 for(var i=run.length-1;i>=0;i--){var r=run[i];if(!r.n.isConnected){run.splice(i,1);continue}if(r.n.getBoundingClientRect().width>0)r.f(t)}
-if(!RM)requestAnimationFrame(frame)}
-if(RM)frame(2000);else requestAnimationFrame(frame);
+requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
 })();
