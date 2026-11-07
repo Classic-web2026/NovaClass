@@ -82,96 +82,113 @@
   <symbol id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" stroke-linecap="round"/></symbol>
   <symbol id="icon-palm" viewBox="0 0 24 24"><path d="M12 22V10m0 0c0-4.4-3.6-8-8-8 0 4.4 3.6 8 8 8zm0 0c0-4.4 3.6-8 8-8 0 4.4-3.6 8-8 8z" stroke-linecap="round"/></symbol>
   <symbol id="icon-megaphone" viewBox="0 0 24 24"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" stroke-linecap="round"/></symbol>
+  <symbol id="nc-icon-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.5-3.5 3-5.5 7-5.5s6.5 2 7 5.5" stroke-linecap="round"/></symbol>
+  <symbol id="nc-icon-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke-linecap="round"/><circle cx="12" cy="15" r=".8" fill="currentColor" stroke="none"/><path d="M12 16v1.5" stroke-linecap="round"/></symbol>
+  <symbol id="nc-icon-name" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.5-3.5 3-5.5 7-5.5s6.5 2 7 5.5" stroke-linecap="round"/></symbol>
+  <symbol id="nc-icon-repeat-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 7-2.6M17 3.5v4h-4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="15" r=".8" fill="currentColor" stroke="none"/><path d="M12 16v1.5" stroke-linecap="round"/></symbol>
+  <symbol id="nc-icon-chevron" viewBox="0 0 24 24"><path d="m8 10 4 4 4-4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="nc-icon-home" viewBox="0 0 24 24"><path d="m3.5 10.5 8.5-7 8.5 7M5.5 9.5V19a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V9.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 21v-5a2 2 0 0 1 4 0v5"/></symbol>
+  <symbol id="nc-icon-calendar" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2.5"/><path d="M8 3v4m8-4v4M4 9.5h16M8 13h.1m4-.1h.1m3.9.1h.1M8 17h.1m4-.1h.1" stroke-linecap="round" stroke-width="2"/></symbol>
+  <symbol id="nc-icon-homework" viewBox="0 0 24 24"><path d="M6 3.5h12v17H6zM9 8h6m-6 4h6m-6 4h3m5 0 1.5 1.5L21 15" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="nc-icon-diary" viewBox="0 0 24 24"><path d="M5 4.5A2.5 2.5 0 0 1 7.5 2H20v18H7.5A2.5 2.5 0 0 0 5 22.5zM5 4.5v18m4-15h7m-7 4h7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="nc-icon-journal" viewBox="0 0 24 24"><path d="M4 20V5a2 2 0 0 1 2-2h14v18H6a2 2 0 0 0-2 2m4-7v-3m4 3V8m4 8v-5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="nc-icon-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3.5 20c.5-3 2.3-4.5 5.5-4.5s5 1.5 5.5 4.5m1-14a3 3 0 0 1 0 5.5m1.5 4.5c2.1.6 3.3 2 3.5 4" stroke-linecap="round"/></symbol>
+  <symbol id="nc-icon-school" viewBox="0 0 24 24"><path d="m3 9 9-5 9 5-9 5zM6 11v5c3.5 3 8.5 3 12 0v-5m3-2v6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 </svg>
 
 <!-- AUTH -->
 <div id="authView" class="hidden">
-  <div class="app-container">
-    <header class="top-header">
-      <h1 id="pageTitle">Вход <span aria-hidden="true">•</span> Login</h1>
-      <div class="divider-line"></div>
-    </header>
-
-    <main class="form-container">
-      <div class="forms-wrap" id="formsWrap">
-        <div class="slider-track" id="track" data-active="login">
-          
-          <!-- ВХОД -->
-          <div class="slide-pane" data-pane="login" id="loginForm">
-            <div class="m3-field" id="loginUserField">
-              <span class="outer-label">Введите логин</span>
-              <div class="input-wrapper">
-                <span class="material-symbols-rounded input-icon">person</span>
-                <input type="text" id="loginEmail" placeholder=" ">
-                <label class="floating-label">Логин</label>
-              </div>
-            </div>
-            <div class="m3-field" id="loginPassField">
-              <span class="outer-label">Введите пароль</span>
-              <div class="input-wrapper">
-                <span class="material-symbols-rounded input-icon">lock</span>
-                <input type="password" id="loginPass" placeholder=" ">
-                <label class="floating-label">Пароль</label>
-                <button class="pass-icon material-symbols-rounded" type="button" onclick="togglePass('loginPass')">visibility_off</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- РЕГИСТРАЦИЯ -->
-          <div class="slide-pane" data-pane="reg" id="regForm">
-            <div class="m3-field" id="regNameField">
-              <span class="outer-label">Введите имя</span>
-              <div class="input-wrapper">
-                <span class="material-symbols-rounded input-icon">badge</span>
-                <input type="text" id="regName" placeholder=" ">
-                <label class="floating-label">Имя</label>
-              </div>
-            </div>
-            <div class="m3-field" id="regUserField">
-              <span class="outer-label">Введите логин</span>
-              <div class="input-wrapper">
-                <span class="material-symbols-rounded input-icon">person</span>
-                <input type="text" id="regEmail" placeholder=" ">
-                <label class="floating-label">Логин</label>
-              </div>
-            </div>
-            <div class="m3-field" id="regPassField">
-              <span class="outer-label">Введите пароль</span>
-              <div class="input-wrapper">
-                <span class="material-symbols-rounded input-icon">lock</span>
-                <input type="password" id="regPass" placeholder=" ">
-                <label class="floating-label">Пароль</label>
-                <button class="pass-icon material-symbols-rounded" type="button" onclick="togglePass('regPass')">visibility_off</button>
-              </div>
-            </div>
-            <div class="m3-field" id="regPass2Field">
-              <span class="outer-label">Повторите пароль</span>
-              <div class="input-wrapper">
-                <span class="material-symbols-rounded input-icon">lock_reset</span>
-                <input type="password" id="regPass2" placeholder=" ">
-                <label class="floating-label">Повтор пароля</label>
-                <button class="pass-icon material-symbols-rounded" type="button" onclick="togglePass('regPass2')">visibility_off</button>
-              </div>
-            </div>
-          </div>
-
+  <div class="app-container auth-shell">
+    <header class="auth-brandbar">
+      <span class="auth-brand">NovaClass You</span>
+      <div class="auth-language-wrap" id="authLanguageWrap">
+        <button class="auth-language-trigger" id="authLanguageTrigger" type="button" aria-haspopup="menu" aria-controls="authLanguageMenu" aria-expanded="false" aria-label="Choose language">
+          <svg class="ui-icon" aria-hidden="true"><use href="#icon-globe"></use></svg>
+          <span id="authLanguageName">English</span>
+          <svg class="ui-icon auth-language-chevron" aria-hidden="true"><use href="#nc-icon-chevron"></use></svg>
+        </button>
+        <div class="auth-language-menu" id="authLanguageMenu" role="menu" aria-label="Language">
+          <button type="button" role="menuitemradio" data-auth-lang="en">English</button>
+          <button type="button" role="menuitemradio" data-auth-lang="ru">Русский</button>
+          <button type="button" role="menuitemradio" data-auth-lang="kz">Қазақша</button>
         </div>
       </div>
-      
-      <div class="error-text" id="errBox">Ошибка</div>
-    </main>
-
-    <footer class="bottom-section">
-      <div class="divider-line"></div>
-      <div class="bottom-buttons" id="bottomButtons">
-        <button class="m3-btn btn-login" id="loginBtn">
-          <span class="btn-text">Вход</span>
-        </button>
-        <button class="m3-btn btn-register" id="btnRegister">
-          <span class="btn-text">Регистрация</span>
-        </button>
-      </div>
-    </footer>
+    </header>
+    <section class="auth-card" id="authCard">
+      <header class="top-header">
+        <h1 id="pageTitle">Login</h1>
+        <div class="divider-line"></div>
+      </header>
+      <main class="form-container">
+        <div class="forms-wrap" id="formsWrap">
+          <div class="slider-track" id="track" data-active="login">
+            <div class="slide-pane" data-pane="login" id="loginForm">
+              <div class="m3-field" id="loginUserField">
+                <span class="outer-label" data-auth-text="enterLogin">Enter your login</span>
+                <div class="input-wrapper">
+                  <svg class="ui-icon input-icon" aria-hidden="true"><use href="#nc-icon-person"></use></svg>
+                  <input type="text" id="loginEmail" placeholder=" ">
+                  <label class="floating-label" data-auth-text="login">Login</label>
+                </div>
+              </div>
+              <div class="m3-field" id="loginPassField">
+                <span class="outer-label" data-auth-text="enterPassword">Enter your password</span>
+                <div class="input-wrapper">
+                  <svg class="ui-icon input-icon" aria-hidden="true"><use href="#nc-icon-lock"></use></svg>
+                  <input type="password" id="loginPass" placeholder=" ">
+                  <label class="floating-label" data-auth-text="password">Password</label>
+                  <button class="pass-icon" type="button" aria-label="Toggle password visibility" title="Toggle password visibility" onclick="togglePass('loginPass')"><svg class="pass-eye-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12c2.4-3.8 5.6-5.8 9.5-5.8s7.1 2 9.5 5.8"/><path d="M5.2 14.2c1.9 2.2 4.2 3.4 6.8 3.4s4.9-1.2 6.8-3.4"/><circle cx="12" cy="12" r="2.3"/></svg></button>
+                </div>
+              </div>
+            </div>
+            <div class="slide-pane" data-pane="reg" id="regForm">
+              <div class="m3-field" id="regNameField">
+                <span class="outer-label" data-auth-text="enterFullName">Enter your first and last name</span>
+                <div class="input-wrapper">
+                  <svg class="ui-icon input-icon" aria-hidden="true"><use href="#nc-icon-name"></use></svg>
+                  <input type="text" id="regName" placeholder=" ">
+                  <label class="floating-label" data-auth-text="fullName">Full name</label>
+                </div>
+              </div>
+              <div class="m3-field" id="regUserField">
+                <span class="outer-label" data-auth-text="enterLogin">Enter your login</span>
+                <div class="input-wrapper">
+                  <svg class="ui-icon input-icon" aria-hidden="true"><use href="#nc-icon-person"></use></svg>
+                  <input type="text" id="regEmail" placeholder=" ">
+                  <label class="floating-label" data-auth-text="login">Login</label>
+                </div>
+              </div>
+              <div class="m3-field" id="regPassField">
+                <span class="outer-label" data-auth-text="enterPassword">Enter your password</span>
+                <div class="input-wrapper">
+                  <svg class="ui-icon input-icon" aria-hidden="true"><use href="#nc-icon-lock"></use></svg>
+                  <input type="password" id="regPass" placeholder=" ">
+                  <label class="floating-label" data-auth-text="password">Password</label>
+                  <button class="pass-icon" type="button" aria-label="Toggle password visibility" title="Toggle password visibility" onclick="togglePass('regPass')"><svg class="pass-eye-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12c2.4-3.8 5.6-5.8 9.5-5.8s7.1 2 9.5 5.8"/><path d="M5.2 14.2c1.9 2.2 4.2 3.4 6.8 3.4s4.9-1.2 6.8-3.4"/><circle cx="12" cy="12" r="2.3"/></svg></button>
+                </div>
+              </div>
+              <div class="m3-field" id="regPass2Field">
+                <span class="outer-label" data-auth-text="repeatPassword">Repeat your password</span>
+                <div class="input-wrapper">
+                  <svg class="ui-icon input-icon" aria-hidden="true"><use href="#nc-icon-repeat-lock"></use></svg>
+                  <input type="password" id="regPass2" placeholder=" ">
+                  <label class="floating-label" data-auth-text="repeatPasswordShort">Repeat password</label>
+                  <button class="pass-icon" type="button" aria-label="Toggle password visibility" title="Toggle password visibility" onclick="togglePass('regPass2')"><svg class="pass-eye-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12c2.4-3.8 5.6-5.8 9.5-5.8s7.1 2 9.5 5.8"/><path d="M5.2 14.2c1.9 2.2 4.2 3.4 6.8 3.4s4.9-1.2 6.8-3.4"/><circle cx="12" cy="12" r="2.3"/></svg></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="error-text" id="errBox">Error</div>
+      </main>
+      <footer class="bottom-section">
+        <div class="divider-line"></div>
+        <div class="bottom-buttons" id="bottomButtons">
+          <button class="m3-btn btn-login active" id="loginBtn" type="button" aria-pressed="true"><span class="btn-text">Login</span></button>
+          <button class="m3-btn btn-register" id="btnRegister" type="button" aria-pressed="false"><span class="btn-text">Register</span></button>
+        </div>
+      </footer>
+    </section>
   </div>
 </div>
 
