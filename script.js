@@ -1,7 +1,7 @@
 (function(){
   try{
-    var t=localStorage.getItem('nc_theme')||'light';
-    if(t==='winter')t='light';
+    var t=localStorage.getItem('nc_theme')||'dark';
+    if(t==='winter')t='dark';
     document.documentElement.setAttribute('data-theme',t);
     document.documentElement.lang=localStorage.getItem('nc_lang')||'en';
   }catch(e){}
@@ -157,21 +157,31 @@ function applyTranslations() {
 }
 
 const AUTH_TEXT={
-  en:{login:'Login',register:'Register',enterLogin:'Enter your login',enterPassword:'Enter your password',password:'Password',enterFullName:'Enter your first and last name',fullName:'Full name',repeatPassword:'Repeat your password',repeatPasswordShort:'Repeat password',togglePassword:'Toggle password visibility',chooseLanguage:'Choose language',error:'Error'},
-  ru:{login:'Логин',register:'Регистрация',enterLogin:'Введите логин',enterPassword:'Введите пароль',password:'Пароль',enterFullName:'Введите имя и фамилию',fullName:'Имя и фамилия',repeatPassword:'Повторите пароль',repeatPasswordShort:'Повтор пароля',togglePassword:'Показать или скрыть пароль',chooseLanguage:'Выбрать язык',error:'Ошибка'},
-  kz:{login:'Логин',register:'Тіркелу',enterLogin:'Логинді енгізіңіз',enterPassword:'Құпия сөзді енгізіңіз',password:'Құпия сөз',enterFullName:'Аты-жөніңізді енгізіңіз',fullName:'Аты-жөні',repeatPassword:'Құпия сөзді қайталаңыз',repeatPasswordShort:'Құпия сөзді қайталау',togglePassword:'Құпия сөзді көрсету немесе жасыру',chooseLanguage:'Тілді таңдау',error:'Қате'}
+  en:{modeLogin:'Login',modeRegister:'Register',loginField:'Login',password:'Password',fullName:'Full name',chooseLanguage:'Choose language',themeDark:'Dark theme',themeLight:'Light theme',toggleTheme:'Toggle theme',togglePassword:'Toggle password visibility',error:'Error'},
+  ru:{modeLogin:'Вход',modeRegister:'Регистрация',loginField:'Логин',password:'Пароль',fullName:'Имя и Фамилия',chooseLanguage:'Выбрать язык',themeDark:'Тёмная тема',themeLight:'Светлая тема',toggleTheme:'Переключить тему',togglePassword:'Показать или скрыть пароль',error:'Ошибка'},
+  kz:{modeLogin:'Кіру',modeRegister:'Тіркелу',loginField:'Логин',password:'Құпия сөз',fullName:'Аты-жөні',chooseLanguage:'Тілді таңдау',themeDark:'Қараңғы тақырып',themeLight:'Жарық тақырып',toggleTheme:'Тақырыпты ауыстыру',togglePassword:'Құпия сөзді көрсету немесе жасыру',error:'Қате'}
 };
+function updateAuthBrand(){
+  const t=AUTH_TEXT[currentLang]||AUTH_TEXT.en;
+  const brand=$('authBrandTitle');
+  const mode=isRegisterMode?t.modeRegister:t.modeLogin;
+  if(brand) brand.textContent = (window.innerWidth>=768) ? 'NovaClass' : ('NovaClass • '+mode);
+}
 function applyAuthTranslations(){
   const text=AUTH_TEXT[currentLang]||AUTH_TEXT.en;
-  document.querySelectorAll('[data-auth-text]').forEach(el=>{el.textContent=text[el.dataset.authText]||'';});
+  document.querySelectorAll('[data-auth-text="login"]').forEach(el=>el.textContent=text.loginField);
+  document.querySelectorAll('[data-auth-text="password"]').forEach(el=>el.textContent=text.password);
+  document.querySelectorAll('[data-auth-text="fullName"]').forEach(el=>el.textContent=text.fullName);
+  const modeLabel=isRegisterMode?text.modeRegister:text.modeLogin;
   const title=$('pageTitle');
-  if(title)title.textContent=isRegisterMode?text.register:text.login;
+  if(title)title.textContent=modeLabel;
+  updateAuthBrand();
   const error=$('errBox');
   if(error&&!error.classList.contains('show'))error.textContent=text.error;
   const loginText=$('loginBtn')?.querySelector('.btn-text');
   const registerText=$('btnRegister')?.querySelector('.btn-text');
-  if(loginText)loginText.textContent=text.login;
-  if(registerText)registerText.textContent=text.register;
+  if(loginText)loginText.textContent=text.modeLogin;
+  if(registerText)registerText.textContent=text.modeRegister;
   const trigger=$('authLanguageTrigger');
   const languageName=$('authLanguageName');
   const languageNames={en:'English',ru:'Русский',kz:'Қазақша'};
@@ -179,13 +189,19 @@ function applyAuthTranslations(){
   if(trigger)trigger.setAttribute('aria-label',text.chooseLanguage);
   document.querySelectorAll('[data-auth-lang]').forEach(option=>option.setAttribute('aria-checked',String(option.dataset.authLang===currentLang)));
   document.querySelectorAll('.pass-icon').forEach(button=>{button.setAttribute('aria-label',text.togglePassword);button.title=text.togglePassword;});
+  const themeBtn=$('authThemeToggle');
+  const themeText=$('authThemeText');
+  const isDark=(document.documentElement.getAttribute('data-theme')||'dark')==='dark';
+  if(themeText) themeText.textContent = isDark ? text.themeDark : text.themeLight;
+  if(themeBtn){ themeBtn.setAttribute('aria-label',text.toggleTheme); themeBtn.title=text.toggleTheme; }
+  updateAuthMerge();
 }
 
 function initAuthLanguage(){
   const wrap=$('authLanguageWrap'),trigger=$('authLanguageTrigger');
   if(!wrap||!trigger)return;
   const setOpen=open=>{wrap.classList.toggle('open',open);trigger.setAttribute('aria-expanded',String(open));};
-  trigger.addEventListener('click',()=>setOpen(!wrap.classList.contains('open')));
+  trigger.addEventListener('click',e=>{e.stopPropagation();setOpen(!wrap.classList.contains('open'));});
   wrap.querySelectorAll('[data-auth-lang]').forEach(option=>option.addEventListener('click',()=>{I18N.set(option.dataset.authLang);setOpen(false);}));
   document.addEventListener('click',event=>{if(!wrap.contains(event.target))setOpen(false);});
   trigger.addEventListener('keydown',event=>{if(event.key==='Escape')setOpen(false);});
@@ -198,7 +214,7 @@ function uid(p){return (p||'id')+'_'+Date.now()+'_'+Math.random().toString(36).s
 
 /* Ripple Effect for all interactive elements */
 document.body.addEventListener('click', function(e) {
-  const btn = e.target.closest('.m3-btn, .btn, .topbar-add, .btn-save, .btn-clear, .mgmt-tab, .ud-action, .set-tab, .lesson-row, .date-card');
+  const btn = e.target.closest('.m3-btn, .btn, .topbar-add, .btn-save, .btn-clear, .mgmt-tab, .ud-action, .set-tab, .lesson-row, .date-card, .auth-ctl, .auth-language-menu button');
   if(!btn || btn.disabled) return;
   const rect = btn.getBoundingClientRect();
   const x = e.clientX - rect.left;
@@ -276,7 +292,7 @@ function extractLogin(raw){
   if (!/^[a-z0-9._-]{2,32}$/.test(s)) return { error: currentLang==='en'?'Login: 2-32 chars, latin, digits, . _ -':'Логин: 2–32 симв., латиница, цифры, . _ -' };
   return { name: s, email: s + EMAIL_DOMAIN };
 }
-function markLoginError(inputId){ const inp = $(inputId); if (!inp) return; inp.classList.add('error'); const wrap = inp.closest('.login-wrap'); if (wrap) wrap.classList.add('error'); }
+function markLoginError(inputId){ const inp = $(inputId); if (!inp) return; inp.classList.add('error'); const field = inp.closest('.m3-field'); if (field) field.classList.add('error'); const wrap = inp.closest('.login-wrap'); if (wrap) wrap.classList.add('error'); }
 
 let _loaderAt = 0, _loaderT = 0;
 function showLoader(){_loaderAt = Date.now(); if(_loaderT){clearTimeout(_loaderT); _loaderT = 0;} const l = $('loader'); if(l) l.classList.remove('hidden','fade-out');}
@@ -351,7 +367,7 @@ const I18N=(function(){
   return {apply, set, init};
 })();
 
-const Theme=(function(){function apply(mode){document.documentElement.setAttribute('data-theme',mode==='dark'?'dark':'light');try{localStorage.setItem(THEME_KEY,mode);}catch(e){}document.querySelectorAll('.theme-card').forEach(c=>c.classList.toggle('active',c.dataset.theme===mode));}function current(){try{return localStorage.getItem(THEME_KEY)||'light';}catch(e){return'light';}}function init(){apply(current());document.querySelectorAll('.theme-card').forEach(c=>c.onclick=()=>{apply(c.dataset.theme);showToast(currentLang==='en'?'Theme changed':(currentLang==='kz'?'Тақырып өзгертілді':'Тема изменена'));});}return{apply,current,init};})();
+const Theme=(function(){function apply(mode){document.documentElement.setAttribute('data-theme',mode==='dark'?'dark':'light');try{localStorage.setItem(THEME_KEY,mode);}catch(e){}document.querySelectorAll('.theme-card').forEach(c=>c.classList.toggle('active',c.dataset.theme===mode));}function current(){try{return localStorage.getItem(THEME_KEY)||'dark';}catch(e){return'dark';}}function init(){apply(current());document.querySelectorAll('.theme-card').forEach(c=>c.onclick=()=>{apply(c.dataset.theme);showToast(currentLang==='en'?'Theme changed':(currentLang==='kz'?'Тақырып өзгертілді':'Тема изменена'));});}return{apply,current,init};})();
 function getCustomRefs(){try{const r=localStorage.getItem(CUSTOM_REFS_KEY);if(!r)return{lessonNum:[],time:[],subject:[],teacher:[],room:[]};const o=JSON.parse(r);return{lessonNum:o.lessonNum||[],time:o.time||[],subject:o.subject||[],teacher:o.teacher||[],room:o.room||[]};}catch(e){return{lessonNum:[],time:[],subject:[],teacher:[],room:[]};}}
 function saveCustomRefs(o){try{localStorage.setItem(CUSTOM_REFS_KEY,JSON.stringify(o));}catch(e){}}
 function normKey(s){return String(s||'').trim().toLowerCase();}
@@ -436,13 +452,12 @@ const loginPass=$('loginPass');
 const regName=$('regName');
 const regEmail=$('regEmail');
 const regPass=$('regPass');
-const regPass2=$('regPass2');
 
 const loginBtn=$('loginBtn');
 const btnRegister=$('btnRegister');
 
 function checkFields() {
-  document.querySelectorAll('.m3-field').forEach(field => {
+  document.querySelectorAll('#authView .m3-field').forEach(field => {
     const input = field.querySelector('input');
     if (!input) return;
     if (input.value.trim() !== '') field.classList.add('has-value');
@@ -450,50 +465,71 @@ function checkFields() {
   });
 }
 
+function updateAuthMerge(){
+  const wrap=$('bottomButtons');
+  if(!wrap) return;
+  const loginReady=!!(loginEmail && loginPass && loginEmail.value.trim() && loginPass.value.trim());
+  const regReady=!!(regName && regEmail && regPass && regName.value.trim() && regEmail.value.trim() && regPass.value.trim());
+  const ready=isRegisterMode ? regReady : loginReady;
+  wrap.classList.toggle('merged', ready);
+}
+
 function setAuthButtonState(){
   loginBtn.classList.toggle('active',!isRegisterMode);
   btnRegister.classList.toggle('active',isRegisterMode);
   loginBtn.setAttribute('aria-pressed',String(!isRegisterMode));
   btnRegister.setAttribute('aria-pressed',String(isRegisterMode));
+  updateAuthMerge();
 }
 
-[loginEmail,loginPass,regName,regEmail,regPass,regPass2].forEach(input => {
+[loginEmail,loginPass,regName,regEmail,regPass].forEach(input => {
   if(!input) return;
   input.addEventListener('input', () => {
     checkFields();
     hideErr();
-    document.querySelectorAll('.m3-field').forEach(f => f.classList.remove('error'));
+    document.querySelectorAll('#authView .m3-field').forEach(f => f.classList.remove('error'));
+    updateAuthMerge();
+  });
+});
+
+document.querySelectorAll('.pass-icon[data-pass-target]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const inp=$(btn.dataset.passTarget);
+    if(!inp) return;
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+    inp.focus();
   });
 });
 
 function fitFormHeight() {
   const pane = document.querySelector('.slide-pane[data-pane="' + (isRegisterMode ? 'reg' : 'login') + '"]');
-  if (pane) formsWrap.style.height = pane.scrollHeight + 'px';
+  if (pane && formsWrap) formsWrap.style.height = pane.scrollHeight + 'px';
 }
-window.addEventListener('resize', fitFormHeight);
+window.addEventListener('resize', ()=>{ fitFormHeight(); updateAuthBrand(); });
 
 let authSwitchTimer=0;
 function switchAuthMode(register){
   if(isRegisterMode===register)return;
-  const card=$('authCard');
+  const middle=$('authMiddle');
   if(authSwitchTimer)clearTimeout(authSwitchTimer);
-  card.classList.remove('is-entering');
-  card.classList.add('is-exiting');
+  if(middle){ middle.classList.remove('is-entering'); middle.classList.add('is-exiting'); }
   authSwitchTimer=setTimeout(()=>{
     isRegisterMode=register;
-    track.dataset.active=register?'reg':'login';
+    if(track) track.dataset.active=register?'reg':'login';
     applyAuthTranslations();
     setAuthButtonState();
     updateDocTitle();
     hideErr();
-    document.querySelectorAll('.m3-field').forEach(field=>field.classList.remove('error'));
+    document.querySelectorAll('#authView .m3-field').forEach(field=>field.classList.remove('error'));
     checkFields();
-    card.classList.remove('is-exiting');
-    void card.offsetWidth;
-    card.classList.add('is-entering');
+    if(middle){
+      middle.classList.remove('is-exiting');
+      void middle.offsetWidth;
+      middle.classList.add('is-entering');
+    }
     fitFormHeight();
-    authSwitchTimer=setTimeout(()=>{card.classList.remove('is-entering');authSwitchTimer=0;},800);
-  },160);
+    authSwitchTimer=setTimeout(()=>{ if(middle) middle.classList.remove('is-entering'); authSwitchTimer=0; },500);
+  },120);
 }
 
 loginBtn.addEventListener('click',()=>isRegisterMode?switchAuthMode(false):doLogin());
@@ -507,14 +543,14 @@ function showErr(m){
   b.classList.add('show');
   fitFormHeight();
 }
-function hideErr(){$('errBox')?.classList.remove('show');}
+function hideErr(){ const b=$('errBox'); if(b) b.classList.remove('show'); }
 
 function markEmpty(arr){
   let any=false;
   arr.forEach(i=>{
-    if(!i.value.trim()){
-      i.classList.add('error');
-      const w=i.closest('.m3-field');
+    if(!i || !i.value.trim()){
+      if(i) i.classList.add('error');
+      const w=i && i.closest('.m3-field');
       if(w)w.classList.add('error');
       any=true;
     }
@@ -522,23 +558,10 @@ function markEmpty(arr){
   return any;
 }
 
-document.querySelectorAll('.pass-toggle').forEach(btn=>btn.addEventListener('click',()=>{
-  const inp=document.getElementById(btn.dataset.target);
-  if(!inp)return;
-  const s=inp.type==='password';
-  inp.type=s?'text':'password';
-}));
 function togglePass(inputId) {
   const input = document.getElementById(inputId);
   if(!input) return;
-  const btn = input.parentElement && input.parentElement.querySelector('.pass-icon');
-  if (input.type === 'password') {
-    input.type = 'text';
-
-  } else {
-    input.type = 'password';
-
-  }
+  input.type = input.type === 'password' ? 'text' : 'password';
 }
 
 async function doLogin(){
@@ -565,18 +588,17 @@ async function doLogin(){
 }
 async function doRegister(){
   hideErr();
-  if(markEmpty([$('regName'),$('regEmail'),$('regPass'),$('regPass2')])){showErr(currentLang==='en'?'Enter data':'Введите данные');return;}
+  if(markEmpty([$('regName'),$('regEmail'),$('regPass')])){showErr(currentLang==='en'?'Enter data':(currentLang==='kz'?'Деректерді енгізіңіз':'Введите данные'));return;}
   const parsed=extractLogin($('regEmail').value);
   if(parsed.error){showErr(parsed.error);markLoginError('regEmail');return;}
-  const p1=$('regPass').value,p2=$('regPass2').value;
-  if(p1.length<6){showErr(currentLang==='en'?'Password min 6 chars':'Пароль минимум 6 символов');return;}
-  if(p1!==p2){showErr(currentLang==='en'?'Passwords do not match':'Пароли не совпадают');return;}
+  const p1=$('regPass').value;
+  if(p1.length<6){showErr(currentLang==='en'?'Password min 6 chars':(currentLang==='kz'?'Құпия сөз кемінде 6 таңба':'Пароль минимум 6 символов'));return;}
   $('btnRegister').disabled=true;
   const email=parsed.email;const name=$('regName').value.trim();
   try{
     showLoader();
     const res=await jsonp({action:'register',email,pass:p1,name});
-    if(!res){hideLoader();showErr(currentLang==='en'?'Empty response':'Пустой ответ');return;}
+    if(!res){hideLoader();showErr(currentLang==='en'?'Empty response':(currentLang==='kz'?'Бос жауап':'Пустой ответ'));return;}
     if(res.status!=='ok'){hideLoader();showErr(res.message||'Ошибка');return;}
     const u=res.user||{};
     if(!u.name)u.name=name;
@@ -1031,7 +1053,10 @@ window.addEventListener('offline',updateOnlineStatus);
   try{
     checkFields();
     initAllSelects();buildGradesGrid();Theme.init();I18N.init();initAuthLanguage();UserMenu.init();Account.init();Account.applyAvatar();updateOnlineStatus();
-    setTimeout(fitFormHeight, 50);
+    const authThemeBtn=$('authThemeToggle');
+    if(authThemeBtn){ authThemeBtn.addEventListener('click',()=>{ Theme.apply(Theme.current()==='dark'?'light':'dark'); applyAuthTranslations(); }); }
+    setTimeout(()=>{ fitFormHeight(); updateAuthBrand(); updateAuthMerge(); }, 50);
+    const finishAuthIntro=()=>{ const l=$('authLayout'); if(l){l.classList.remove('auth-intro'); l.classList.add('auth-ready');} }; if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) finishAuthIntro(); else setTimeout(finishAuthIntro, 4100);
     const s=getSession();
     if(s&&s.user){
       showLoader();$('authView').classList.add('hidden');$('appView').classList.remove('hidden');
