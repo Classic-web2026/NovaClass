@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
@@ -9,10 +9,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" />
 <link rel="icon" type="image/png" href="image.png">
-<link rel="stylesheet" href="style.css">
 
+<!-- ============================================================ -->
+<!-- ВНИМАНИЕ: файл style.css НЕ был предоставлен.                -->
+<!-- Вставьте сюда содержимое вашего style.css.                   -->
+<!-- ============================================================ -->
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
+
 <!-- OFFLINE -->
 <div id="offlineOverlay">
   <div class="offline-card">
@@ -80,6 +85,7 @@
   <symbol id="icon-sliders" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></symbol>
   <symbol id="icon-refresh" viewBox="0 0 24 24"><path d="M21 3.5v5h-5"/><path d="M20.5 14a8.5 8.5 0 1 1-.5-6.5L21 8.5"/></symbol>
   <symbol id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" stroke-linecap="round"/></symbol>
+  <symbol id="icon-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
   <symbol id="icon-palm" viewBox="0 0 24 24"><path d="M12 22V10m0 0c0-4.4-3.6-8-8-8 0 4.4 3.6 8 8 8zm0 0c0-4.4 3.6-8 8-8 0 4.4-3.6 8-8 8z" stroke-linecap="round"/></symbol>
   <symbol id="icon-megaphone" viewBox="0 0 24 24"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" stroke-linecap="round"/></symbol>
   <symbol id="nc-icon-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.5-3.5 3-5.5 7-5.5s6.5 2 7 5.5" stroke-linecap="round"/></symbol>
@@ -98,99 +104,100 @@
 
 <!-- AUTH -->
 <div id="authView" class="hidden">
-  <div class="app-container auth-shell">
-    <header class="auth-brandbar">
-      <span class="auth-brand">NovaClass You</span>
-      <div class="auth-language-wrap" id="authLanguageWrap">
-        <button class="auth-language-trigger" id="authLanguageTrigger" type="button" aria-haspopup="menu" aria-controls="authLanguageMenu" aria-expanded="false" aria-label="Choose language">
-          <svg class="ui-icon" aria-hidden="true"><use href="#icon-globe"></use></svg>
-          <span id="authLanguageName">English</span>
-          <svg class="ui-icon auth-language-chevron" aria-hidden="true"><use href="#nc-icon-chevron"></use></svg>
-        </button>
-        <div class="auth-language-menu" id="authLanguageMenu" role="menu" aria-label="Language">
-          <button type="button" role="menuitemradio" data-auth-lang="en">English</button>
-          <button type="button" role="menuitemradio" data-auth-lang="ru">Русский</button>
-          <button type="button" role="menuitemradio" data-auth-lang="kz">Қазақша</button>
+  <div class="auth-layout auth-intro" id="authLayout">
+    <header class="auth-container auth-top" id="authTop">
+      <div class="auth-brand-title auth-text" id="authBrandTitle">NovaClass • Login</div>
+      <div class="auth-controls" role="group" aria-label="Language and theme">
+        <div class="auth-lang-wrap" id="authLanguageWrap">
+          <button class="auth-ctl auth-ctl-lang" id="authLanguageTrigger" type="button" aria-haspopup="menu" aria-controls="authLanguageMenu" aria-expanded="false">
+            <svg class="auth-ctl-icon" aria-hidden="true"><use href="#icon-globe"></use></svg>
+            <span class="auth-ctl-label auth-text" id="authLanguageName">English</span>
+          </button>
+          <div class="auth-language-menu" id="authLanguageMenu" role="menu" aria-label="Language">
+            <button type="button" role="menuitemradio" data-auth-lang="en" aria-checked="true">English</button>
+            <button type="button" role="menuitemradio" data-auth-lang="kz" aria-checked="false">Қазақша</button>
+            <button type="button" role="menuitemradio" data-auth-lang="ru" aria-checked="false">Русский</button>
+          </div>
         </div>
+        <button class="auth-ctl auth-ctl-theme" id="authThemeToggle" type="button" aria-label="Toggle theme">
+          <span class="auth-theme-icons" aria-hidden="true">
+            <svg class="auth-ctl-icon icon-sun"><use href="#icon-sun"></use></svg>
+            <svg class="auth-ctl-icon icon-moon"><use href="#icon-moon"></use></svg>
+          </span>
+          <span class="auth-ctl-label auth-theme-text auth-text" id="authThemeText">Dark theme</span>
+        </button>
       </div>
     </header>
-    <section class="auth-card" id="authCard">
-      <header class="top-header">
-        <h1 id="pageTitle">Login</h1>
-        <div class="divider-line"></div>
-      </header>
-      <main class="form-container">
+
+    <div class="auth-card-wrap" id="authCardWrap">
+      <section class="auth-container auth-middle" id="authMiddle">
+        <div class="auth-form-head desktop-only">
+          <h1 class="auth-form-title auth-text" id="pageTitle">Login</h1>
+          <div class="auth-divider"></div>
+        </div>
+
         <div class="forms-wrap" id="formsWrap">
           <div class="slider-track" id="track" data-active="login">
             <div class="slide-pane" data-pane="login" id="loginForm">
-              <div class="m3-field" id="loginUserField">
-                <span class="outer-label" data-auth-text="enterLogin">Enter your login</span>
+              <div class="m3-field">
                 <div class="input-wrapper">
-                  <svg class="ui-icon input-icon" aria-hidden="true"><use href="#nc-icon-person"></use></svg>
-                  <input type="text" id="loginEmail" placeholder=" ">
-                  <label class="floating-label" data-auth-text="login">Login</label>
+                  <input type="text" id="loginEmail" placeholder=" " autocomplete="username" spellcheck="false">
+                  <label class="floating-label" for="loginEmail" data-auth-text="login">Login</label>
                 </div>
               </div>
-              <div class="m3-field" id="loginPassField">
-                <span class="outer-label" data-auth-text="enterPassword">Enter your password</span>
-                <div class="input-wrapper">
-                  <svg class="ui-icon input-icon" aria-hidden="true"><use href="#nc-icon-lock"></use></svg>
-                  <input type="password" id="loginPass" placeholder=" ">
-                  <label class="floating-label" data-auth-text="password">Password</label>
-                  <button class="pass-icon" type="button" aria-label="Toggle password visibility" title="Toggle password visibility" onclick="togglePass('loginPass')"><svg class="pass-eye-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12c2.4-3.8 5.6-5.8 9.5-5.8s7.1 2 9.5 5.8"/><path d="M5.2 14.2c1.9 2.2 4.2 3.4 6.8 3.4s4.9-1.2 6.8-3.4"/><circle cx="12" cy="12" r="2.3"/></svg></button>
+              <div class="m3-field">
+                <div class="input-wrapper has-toggle">
+                  <input type="password" id="loginPass" placeholder=" " autocomplete="current-password">
+                  <label class="floating-label" for="loginPass" data-auth-text="password">Password</label>
+                  <button class="pass-icon" type="button" data-pass-target="loginPass" aria-label="Toggle password visibility" tabindex="-1">
+                    <svg class="pass-eye-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </button>
                 </div>
               </div>
             </div>
+
             <div class="slide-pane" data-pane="reg" id="regForm">
-              <div class="m3-field" id="regNameField">
-                <span class="outer-label" data-auth-text="enterFullName">Enter your first and last name</span>
+              <div class="m3-field">
                 <div class="input-wrapper">
-                  <svg class="ui-icon input-icon" aria-hidden="true"><use href="#nc-icon-name"></use></svg>
-                  <input type="text" id="regName" placeholder=" ">
-                  <label class="floating-label" data-auth-text="fullName">Full name</label>
+                  <input type="text" id="regName" placeholder=" " autocomplete="name">
+                  <label class="floating-label" for="regName" data-auth-text="fullName">Full name</label>
                 </div>
               </div>
-              <div class="m3-field" id="regUserField">
-                <span class="outer-label" data-auth-text="enterLogin">Enter your login</span>
+              <div class="m3-field">
                 <div class="input-wrapper">
-                  <svg class="ui-icon input-icon" aria-hidden="true"><use href="#nc-icon-person"></use></svg>
-                  <input type="text" id="regEmail" placeholder=" ">
-                  <label class="floating-label" data-auth-text="login">Login</label>
+                  <input type="text" id="regEmail" placeholder=" " autocomplete="username" spellcheck="false">
+                  <label class="floating-label" for="regEmail" data-auth-text="login">Login</label>
                 </div>
               </div>
-              <div class="m3-field" id="regPassField">
-                <span class="outer-label" data-auth-text="enterPassword">Enter your password</span>
-                <div class="input-wrapper">
-                  <svg class="ui-icon input-icon" aria-hidden="true"><use href="#nc-icon-lock"></use></svg>
-                  <input type="password" id="regPass" placeholder=" ">
-                  <label class="floating-label" data-auth-text="password">Password</label>
-                  <button class="pass-icon" type="button" aria-label="Toggle password visibility" title="Toggle password visibility" onclick="togglePass('regPass')"><svg class="pass-eye-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12c2.4-3.8 5.6-5.8 9.5-5.8s7.1 2 9.5 5.8"/><path d="M5.2 14.2c1.9 2.2 4.2 3.4 6.8 3.4s4.9-1.2 6.8-3.4"/><circle cx="12" cy="12" r="2.3"/></svg></button>
-                </div>
-              </div>
-              <div class="m3-field" id="regPass2Field">
-                <span class="outer-label" data-auth-text="repeatPassword">Repeat your password</span>
-                <div class="input-wrapper">
-                  <svg class="ui-icon input-icon" aria-hidden="true"><use href="#nc-icon-repeat-lock"></use></svg>
-                  <input type="password" id="regPass2" placeholder=" ">
-                  <label class="floating-label" data-auth-text="repeatPasswordShort">Repeat password</label>
-                  <button class="pass-icon" type="button" aria-label="Toggle password visibility" title="Toggle password visibility" onclick="togglePass('regPass2')"><svg class="pass-eye-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12c2.4-3.8 5.6-5.8 9.5-5.8s7.1 2 9.5 5.8"/><path d="M5.2 14.2c1.9 2.2 4.2 3.4 6.8 3.4s4.9-1.2 6.8-3.4"/><circle cx="12" cy="12" r="2.3"/></svg></button>
+              <div class="m3-field">
+                <div class="input-wrapper has-toggle">
+                  <input type="password" id="regPass" placeholder=" " autocomplete="new-password">
+                  <label class="floating-label" for="regPass" data-auth-text="password">Password</label>
+                  <button class="pass-icon" type="button" data-pass-target="regPass" aria-label="Toggle password visibility" tabindex="-1">
+                    <svg class="pass-eye-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="error-text" id="errBox">Error</div>
-      </main>
-      <footer class="bottom-section">
-        <div class="divider-line"></div>
+
+        <div class="error-text" id="errBox" aria-live="polite">Error</div>
+        <div class="auth-form-foot desktop-only">
+          <div class="auth-divider"></div>
+        </div>
+      </section>
+
+      <footer class="auth-container auth-bottom" id="authBottom">
         <div class="bottom-buttons" id="bottomButtons">
-          <button class="m3-btn btn-login active" id="loginBtn" type="button" aria-pressed="true"><span class="btn-text">Login</span></button>
-          <button class="m3-btn btn-register" id="btnRegister" type="button" aria-pressed="false"><span class="btn-text">Register</span></button>
+          <button class="m3-btn active" id="loginBtn" type="button" aria-pressed="true"><span class="btn-text">Login</span></button>
+          <button class="m3-btn" id="btnRegister" type="button" aria-pressed="false"><span class="btn-text">Register</span></button>
         </div>
       </footer>
-    </section>
+    </div>
   </div>
 </div>
+
 
 <!-- APP -->
 <div id="appView" class="hidden">
@@ -324,6 +331,13 @@
 </div>
 
 <div id="toast"></div>
-<script src="script.js" defer></script>
+
+<!-- ============================================================ -->
+<!-- ВНИМАНИЕ: script.js обрезан в предоставленном фрагменте      -->
+<!-- (обрывается на строке `if(isCreatorEmail(u.email))u`).       -->
+<!-- Ниже — всё, что было прислано. Приложение не запустится      -->
+<!-- без полной версии скрипта.                                   -->
+<!-- ============================================================ -->
+<script src="script.js"></script>
 </body>
 </html>
