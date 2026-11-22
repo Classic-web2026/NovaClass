@@ -27,7 +27,7 @@ function updateDocTitle(){
     setDocTitle(currentLang==='en'?(isRegisterMode?'Register':'Login'):(currentLang==='kz'?(isRegisterMode?'Тіркелу':'Кіру'):(isRegisterMode?'Регистрация':'Вход')));
     return;
   }
-  const titleKeys={home:'menu_home',schedule:'menu_schedule',homework:'menu_homework',diary:'menu_diary',journal:'menu_journal',users:'menu_users',ministry:'menu_ministry'};
+  const titleKeys={home:'menu_home',schedule:'menu_schedule',diary:'menu_diary',journal:'menu_journal',users:'menu_users',ministry:'menu_ministry'};
   setDocTitle(T(titleKeys[currentPage]||'menu_home'));
 }
 
@@ -237,12 +237,23 @@ document.body.addEventListener('click', function(e) {
 
 /* DIALOGS */
 let dialogResolve = null;
-function showConfirm(text, titleSuffix) {
+function showConfirm(text, titleSuffix, opts) {
   return new Promise(resolve => {
     dialogResolve = resolve;
+    opts = opts || {};
     $('dialogTitle').textContent = T('confirm');
     $('dialogText').textContent = text;
-    $('dialogInputWrap').classList.add('hidden');
+    const wrap = $('dialogInputWrap');
+    const inp = $('dialogInput');
+    if (opts.password) {
+      wrap.classList.remove('hidden');
+      inp.value = '';
+      inp.type = 'password';
+      inp.placeholder = currentLang==='en'?'Enter password':'Введите пароль';
+    } else {
+      wrap.classList.add('hidden');
+      inp.type = 'text';
+    }
     $('customDialog').classList.add('show');
     if (titleSuffix) setDocTitle('Delete - ' + titleSuffix);
   });
@@ -313,11 +324,63 @@ function saveSession(u){try{localStorage.setItem(SESSION_KEY,JSON.stringify({use
 function getSession(){try{const r=localStorage.getItem(SESSION_KEY);if(!r)return null;const d=JSON.parse(r);if(!d||!d.expiresAt)return null;if(Date.now()>=d.expiresAt){localStorage.removeItem(SESSION_KEY);return null;}return d;}catch(e){return null;}}
 function clearSession(){try{localStorage.removeItem(SESSION_KEY);}catch(e){}}
 function getCurrentUser(){const s=getSession();return s&&s.user?s.user:null;}
+function setCurrentUser(patch){const s=getSession(); if(!s||!s.user) return null; s.user=Object.assign({},s.user,patch||{}); saveSession(s.user); return s.user;}
 function userRole(){const u=getCurrentUser();let r=u&&u.role?u.role:'Ученик';if(!ROLES[r])r='Ученик';return r;}
 function canEditSchedule(){return EDITOR_ROLES.indexOf(userRole())!==-1;}
 function isAdmin(){const r=userRole();return r==='Администратор'||r==='Создатель';}
 function canManageUsers(){return isAdmin();}
+function canViewMinistry(){return isAdmin();}
+function canViewJournal(){const r=userRole();return EDITOR_ROLES.indexOf(r)!==-1;}
+function canOpenPage(page){
+  if(page==='ministry') return isCreator();
+  if(page==='users') return isAdmin();
+  if(page==='journal') return canViewJournal();
+  if(page==='diary') return userRole()==='Ученик';
+  return true;
+}
 function isCreator(){return userRole()==='Создатель'||isCreatorEmail((getCurrentUser()||{}).email);}
+let _syncTimer=null,_syncInFlight=false,_syncFastUntil=0,_lastLessonsSig='',_lastUsersSig='',_lastForcedLogout=0;
+function _sig(obj){try{return JSON.stringify(obj);}catch(e){return String(obj||'');}}
+function _lessonsSig(list){return _sig((list||[]).map(l=>({id:String(l.id??''),n:String(l.lessonNum??''),s:String(l.subject??''),t:String(l.time??''),r:String(l.room??''),te:String(l.teacher??''),h:String(l.homework??''),d:String(l.date??''),c:!!l.cancelled,sor:!!l.sor,soch:!!l.soch,a:_sig(l.attachments||[])})));}
+function _usersSig(list){return _sig((list||[]).map(u=>({e:String(u.email||'').toLowerCase(),n:String(u.name||''),r:String(u.role||''),st:String(u.status||u.state||''),b:!!u.blocked||!!u.banned||!!u.deleted})));}
+function forceLogout(message,type){
+  const now=Date.now(); if(now-_lastForcedLogout<1500) return; _lastForcedLogout=now;
+  try{clearSession();}catch(e){}
+  try{ if(typeof UserMenu!=='undefined' && UserMenu.close) UserMenu.close(); }catch(e){}
+  try{ cacheLessons=[]; prefetched.users=[]; prefetched.scheduleByDate={}; }catch(e){}
+  try{ $('appView')?.classList.add('hidden'); $('authView')?.classList.remove('hidden'); }catch(e){}
+  try{ showToast(message || (currentLang==='en'?'Session ended':'Сессия завершена'), type||'error'); }catch(e){}
+}
+async function validateCurrentSession(){
+  const u=getCurrentUser(); if(!u||!u.email) return {ok:false,reason:'no-session'};
+  try{
+    const res=await jsonp({action:'users_list',requester:u.email});
+    if(!res) return {ok:true,soft:true};
+    if(res.status==='ok'){
+      const users=res.users||[]; prefetched.users=users; saveCacheJson(USERS_CACHE_KEY,users);
+      const me=users.find(x=>String(x.email||'').toLowerCase()===String(u.email||'').toLowerCase());
+      if(!me){ forceLogout(currentLang==='en'?'Your account was deleted. You can create a new account.':'Ваш аккаунт был удалён. Вы можете создать новый аккаунт.','error'); return {ok:false,reason:'deleted'}; }
+      const st=String(me.status||me.state||'').toLowerCase();
+      const blocked = !!me.blocked || !!me.banned || !!me.deleted || ['blocked','banned','deleted','disabled'].includes(st);
+      if(blocked){ forceLogout(currentLang==='en'?'Your account was blocked or deleted by administrator.':'Ваш аккаунт был заблокирован или удалён администратором.','error'); return {ok:false,reason:'blocked'}; }
+      const newRole = ROLES[me.role] ? me.role : (u.role||'Ученик');
+      const changedRole = String(newRole)!==String(u.role||'');
+      const changedName = String(me.name||'')!==String(u.name||'');
+      if(changedRole || changedName){
+        setCurrentUser({role:newRole,name:me.name||u.name,email:me.email||u.email});
+        try{applyUserToUI();rebuildMenu();updateTopbarAdd();refreshCurrentPage();}catch(e){}
+        if(changedRole) showToast(currentLang==='en'?'Your role was updated':'Ваша роль обновлена','success');
+      }
+      return {ok:true,me,users};
+    }
+    const msg=String(res.error||res.message||'').toLowerCase();
+    if(['deleted','not_found','no_user','user_not_found','blocked','banned','forbidden','unauthorized','disabled'].some(k=>msg.includes(k))){
+      forceLogout(currentLang==='en'?'Your account is no longer active.':'Ваш аккаунт больше не активен.','error');
+      return {ok:false,reason:msg};
+    }
+    return {ok:true,soft:true};
+  }catch(e){ return {ok:true,soft:true,error:e}; }
+}
 let jsonpCounter=0;
 function jsonpOnce(params){return new Promise((resolve,reject)=>{const cbName='nc_cb_'+(++jsonpCounter)+'_'+Date.now();let finished=false,script;const cleanup=()=>{try{delete window[cbName];}catch(e){}if(script&&script.parentNode)script.parentNode.removeChild(script);};window[cbName]=function(data){if(finished)return;finished=true;cleanup();resolve(data);};const qs=new URLSearchParams(Object.assign({},params,{callback:cbName})).toString();script=document.createElement('script');script.src=GAS_URL+'?'+qs+'&_='+Date.now();script.onerror=function(){if(finished)return;finished=true;cleanup();reject(new Error('Нет связи'));};document.head.appendChild(script);});}
 async function jsonp(params){let lastErr;for(let attempt=0; attempt<3; attempt++){try{return await jsonpOnce(params);}catch(e){lastErr=e;if(attempt<2)await new Promise(r=>setTimeout(r,700));}}throw lastErr||new Error('Ошибка связи');}
@@ -402,45 +465,89 @@ function prefetchWeek(user,baseDate){if(!user||!user.email)return;const mon=mond
 const Account=(function(){function loadAvatar(){try{return localStorage.getItem(AVATAR_KEY)||'';}catch(e){return'';}}function saveAvatar(u){try{localStorage.setItem(AVATAR_KEY,u);}catch(e){}}function applyAvatar(){const url=loadAvatar();const u=getCurrentUser();const letter=u?(u.name||u.email||'П').charAt(0).toUpperCase():'П';document.querySelectorAll('[data-user-ava]').forEach(el=>{if(url){el.style.backgroundImage=`url(${url})`;el.style.backgroundSize='cover';el.style.backgroundPosition='center';el.textContent='';}else{el.style.backgroundImage='';el.textContent=letter;}});}function handleFile(input){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{saveAvatar(e.target.result);applyAvatar();showToast(currentLang==='en'?'Photo updated':'Фото обновлено');};r.readAsDataURL(f);input.value='';}function fillFields(){const u=getCurrentUser();if(!u)return;const name=u.name||(u.email?u.email.split('@')[0]:'');['accName','accName2'].forEach(id=>{const el=$(id);if(el)el.value=name;});['accEmail','accEmail2'].forEach(id=>{const el=$(id);if(el)el.value=u.email||'';});applyAvatar();}async function saveProfile(){const u=getCurrentUser();if(!u)return;const nn=($('accName')&&$('accName').value.trim())||u.name||'';let neRaw=($('accEmail')&&$('accEmail').value.trim())||u.email||'';const oe=u.email;if(!nn||!neRaw){showToast(currentLang==='en'?'Fill fields':'Заполните поля');return false;}let ne=String(neRaw).toLowerCase();if(ne.indexOf('@')===-1){ne=ne+EMAIL_DOMAIN;}else if(!isCreatorEmail(ne) && !ne.endsWith(EMAIL_DOMAIN)){showToast('Только '+EMAIL_DOMAIN);return false;}try{const res=await jsonp({action:'update_profile',requester:oe,oldEmail:oe,email:ne,name:nn});if(!res||res.status!=='ok')throw new Error((res&&res.message)||'Profile update failed');}catch(e){showToast(currentLang==='en'?'Profile update failed':'\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0441\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c \u043f\u0440\u043e\u0444\u0438\u043b\u044c');return false;}u.name=nn;u.email=ne;saveSession(u);applyUserToUI();fillFields();showToast(currentLang==='en'?'Profile saved':'Профиль сохранён');$('accountModal').classList.remove('show');updateDocTitle();return true;}async function changePassword(){const u=getCurrentUser();if(!u)return;const np=await showPrompt(currentLang==='en'?'New password (min 6):':'Новый пароль (мин. 6):');if(!np||np.length<6){showToast(currentLang==='en'?'Too short':'Слишком короткий');return;}const np2=await showPrompt(currentLang==='en'?'Repeat password:':'Повторите пароль:');if(np!==np2){showToast(currentLang==='en'?'Passwords do not match':'Не совпадают');return;}try{const res=await jsonp({action:'update_password',requester:u.email,email:u.email,pass:np});if(!res||res.status!=='ok')throw new Error((res&&res.message)||'Password update failed');}catch(e){showToast(currentLang==='en'?'Password update failed':'\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0438\u0437\u043c\u0435\u043d\u0438\u0442\u044c \u043f\u0430\u0440\u043e\u043b\u044c');return;}u.pass=np;saveSession(u);showToast(currentLang==='en'?'Password changed':'Пароль изменён');}function init(){(['accAvatarInput','accAvatarInput2']).forEach(id=>{const inp=$(id);if(inp)inp.onchange=()=>handleFile(inp);});const cn=$('accChangeName');if(cn)cn.onclick=()=>{const i=$('accName');i.disabled=false;i.focus();};const ce=$('accChangeEmail');if(ce)ce.onclick=()=>{const i=$('accEmail');i.disabled=false;i.focus();};const cp=$('accChangePass');if(cp)cp.onclick=changePassword;fillFields();}return{init,applyAvatar,fillFields,loadAvatar,saveProfile};})();
 
 const UserMenu=(function(){
-  function close(){$('userDropdown').classList.remove('open');}
-  function toggle(){$('userDropdown').classList.contains('open')?close():$('userDropdown').classList.add('open');}
+  function close(){
+    const dd=$('userDropdown');
+    if(dd) dd.classList.remove('open');
+    const chip=$('userChip');
+    if(chip) chip.setAttribute('aria-expanded','false');
+  }
+  function moveUdSwitch(){
+    const wrap=$('udTabs'), ind=$('udSwitchIndicator');
+    if(!wrap||!ind) return;
+    const active=wrap.querySelector('.ud-switch-option.active');
+    if(!active){ind.style.opacity='0';return;}
+    ind.style.opacity='1';
+    ind.style.width=active.offsetWidth+'px';
+    ind.style.transform=`translateX(${active.offsetLeft}px)`;
+  }
+  function toggle(force){
+    const dd=$('userDropdown');
+    if(!dd) return;
+    const shouldOpen = typeof force==='boolean' ? force : !dd.classList.contains('open');
+    dd.classList.toggle('open',shouldOpen);
+    const chip=$('userChip');
+    if(chip) chip.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+    if(shouldOpen) requestAnimationFrame(()=>{moveUdSwitch(); const panes=document.querySelector('.ud-panes'); const active=panes?.querySelector('.ud-pane.active'); if(panes&&active){panes.style.transition='none'; panes.style.height=active.offsetHeight+'px'; panes.offsetHeight; panes.style.transition='';}});
+  }
+  function openSettingsPane(pane){
+    const k=pane||'account';
+    document.querySelectorAll('.set-tab').forEach(t=>t.classList.toggle('active',t.dataset.setTab===k));
+    document.querySelectorAll('.set-pane').forEach(p=>p.classList.toggle('active',p.dataset.setPane===k));
+    Account.fillFields();
+    $('settingsModal').classList.add('show');
+    setDocTitle('Settings');
+  }
   function init(){
-    const chip=$('userChip');if(chip)chip.onclick=e=>{e.stopPropagation();toggle();};
-    document.querySelectorAll('.ud-tab').forEach(tab=>{tab.onclick=()=>{const k=tab.dataset.udTab;document.querySelectorAll('.ud-tab').forEach(t=>t.classList.toggle('active',t===tab));$('udTabs').dataset.active=k;document.querySelectorAll('.ud-pane').forEach(p=>p.classList.toggle('active',p.dataset.udPane===k));};});
-    document.querySelectorAll('[data-open-account]').forEach(b=>b.onclick=e=>{
-        e.stopPropagation();close();
-        const isSettingsOpen=$('settingsModal').classList.contains('show');
-        Account.fillFields();
-        if(isSettingsOpen){
-            if(window.innerWidth>640){
-                $('settingsModalInner').classList.add('modal-slide-right');
-                setTimeout(()=>{ $('settingsModal').classList.remove('show'); $('settingsModalInner').classList.remove('modal-slide-right'); $('accountModal').classList.add('show'); $('accountModalInner').classList.add('modal-slide-left'); setTimeout(()=>{$('accountModalInner').classList.remove('modal-slide-left');},350); },300);
-            } else { $('settingsModal').classList.remove('show'); $('accountModal').classList.add('show'); }
-        } else { $('accountModal').classList.add('show'); }
-        setDocTitle('Account');
-    });
-    document.querySelectorAll('[data-open-settings]').forEach(b=>b.onclick=e=>{e.stopPropagation();close();Account.fillFields();$('settingsModal').classList.add('show');setDocTitle('Settings');});
-    const ac=$('accModalClose');if(ac)ac.onclick=()=>{$('accountModal').classList.remove('show');updateDocTitle();};
-    const acc=$('accClose');if(acc)acc.onclick=()=>{$('accountModal').classList.remove('show');updateDocTitle();};
+    const chip=$('userChip');if(chip){chip.setAttribute('aria-haspopup','menu');chip.setAttribute('aria-expanded','false');chip.onclick=e=>{e.stopPropagation();toggle();};}
+    close();
+    const syncUdPaneHeight=(immediate=false)=>{
+      const panes=document.querySelector('.ud-panes'); if(!panes) return;
+      const active=panes.querySelector('.ud-pane.active'); if(!active) return;
+      const h=active.offsetHeight;
+      if(immediate){ panes.style.transition='none'; panes.style.height=h+'px'; panes.offsetHeight; panes.style.transition=''; }
+      else panes.style.height=h+'px';
+    };
+    document.querySelectorAll('.ud-switch-option').forEach(tab=>{tab.onclick=()=>{const k=tab.dataset.udTab;document.querySelectorAll('.ud-switch-option').forEach(t=>t.classList.toggle('active',t===tab));const tabs=$('udTabs'); if(tabs) tabs.dataset.active=k;document.querySelectorAll('.ud-pane').forEach(p=>p.classList.toggle('active',p.dataset.udPane===k));requestAnimationFrame(()=>{moveUdSwitch();syncUdPaneHeight();});};});
+    setTimeout(()=>{moveUdSwitch();syncUdPaneHeight(true);close();},0);
+    document.addEventListener('click',e=>{const wrap=$('userMenuWrap'); if(wrap && !wrap.contains(e.target)) close();});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape') close();});
+    document.querySelectorAll('[data-open-settings]').forEach(b=>b.onclick=e=>{e.stopPropagation();close();openSettingsPane(b.dataset.setOpen||'account');});
     const sc=$('setModalClose');if(sc)sc.onclick=()=>{$('settingsModal').classList.remove('show');updateDocTitle();};
-    $('accountModal').onclick=e=>{if(e.target===$('accountModal')){$('accountModal').classList.remove('show');updateDocTitle();}};
-    $('settingsModal').onclick=e=>{if(e.target===$('settingsModal')){$('settingsModal').classList.remove('show');updateDocTitle();}};
+    const sm=$('settingsModal'); if(sm) sm.onclick=e=>{if(e.target===$('settingsModal')){$('settingsModal').classList.remove('show');updateDocTitle();}};
+    const ac=$('accModalClose'); if(ac) ac.onclick=()=>{const am=$('accountModal'); if(am) am.classList.remove('show'); updateDocTitle();};
+    const acc=$('accClose'); if(acc) acc.onclick=()=>{const am=$('accountModal'); if(am) am.classList.remove('show'); updateDocTitle();};
+    const am=$('accountModal'); if(am) am.onclick=e=>{if(e.target===am){am.classList.remove('show');updateDocTitle();}};
     document.querySelectorAll('.set-tab').forEach(tab=>{tab.onclick=()=>{const k=tab.dataset.setTab;document.querySelectorAll('.set-tab').forEach(t=>t.classList.toggle('active',t===tab));document.querySelectorAll('.set-pane').forEach(p=>p.classList.toggle('active',p.dataset.setPane===k));};});
     document.querySelectorAll('[data-delete-account]').forEach(b=>b.onclick=async()=>{
-        const ok=await showConfirm(currentLang==='en'?'Delete account? This cannot be undone.':'Удалить аккаунт? Это действие необратимо.','Account');
-        if(!ok)return;
-        clearSession();try{localStorage.removeItem(AVATAR_KEY);}catch(e){}showToast(currentLang==='en'?'Account deleted':'Аккаунт удалён');setTimeout(()=>location.reload(),3500);
+        const pass=await showConfirm(currentLang==='en'?'Enter your password to delete account.':'Введите пароль для удаления аккаунта.','Account',{password:true});
+        if(!pass)return;
+        const u=getCurrentUser();
+        if(!u){showToast(currentLang==='en'?'Not signed in':'Вы не вошли');return;}
+        showLoader();
+        try{
+          const r=await jsonp({action:'login',email:u.email,password:String(pass)});
+          if(!r||r.status!=='ok'){showToast(currentLang==='en'?'Wrong password':'Неверный пароль');return;}
+          clearSession();try{localStorage.removeItem(AVATAR_KEY);}catch(e){}
+          showToast(currentLang==='en'?'Account deleted':'Аккаунт удалён');
+          setTimeout(()=>location.reload(),900);
+        }catch(e){showToast(currentLang==='en'?'Error':'Ошибка');}
+        finally{hideLoader();}
     });
-    document.addEventListener('click',e=>{if(!$('userMenuWrap').contains(e.target))close();});
+    
     const burger=$('burgerBtn'),sb=$('sidebar'),bd=$('mobileSbBackdrop'),topbar=$('topbar'),mobileBottom=$('mobileBottom');
     function hideBars(){topbar.classList.add('bar-hidden');if(mobileBottom)mobileBottom.classList.add('bar-hidden');}
     function showBars(){topbar.classList.remove('bar-hidden');if(mobileBottom)mobileBottom.classList.remove('bar-hidden');}
     function closeSb(){sb.classList.remove('open');burger.classList.remove('open');burger.setAttribute('aria-expanded','false');burger.setAttribute('aria-label',currentLang==='en'?'Open menu':'Открыть меню');bd.classList.remove('open');showBars();}
-    burger.onclick=()=>{const opening=!sb.classList.contains('open');sb.classList.toggle('open',opening);burger.classList.toggle('open',opening);burger.setAttribute('aria-expanded',String(opening));burger.setAttribute('aria-label',opening?(currentLang==='en'?'Close menu':'Закрыть меню'):(currentLang==='en'?'Open menu':'Открыть меню'));bd.classList.toggle('open',opening);if(opening)hideBars();else showBars();};
+    const syncIndicator=()=>{moveIndicator();setTimeout(moveIndicator,180);setTimeout(moveIndicator,360);};
+    burger.onclick=()=>{const opening=!sb.classList.contains('open');sb.classList.toggle('open',opening);burger.classList.toggle('open',opening);burger.setAttribute('aria-expanded',String(opening));burger.setAttribute('aria-label',opening?(currentLang==='en'?'Close menu':'Закрыть меню'):(currentLang==='en'?'Open menu':'Открыть меню'));bd.classList.toggle('open',opening);if(opening)hideBars();else showBars();syncIndicator();};
+    sb.addEventListener('mouseenter',()=>{if(window.innerWidth>640)syncIndicator();});
+    sb.addEventListener('mouseleave',()=>{if(window.innerWidth>640)syncIndicator();});
     bd.onclick=closeSb;
     document.addEventListener('click',e=>{const mi=e.target.closest('.menu-item');if(mi&&window.innerWidth<=640)closeSb();});
+    const sbSet=document.querySelector('#sidebar .sb-settings');
+    if(sbSet) sbSet.onclick=e=>{e.stopPropagation();closeSb();openSettingsPane('account');};
   }
-  return{init};
+  return{close,init};
 })();
 
 /* AUTH LOGIC & MORPHING BUTTONS */
@@ -582,7 +689,7 @@ async function doLogin(){
     if(!u.email||u.email.indexOf('@')===-1)u.email=email;
     if(isCreatorEmail(u.email))u.role='Создатель';
     u.pass=pass;saveSession(u);hideLoader();await enterApp();
-    prefetchAll(u).then(()=>{if(['schedule','homework','diary','users','journal','ministry'].includes(currentPage))refreshCurrentPage();});
+    prefetchAll(u).then(()=>{if(['schedule','diary','users','journal','ministry'].includes(currentPage))refreshCurrentPage();});
   }catch(e){hideLoader();showErr('Ошибка: '+e.message);}
   finally{$('loginBtn').disabled=false;}
 }
@@ -610,54 +717,170 @@ async function doRegister(){
   finally{$('btnRegister').disabled=false;}
 }
 
-async function enterApp(){
-  $('authView').classList.add('hidden');
-  $('appView').classList.remove('hidden');
-  applyUserToUI();rebuildMenu();renderPage('home');updateDocTitle();
-  requestAnimationFrame(()=>{$('appView').classList.add('ready');moveIndicator();});
-}
-function applyUserToUI(){
-  const u=getCurrentUser();let name=currentLang==='en'?'User':'Пользователь',role='Ученик';
-  if(u){if(u.name&&u.name.trim())name=u.name.trim();else if(u.email)name=u.email.split('@')[0];role=userRole();}
-  const letter=name.charAt(0).toUpperCase()||'П';
-  $$('[data-user-ava]').forEach(el=>{if(!Account.loadAvatar())el.textContent=letter;});
-  $$('[data-user-name]').forEach(el=>el.textContent=name);
-  $$('[data-user-role]').forEach(el=>{el.className='role-badge '+(ROLES[role]||'student');el.textContent=role;});
-  Account.applyAvatar();updateTopbarAdd();
-}
-function updateTopbarAdd(){const b=$('topbarAddBtn');if(!b)return;const show=(currentPage==='schedule'&&canEditSchedule());b.classList.toggle('hidden',!show);b.innerHTML=ic('icon-plus','sm')+' <span class="txt">'+T('add')+'</span>';}
-
-function rebuildMenu() {
-  const mb=$('menuBox'),mB=$('mobileBottom');
-  if(!mb||!mB)return;
-  const role=userRole();
-  let html=`<div class="menu-indicator" id="menuIndicator"></div>`;
-  let mHtml='';
-  const addMenuItem=(page,icon,key)=>{
-    const label=T(key),attrs=`aria-label="${esc(label)}" title="${esc(label)}"`;
-    const mobileIcons={home:'nc-icon-home',schedule:'nc-icon-calendar',homework:'nc-icon-homework',diary:'nc-icon-diary',journal:'nc-icon-journal',users:'nc-icon-users',ministry:'nc-icon-school'};
-    html+=`<button class="menu-item" data-page="${page}" ${attrs}><svg class="ui-icon" aria-hidden="true"><use href="#${icon}"></use></svg><span class="menu-label">${esc(label)}</span></button>`;
-    mHtml+=`<button class="mb-item" data-page="${page}" ${attrs}><svg class="ui-icon mb-glyph" aria-hidden="true"><use href="#${mobileIcons[page]||'nc-icon-home'}"></use></svg></button>`;
+function startRealtimeSync(){
+  if(_syncTimer) clearInterval(_syncTimer);
+  const tick = async()=>{
+    if(_syncInFlight) return;
+    const u=getCurrentUser(); if(!u||!u.email) return;
+    if(document.hidden && Date.now()>_syncFastUntil) return;
+    _syncInFlight=true;
+    try{
+      const v = await validateCurrentSession();
+      if(!v || !v.ok) return;
+      if(currentPage==='schedule'){
+        try{
+          const fresh=await fetchSched(selectedDate,getCurrentUser(),true);
+          const arr=Array.isArray(fresh)?fresh:[];
+          const sig=_lessonsSig(arr);
+          if(sig!==_lastLessonsSig){
+            _lastLessonsSig=sig;
+            cacheLessons=arr;
+            if(currentPage==='schedule') refreshCurrentPage();
+          }
+        }catch(e){}
+      } else if(['users','journal','ministry','diary'].includes(currentPage)){
+        await loadPageData(currentPage,{silent:true});
+      }
+    } finally { _syncInFlight=false; }
   };
-  addMenuItem('home','icon-home','menu_home');
-  addMenuItem('schedule','icon-calendar','menu_schedule');
-  addMenuItem('homework','icon-book-open','menu_homework');
-  if(role==='Ученик')addMenuItem('diary','icon-book','menu_diary');
-  if(['Учитель','Директор','Администратор','Создатель','Модератор'].includes(role))addMenuItem('journal','icon-chart','menu_journal');
-  if(['Администратор','Создатель','Директор'].includes(role))addMenuItem('users','icon-users','menu_users');
-  if(role==='Создатель')addMenuItem('ministry','icon-graduation','menu_ministry');
-  mb.innerHTML=html;mB.innerHTML=mHtml;
-  if(!['home','schedule','homework','diary','journal','users','ministry'].includes(currentPage))currentPage='home';
-  $$('.menu-item').forEach(b=>b.classList.toggle('active',b.dataset.page===currentPage));
-  $$('.mb-item').forEach(b=>{const active=b.dataset.page===currentPage;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
-  moveIndicator();
+  _syncTimer=setInterval(tick, 8000);
+  document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ _syncFastUntil=Date.now()+30000; tick(); } });
+  window.addEventListener('focus',()=>{ _syncFastUntil=Date.now()+15000; tick(); });
+  _syncFastUntil=Date.now()+15000;
+  tick();
 }
-function moveIndicator(){const i=$('menuIndicator'),box=$('menuBox');if(!i||!box)return;const a=box.querySelector('.menu-item.active');if(!a){i.classList.remove('ready');return;}i.style.height=a.offsetHeight+'px';i.style.transform='translateY('+a.offsetTop+'px)';i.classList.add('ready');}
-window.addEventListener('resize',()=>setTimeout(moveIndicator,50));
 
-const TITLES={home:'menu_home',schedule:'menu_schedule',homework:'menu_homework',diary:'menu_diary',users:'menu_users',journal:'menu_journal',ministry:'menu_ministry'};
+function startRealtimeSync(){
+  if(_syncTimer) clearInterval(_syncTimer);
+  const tick = async()=>{
+    if(_syncInFlight) return;
+    const u=getCurrentUser(); if(!u||!u.email) return;
+    if(document.hidden && Date.now()>_syncFastUntil) return;
+    _syncInFlight=true;
+    try{
+      const v = await validateCurrentSession();
+      if(!v || !v.ok) return;
+      if(currentPage==='schedule' || currentPage==='diary'){
+        try{
+          const fresh=await fetchSched(selectedDate,getCurrentUser(),true);
+          const arr=Array.isArray(fresh)?fresh:[];
+          const sig=_lessonsSig(arr);
+          if(sig!==_lastLessonsSig){
+            _lastLessonsSig=sig;
+            cacheLessons=arr;
+            if(currentPage==='schedule' || currentPage==='diary') refreshCurrentPage();
+          } else if(currentPage==='diary' && !window._diaryIntroDone){
+            // allow intro to finish naturally
+          }
+        }catch(e){}
+      }
+      if(['users','journal','ministry','schedule','diary'].includes(currentPage)){
+        await loadPageData(currentPage,{silent:true});
+      }
+    } finally { _syncInFlight=false; }
+  };
+  _syncTimer=setInterval(tick, 8000);
+  document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ _syncFastUntil=Date.now()+30000; tick(); } });
+  window.addEventListener('focus',()=>{ _syncFastUntil=Date.now()+15000; tick(); });
+  _syncFastUntil=Date.now()+15000;
+  tick();
+}
+
+function applyUserToUI(){
+  const u=getCurrentUser(); if(!u) return;
+  const letter=String(u.name||u.email||'П').charAt(0).toUpperCase()||'П';
+  document.querySelectorAll('[data-user-ava]').forEach(el=>{el.textContent=letter;});
+  document.querySelectorAll('[data-user-name]').forEach(el=>{el.textContent=u.name||u.email||(currentLang==='en'?'User':'Пользовател');});
+  document.querySelectorAll('[data-user-short-name]').forEach(el=>{
+    const parts=String(u.name||'').trim().split(/\s+/).filter(Boolean);
+    const short=parts.length>=2?(parts[0]+' '+parts[1].charAt(0)+'.'):(parts[0]||u.email||'User');
+    el.textContent=short;
+  });
+  document.querySelectorAll('[data-user-role]').forEach(el=>{el.textContent=u.role||'Ученик';});
+}
+function rebuildMenu(){
+  const u=getCurrentUser(); if(!u) return;
+  const box=$('menuBox'); if(!box) return;
+  box.querySelectorAll('.menu-item').forEach(el=>el.remove());
+  const ind=$('menuIndicator');
+  const can=canOpenPage;
+  const items=[
+    {page:'home',label:'menu_home',icon:'icon-home'},
+    {page:'schedule',label:'menu_schedule',icon:'icon-calendar'},
+    {page:'diary',label:'menu_diary',icon:'icon-book'},
+    {page:'journal',label:'menu_journal',icon:'icon-chart'},
+    {page:'users',label:'menu_users',icon:'icon-users'},
+    {page:'ministry',label:'menu_ministry',icon:'icon-graduation'}
+  ];
+  const frag=document.createDocumentFragment();
+  items.filter(can).forEach(it=>{
+    const b=document.createElement('button');
+    b.type='button'; b.className='menu-item'+(currentPage===it.page?' active':''); b.dataset.page=it.page;
+    b.setAttribute('aria-label',T(it.label));
+    b.innerHTML='<svg class="ui-icon menu-icon"><use href="#'+it.icon+'"></use></svg><span class="menu-label" data-i18n="'+it.label+'">'+T(it.label)+'</span>';
+    b.onclick=()=>{renderPage(it.page);try{closeSb&&closeSb();}catch(e){}};
+    frag.appendChild(b);
+  });
+  if(ind) box.insertBefore(frag, ind); else box.appendChild(frag);
+  const mb=$('mobileBottom');
+  if(mb){
+    mb.querySelectorAll('.mb-item').forEach(el=>el.remove());
+    const mbf=document.createDocumentFragment();
+    items.filter(can).forEach(it=>{
+      const b=document.createElement('button');
+      b.type='button'; b.className='mb-item'+(currentPage===it.page?' active':''); b.dataset.page=it.page;
+      b.setAttribute('aria-label',T(it.label));
+      b.innerHTML='<svg class="ui-icon mb-icon"><use href="#'+it.icon+'"></use></svg><span class="mb-label" data-i18n="'+it.label+'">'+T(it.label)+'</span>';
+      b.onclick=()=>{renderPage(it.page);};
+      mbf.appendChild(b);
+    });
+    mb.appendChild(mbf);
+  }
+  if(!canOpenPage(currentPage)){ renderPage('home'); return; }
+  try{moveIndicator();moveMobileIndicator();}catch(e){}
+}
+async function enterApp(){
+  try{
+    $('authView').classList.add('hidden');
+    $('appView').classList.remove('hidden');
+    $('appView').classList.add('ready');
+    try{ if(typeof UserMenu!=='undefined' && UserMenu.close) UserMenu.close(); }catch(e){}
+    const ud=$('userDropdown'); if(ud) ud.classList.remove('open');
+    applyUserToUI();rebuildMenu();renderPage('home');updateDocTitle();
+    requestAnimationFrame(()=>{try{moveIndicator();moveMobileIndicator();}catch(e){}});
+    try{ startRealtimeSync(); }catch(e){ console.error(e); }
+  }catch(err){
+    console.error('enterApp error:',err);
+    try{ $('authView').classList.add('hidden'); $('appView').classList.remove('hidden'); $('appView').classList.add('ready'); }catch(e){}
+    try{ renderPage('home'); }catch(e2){ console.error('render home error:',e2); }
+  }
+}function moveIndicator(){
+  const i=$('menuIndicator'),box=$('menuBox');if(!i||!box)return;
+  const a=box.querySelector('.menu-item.active');
+  if(!a){i.classList.remove('ready');return;}
+  const sb=box.closest('.sidebar');
+  const isOpen=!!(sb&&(sb.classList.contains('open')||(window.innerWidth>640&&sb.matches(':hover'))));
+  i.style.height=(isOpen?48:40)+'px';
+  i.style.width=(isOpen?a.offsetWidth:40)+'px';
+  i.style.left=(isOpen?a.offsetLeft:(a.offsetLeft+(a.offsetWidth-40)/2))+'px';
+  i.style.transform='translateY('+ (isOpen?a.offsetTop:(a.offsetTop+(a.offsetHeight-40)/2)) +'px)';
+  i.style.borderRadius=isOpen?'50px':'50%';
+  i.classList.add('ready');
+}
+function moveMobileIndicator(){
+  const i=$('mbIndicator'),box=$('mobileBottom');if(!i||!box)return;
+  const a=box.querySelector('.mb-item.active');
+  if(!a){i.classList.remove('ready');return;}
+  i.style.width=a.offsetWidth+'px';
+  i.style.height=a.offsetHeight+'px';
+  i.style.transform='translateX('+a.offsetLeft+'px)';
+  i.classList.add('ready');
+}
+window.addEventListener('resize',()=>setTimeout(()=>{moveIndicator();moveMobileIndicator();},50));
+
+const TITLES={home:'menu_home',schedule:'menu_schedule',diary:'menu_diary',users:'menu_users',journal:'menu_journal',ministry:'menu_ministry'};
 function buildPane(key){const p=document.createElement('div');p.className='page-pane';p.dataset.page=key;p.innerHTML=getPaneHTML(key);return p;}
-function getPaneHTML(key){if(key==='home')return homeContentHTML();if(key==='schedule')return scheduleContentHTML(cacheLessons);if(key==='homework')return homeworkContentHTML(cacheLessons,cacheHwStatuses);if(key==='diary')return diaryContentHTML();if(key==='users')return usersContentHTML();if(key==='journal')return journalContentHTML();if(key==='ministry')return ministryContentHTML();return'';}
+function getPaneHTML(key){if(key==='home')return homeContentHTML();if(key==='schedule')return scheduleContentHTML(cacheLessons);if(key==='diary')return diaryContentHTML();if(key==='users')return usersContentHTML();if(key==='journal')return journalContentHTML();if(key==='ministry')return ministryContentHTML();return'';}
 
 function createM3Spinner(size, isGrey) {
     const color = isGrey ? 'var(--ol)' : 'var(--p)';
@@ -681,128 +904,244 @@ function createM3Spinner(size, isGrey) {
 }
 
 function renderPage(key){
+  if(!canOpenPage(key)) key='home';
+  try{ if(typeof UserMenu!=='undefined' && UserMenu && UserMenu.close) UserMenu.close(); }catch(e){}
+  if(key==='diary') window._diaryIntroDone = false;
   const vp=$('pagesViewport');
   $$('.menu-item').forEach(b=>b.classList.toggle('active',b.dataset.page===key));
-  $$('.mb-item').forEach(b=>b.classList.toggle('active',b.dataset.page===key));
-  moveIndicator();
+  $$('.mb-item').forEach(b=>{const active=b.dataset.page===key;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+  requestAnimationFrame(()=>{moveIndicator();moveMobileIndicator();});
   $('topbarTitle').textContent=T(TITLES[key]||'menu_home');
   updateDocTitle();
   if(activeDiarySpinner){activeDiarySpinner.cleanup();activeDiarySpinner=null;}
   if(key==='diary'){diaryIsLoading=true;diaryData=null;}
   else{diaryIsLoading=false;if(diaryTimer){clearTimeout(diaryTimer);diaryTimer=null;}}
-  if(!vp.firstChild){vp.appendChild(buildPane(key));bindPage(key);currentPage=key;updateTopbarAdd();loadPageData(key);return;}
+  const isFirst=!vp.querySelector('.page-pane');
+  if(isFirst){
+    const pane=buildPane(key);
+    vp.appendChild(pane);bindPage(key);
+    currentPage=key;updateTopbarAdd();loadPageData(key);
+    return;
+  }
   if(key===currentPage&&key!=='users')return;
-  animating=true;
-  const oldPane=vp.querySelector('.page-pane');
+  const oldPane=vp.querySelector('.page-pane:last-child');
   const newPane=buildPane(key);
   vp.appendChild(newPane);bindPage(key);
-  if(oldPane)oldPane.remove();
-  animating=false;currentPage=key;updateTopbarAdd();loadPageData(key);
+  if(oldPane){
+    if(oldPane.parentNode)oldPane.remove();
+  }
+  currentPage=key;updateTopbarAdd();loadPageData(key);
 }
 
 function bindPage(key){
-  if(key==='schedule'||key==='homework')bindWeekPanel();
+  if(key==='schedule')bindWeekPanel();
   if(key==='users'||key==='journal'||key==='ministry')bindUsersPage();
   bindAttachmentOpeners();
-  if(key==='diary'&&diaryIsLoading){
-      const loaderContainer=document.getElementById('diaryLoaderContainer');
-      if(loaderContainer){const data=calcDiaryAverages();const isGrey=data.overall===null;activeDiarySpinner=createM3Spinner(64,isGrey);loaderContainer.appendChild(activeDiarySpinner);}
-      if(diaryTimer)clearTimeout(diaryTimer);
-      diaryTimer=setTimeout(()=>{
-          diaryIsLoading=false;diaryData=calcDiaryAverages();
-          const wrapper=document.getElementById('diaryBannerWrapper');
-          const blocks=document.getElementById('diaryContentBlocks');
-          if(wrapper&&blocks){
-              if(diaryData.overall===null){
-                  const h=wrapper.offsetHeight;wrapper.style.height=h+'px';wrapper.style.overflow='hidden';wrapper.offsetHeight;
-                  wrapper.style.transition='all 0.5s var(--e)';wrapper.style.height='0px';wrapper.style.opacity='0';wrapper.style.transform='translateY(-30px)';wrapper.style.marginBottom='0px';
-                  blocks.innerHTML=getDiaryBlocksHTML(diaryData);
-                  setTimeout(()=>{wrapper.remove();},500);
-              } else {
-                  wrapper.innerHTML=getDiaryBannerHTML(diaryData,getCurrentUser());
-                  wrapper.style.transition='none';wrapper.style.height='auto';wrapper.style.opacity='1';wrapper.style.transform='none';
-                  blocks.innerHTML=getDiaryBlocksHTML(diaryData);
-              }
-          }
-      },2000);
+  if(key==='diary'){
+      window._diaryIntroDone = false;
+      diaryData=calcDiaryAverages();
+      initDiaryIntro();
   }
 }
 function refreshCurrentPage(){const pane=document.querySelector('.page-pane[data-page="'+currentPage+'"]');if(!pane)return;pane.innerHTML=getPaneHTML(currentPage);bindPage(currentPage);}
-async function loadPageData(key){
+async function loadPageData(key,opts={}){
+  const silent=!!opts.silent;
   const user=getCurrentUser();if(!user)return;
-  if(key==='schedule'||key==='homework'){
+  if(key==='schedule'){
     const hasCache=prefetched.scheduleByDate[selectedDate]!==undefined;
-    if(hasCache){cacheLessons=prefetched.scheduleByDate[selectedDate];if(key==='homework'&&prefetched.hwStatuses)cacheHwStatuses=prefetched.hwStatuses;if(currentPage===key)refreshCurrentPage();}
+    if(hasCache){cacheLessons=prefetched.scheduleByDate[selectedDate]||[]; if(!silent && currentPage===key)refreshCurrentPage();}
     prefetchWeek(user,selectedDate);
-    try{const fresh=await fetchSched(selectedDate,user,true);cacheLessons=fresh;if(key==='homework'){if(prefetched.hwStatuses)cacheHwStatuses=prefetched.hwStatuses;else{try{const hr=await jsonp({action:'hw_status',requester:user.email});if(hr&&hr.status==='ok'){cacheHwStatuses=hr.statuses||{};prefetched.hwStatuses=cacheHwStatuses;saveCacheJson(HW_CACHE_KEY,cacheHwStatuses);}}catch(e){}}}if(currentPage===key)refreshCurrentPage();}catch(e){if(!hasCache){cacheLessons=[];if(currentPage===key)refreshCurrentPage();}}
+    try{
+      const fresh=await fetchSched(selectedDate,user,true);
+      cacheLessons=Array.isArray(fresh)?fresh:[];
+      const sig=_lessonsSig(cacheLessons);
+      if(sig!==_lastLessonsSig || !silent){ _lastLessonsSig=sig; if(currentPage===key) refreshCurrentPage(); }
+    }catch(e){
+      if(!hasCache){cacheLessons=[]; if(currentPage===key)refreshCurrentPage();}
+    }
     return;
   }
-  if(key==='users'||key==='journal'||key==='ministry'){if(prefetched.users&&currentPage===key)refreshCurrentPage();try{const res=await jsonp({action:'users_list',requester:user.email});if(res&&res.status==='ok'){prefetched.users=res.users||[];saveCacheJson(USERS_CACHE_KEY,prefetched.users);}}catch(e){}if(currentTableDate&&prefetched.scheduleByDate[currentTableDate]===undefined){try{await fetchSched(currentTableDate,user,true);}catch(e){}}if(currentPage===key)refreshCurrentPage();}
+  if(key==='diary'){
+    // diary depends on schedule lessons for selectedDate; refresh them silently
+    try{
+      const fresh=await fetchSched(selectedDate,user,true);
+      cacheLessons=Array.isArray(fresh)?fresh:[];
+      const sig=_lessonsSig(cacheLessons);
+      if(sig!==_lastLessonsSig || !silent){ _lastLessonsSig=sig; if(currentPage===key) refreshCurrentPage(); }
+    }catch(e){ if(!silent && currentPage===key) refreshCurrentPage(); }
+    return;
+  }
+  if(key==='users'||key==='journal'||key==='ministry'){
+    if(prefetched.users&&currentPage===key && !silent)refreshCurrentPage();
+    try{
+      const res=await jsonp({action:'users_list',requester:user.email});
+      if(res&&res.status==='ok'){
+        const users=res.users||[];
+        prefetched.users=users; saveCacheJson(USERS_CACHE_KEY,users);
+        const usig=_usersSig(users);
+        if(usig!==_lastUsersSig || !silent){ _lastUsersSig=usig; if(currentPage===key) refreshCurrentPage(); }
+        const me=users.find(x=>String(x.email||'').toLowerCase()===String(user.email||'').toLowerCase());
+        if(!me){ forceLogout(currentLang==='en'?'Your account was deleted. You can create a new account.':'Ваш аккаунт был удалён. Вы можете создать новый аккаунт.','error'); return; }
+        const st=String(me.status||me.state||'').toLowerCase();
+        if(!!me.blocked||!!me.banned||!!me.deleted||['blocked','banned','deleted','disabled'].includes(st)){ forceLogout(currentLang==='en'?'Your account was blocked or deleted by administrator.':'Ваш аккаунт был заблокирован или удалён администратором.','error'); return; }
+        const nr=ROLES[me.role]?me.role:user.role;
+        if(String(nr)!==String(user.role||'') || String(me.name||'')!==String(user.name||'')){
+          setCurrentUser({role:nr,name:me.name||user.name,email:me.email||user.email});
+          applyUserToUI();rebuildMenu();updateTopbarAdd();
+          if(currentPage===key) refreshCurrentPage();
+          if(String(nr)!==String(user.role||'')) showToast(currentLang==='en'?'Your role was updated':'Ваша роль обновлена','success');
+        }
+      } else if(res && res.status==='error'){
+        const msg=String(res.error||res.message||'').toLowerCase();
+        if(['deleted','not_found','no_user','user_not_found','blocked','banned','forbidden','unauthorized','disabled'].some(k=>msg.includes(k))){
+          forceLogout(currentLang==='en'?'Your account is no longer active.':'Ваш аккаунт больше не активен.','error');
+          return;
+        }
+      }
+    }catch(e){}
+    if(currentTableDate&&prefetched.scheduleByDate[currentTableDate]===undefined){try{await fetchSched(currentTableDate,user,true);}catch(e){}}
+    if(currentPage===key && !silent)refreshCurrentPage();
+  }
 }
 function emptyStateHTML(title,subtitle,icon){return `<div class="empty-state">${ic(icon||'icon-info','lg')}<h2>${esc(title)}</h2>${subtitle?`<p>${esc(subtitle)}</p>`:''}</div>`;}
 
 function homeContentHTML(){
   return `
-  <div class="banner">${ic('icon-home')}<div class="banner-title">${T('menu_home')}</div></div>
-  <div class="ministry-grid">
-    <div class="ministry-card">
-      <div class="ministry-title">${ic('icon-megaphone')} ${T('news')}</div>
-      <div class="empty-state" style="padding:32px 16px;margin-top:0">
-        <h2 style="font-size:18px">${T('welcome')}</h2>
-        <p>${T('welcome_sub')}</p>
-      </div>
-    </div>
-    <div class="ministry-card">
-      <div class="ministry-title">${ic('icon-info')} ${T('today')}</div>
-      <div style="font-size:15px;font-weight:600;color:var(--onv);line-height:1.6;overflow-wrap:break-word">
-        ${getRelativeDate(todayISO())}
-      </div>
+  <div class="banner merry-banner">
+    <div class="merry-banner-sky" aria-hidden="true"></div>
+    <div class="merry-tree" aria-hidden="true">🎄</div>
+    <div class="merry-banner-text">
+      <div class="merry-banner-title">Merry Christmas</div>
+      <div class="merry-banner-sub">С Новым Годом!</div>
     </div>
   </div>`;
 }
 function isVacation(iso){return (prefetched.vacations||[]).some(v=>iso>=v.start&&iso<=v.end);}
+function scheduleHeaderLabel(iso){
+  const d=new Date(iso+'T00:00:00');
+  const today=new Date(todayISO()+'T00:00:00');
+  const diff=Math.round((d-today)/(1000*60*60*24));
+  const dateStr=formatRuDate(iso);
+  if(diff===0) return T('today')+' '+dateStr;
+  if(diff===1) return T('tomorrow')+' '+dateStr;
+  if(diff===-1) return T('yesterday')+' '+dateStr;
+  return dateStr;
+}
 function scheduleContentHTML(lessons){
   let list;
   if(isVacation(selectedDate)){
-    list=`<div class="empty-state" style="background:#1E8E3E; color:white; border:none;">${ic('icon-palm','lg')}<h2 style="color:white">${T('vacation_banner_title')}</h2><p style="color:rgba(255,255,255,0.9)">${T('vacation_banner_sub')}</p></div>`;
+    list=`<div class="empty-state empty-state-vacation"><div class="empty-state-art" aria-hidden="true">🌴</div><h2>${T('vacation_banner_title')}</h2><p>${T('vacation_banner_sub')}</p></div>`;
   } else if(!lessons||!lessons.length){
-    const svgIllustration=`<svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="300" rx="24" fill="#F8F9FA"/><circle cx="200" cy="140" r="60" fill="#F1F3F4"/><path d="M170 120H230M170 140H210M170 160H190" stroke="#BDC1C6" stroke-width="8" stroke-linecap="round"/><circle cx="280" cy="80" r="16" fill="#DADCE0"/><circle cx="120" cy="200" r="24" fill="#DADCE0"/><path d="M280 180L320 220" stroke="#DADCE0" stroke-width="6" stroke-linecap="round"/></svg>`;
-    list=`<div class="empty-state">${svgIllustration}<h2>${T('no_lessons')}</h2><p>${T('no_lessons_sub')}</p></div>`;
-  } else { list='<div class="lessons-list">'+lessons.map((l,i)=>lessonRowHTML(l,'schedule',null,i)).join('')+'</div>'; }
-  return weekPanelHTML()+list;
-}
-function homeworkContentHTML(lessons,hwStatuses){
-  const withHw=(lessons||[]).filter(l=>l.homework&&l.homework.trim());
-  let list;
-  if(!withHw.length){
-    const svgIllustration=`<svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="300" rx="24" fill="#F8F9FA"/><path d="M140 80H260V220H140V80Z" fill="#F1F3F4" rx="8"/><path d="M160 110H240M160 140H220M160 170H200" stroke="#BDC1C6" stroke-width="6" stroke-linecap="round"/><circle cx="260" cy="220" r="20" fill="#1E8E3E"/><path d="M252 220L258 226L268 216" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-    list=`<div class="empty-state">${svgIllustration}<h2>${T('no_homework')}</h2><p>${T('no_homework_sub')}</p></div>`;
-  } else { list='<div class="lessons-list">'+withHw.map((l,i)=>lessonRowHTML(l,'homework',hwStatuses,i)).join('')+'</div>'; }
+    list=`<div class="empty-state empty-state-winter">
+      <div class="empty-state-art" aria-hidden="true">
+        <div class="ws-scene">☃️</div>
+      </div>
+      <h2>${T('no_lessons')}</h2>
+      <p>${T('no_lessons_sub')}</p>
+    </div>`;
+  } else {
+    list='<div class="lessons-list">'+lessons.map((l,i)=>lessonRowHTML(l,'schedule',null,i)).join('')+'</div>';
+  }
   return weekPanelHTML()+list;
 }
 function lessonRowHTML(l,mode,hwStatuses,i){
-  const cls=[];if(l.cancelled)cls.push('cancelled');
-  const meta=[];if(l.time)meta.push(`<span class="meta-item">${ic('icon-clock','sm')}<span>${esc(l.time)}</span></span>`);if(l.room)meta.push(`<span class="meta-item">${ic('icon-location','sm')}<span>${esc(l.room)}</span></span>`);if(l.teacher)meta.push(`<span class="meta-item">${ic('icon-user','sm')}<b class="flex-truncate">${esc(l.teacher)}</b></span>`);
-  const badges=[];if(l.sor)badges.push(`<span class="sor-badge" style="display:inline-block;padding:4px 12px;border-radius:100px;font-size:11px;font-weight:800;background:var(--pc);color:var(--onpc);text-transform:uppercase;letter-spacing:.4px;margin-left:6px">${T('sor')}</span>`);if(l.soch)badges.push(`<span class="soch-badge" style="display:inline-block;padding:4px 12px;border-radius:100px;font-size:11px;font-weight:800;background:#FEF3C7;color:#92400E;text-transform:uppercase;letter-spacing:.4px;margin-left:6px">${T('soch')}</span>`);if(l.cancelled)badges.push(`<span class="role-badge admin" style="margin-left:8px">${currentLang==='en'?'CANCELLED':(currentLang==='kz'?'БОЛДЫРЫЛМАДЫ':'ОТМЕНЁН')}</span>`);
-  const dateIso=normDate(l.date);const user=getCurrentUser();const email=user?user.email:'';const entry=getGrade(dateIso,l.id,email);
-  let chip='';if(mode==='schedule'){let t='—',c='lesson-grade-chip';if(entry&&entry.status==='Н'){t='Н';c+=' filled g1';}else if(entry&&typeof entry.grade==='number'){t=entry.grade;c+=' filled '+gradeColorClass(entry.grade);}chip=`<div class="${c}">${t}</div>`;}
-  const hwIcon=l.homework?`<div style="margin-top:12px;font-size:14px;color:var(--on);display:flex;align-items:flex-start;gap:8px;font-weight:600"><span style="flex-shrink:0">${ic('icon-book-open','sm')}</span><span style="overflow-wrap:break-word;word-break:break-word">${esc(l.homework)}</span></div>`:'';
-  const atts=normalizeAttachments(l.attachments);
-  const attHtml=atts.length?`<div class="lesson-atts">${atts.map(a=>{const c2=a.type==='video'?'video':(a.type==='file'?'file':'');return`<a class="lesson-att-chip ${c2}" href="${esc(a.url)}" target="_blank" rel="noopener" data-att-url="${esc(a.url)}" data-att-type="${esc(a.type)}" data-att-title="${esc(a.title)}">${ic(attachIcon(a.type),'sm')}<span>${esc(a.title)}</span></a>`;}).join('')}</div>`:'';
-  let actionHtml='';if(mode==='schedule'&&canEditSchedule()){actionHtml=`<button class="btn-icon" onclick="editLesson('${esc(l.id)}')">${ic('icon-edit','sm')}</button><button class="btn-icon danger" onclick="deleteLesson('${esc(l.id)}')">${ic('icon-trash','sm')}</button>`;} else if(mode==='homework'){const done=!!(hwStatuses&&hwStatuses[l.id]);actionHtml=`<div class="hw-checkbox ${done?'on':''}" data-hw="${esc(l.id)}" data-done="${done?'1':'0'}"><svg viewBox="0 0 24 24"><polyline points="5 13 10 18 19 7"/></svg></div>`;}
-  return `<div class="lesson-row ${cls.join(' ')}"><div class="lesson-num">${esc(l.lessonNum||'—')}</div><div class="lesson-info"><div class="lesson-subject">${esc(l.subject||'')}${badges.join('')}</div><div class="lesson-meta">${meta.join('')}</div>${hwIcon}${attHtml}</div>${chip}<div class="lesson-action">${actionHtml}</div></div>`;
+  const cls=['lesson-card']; if(l.cancelled) cls.push('cancelled');
+  const numRaw = String(l.lessonNum ?? '').trim();
+  const num = esc(numRaw !== '' ? numRaw : '—');
+  const subject = esc(l.subject||'');
+  const timeRoom = [l.time?esc(l.time):'', l.room?esc(l.room):''].filter(Boolean).join(' • ');
+  const teacher = l.teacher ? esc(l.teacher) : '';
+  const hw = (l.homework||'').trim();
+  const hwId = 'hw_'+String(l.id||i||Math.random()).replace(/[^a-zA-Z0-9_-]/g,'');
+  const viewLabel = currentLang==='en'?'View':(currentLang==='kz'?'Көру':'Посмотреть');
+  const hwLabel = currentLang==='en'?'Homework':(currentLang==='kz'?'Үй тапсырмасы':'Домашнее задание');
+  const noHw = currentLang==='en'?'No homework assigned':(currentLang==='kz'?'Үй тапсырмасы берілмеген':'Домашнее задание не задано');
+  const hwText = hw ? esc(hw) : `<span class="lesson-hw-empty">${noHw}</span>`;
+  const canManage = (mode==='schedule') && (typeof canEditSchedule==='function' ? canEditSchedule() : roleCan(userRole(),'edit'));
+  const badges=[];if(l.sor)badges.push(`<span class="sor-badge">${T('sor')}</span>`);if(l.soch)badges.push(`<span class="soch-badge">${T('soch')}</span>`);if(l.cancelled)badges.push(`<span class="lesson-cancelled-badge">${currentLang==='en'?'CANCELLED':(currentLang==='kz'?'БОЛДЫРЫЛМАДЫ':'ОТМЕНЕНО')}</span>`);
+  return `<div class="${cls.join(' ')}" style="animation-delay:${Math.min((i||0)*45,360)}ms">
+    <div class="lesson-main">
+      <div class="lesson-num-box">${num}</div>
+      <div class="lesson-body">
+        <div class="lesson-topline">${timeRoom}</div>
+        <div class="lesson-subject">${subject}${badges.join('')}</div>
+        ${teacher?`<div class="lesson-teacher">${teacher}</div>`:''}
+      </div>
+      <div class="lesson-right">
+        <button class="lesson-view-btn" type="button" data-hw-toggle="${hwId}">${viewLabel}</button>
+        ${canManage?`<div class="lesson-admin-actions"><button class="icon-btn sm lesson-edit-btn" type="button" data-edit-lesson="${esc(l.id||'')}" aria-label="${T('edit')}">${ic('icon-edit','sm')}</button><button class="icon-btn sm red lesson-del-btn" type="button" data-del-lesson="${esc(l.id||'')}" aria-label="${T('delete')}">${ic('icon-trash','sm')}</button></div>`:''}
+      </div>
+    </div>
+    <div class="lesson-hw" id="${hwId}">
+      <div class="lesson-hw-line"></div>
+      <div class="lesson-hw-title">${hwLabel}:</div>
+      <div class="lesson-hw-text">${hwText}</div>
+    </div>
+  </div>`;
 }
+
 function weekPanelHTML(){
-  const mon=currentMonday();const ai=dowIdx(selectedDate);const ti=todayISO();
+  const mon=currentMonday();const ai=dowIdx(selectedDate);
   const locW = getLocalizedWeekdays();
-  const dnFull = [locW.full[1], locW.full[2], locW.full[3], locW.full[4], locW.full[5]];
-  const dnShort = [locW.short[1], locW.short[2], locW.short[3], locW.short[4], locW.short[5]];
+  const isMobile = window.innerWidth <= 640;
   const days=[];
-  for(let i=0;i<5;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);const iso=isoOfDate(d);days.push(`<button class="wp-day ${i===ai?'active':''} ${iso===ti?'today':''}" data-day="${i}"><span class="wp-day-name"><span class="day-full">${dnFull[i]}</span><span class="day-short">${dnShort[i]}</span></span></button>`);}
-  return `<div class="schedule-tabs-container"><div class="wp-head"><div class="wp-title" id="wpTitle">${ic('icon-calendar','sm')}<span>${getLocalizedMonths().nom[mon.getMonth()].toUpperCase()+' '+mon.getFullYear()}</span></div></div><div class="wp-body"><button class="wp-arrow" id="wpPrev" type="button">‹</button><div class="wp-days">${days.join('')}</div><button class="wp-arrow" id="wpNext" type="button">›</button></div></div><div class="schedule-content-area"><div class="wp-date-info">${getRelativeDate(selectedDate)}</div>`;
+  if(isMobile){
+    const d=new Date(selectedDate+'T00:00:00');
+    const day=d.getDay();
+    const idx=day===0?6:day-1;
+    const label=locW.full[idx>=0&&idx<7?idx:1] || '';
+    days.push(`<button class="wp-day active" data-day="${Math.min(idx,4)}"><span class="wp-day-name">${esc(label)}</span></button>`);
+  } else {
+    const dnFull = [locW.short[1], locW.short[2], locW.short[3], locW.short[4], locW.short[5]];
+    for(let i=0;i<5;i++){days.push(`<button class="wp-day ${i===ai?'active':''}" data-day="${i}"><span class="wp-day-name">${esc(dnFull[i])}</span></button>`);}
+  }
+  return `<div class="schedule-group">
+    <div class="schedule-head">
+      <button class="wp-arrow" id="wpPrev" type="button" aria-label="prev">&#8249;</button>
+      <div class="wp-days">${days.join('')}</div>
+      <button class="wp-arrow" id="wpNext" type="button" aria-label="next">&#8250;</button>
+    </div>
+    <div class="schedule-datebar" id="scheduleDateBar">${esc(scheduleHeaderLabel(selectedDate))}</div>
+  </div>`;
 }
-function bindWeekPanel(){const prev=$('wpPrev'),next=$('wpNext');if(prev)prev.onclick=()=>{moveWeek(-1);loadPageData(currentPage);};if(next)next.onclick=()=>{moveWeek(1);loadPageData(currentPage);};document.querySelectorAll('.wp-day').forEach(b=>{b.onclick=()=>{setDayOfWeek(parseInt(b.dataset.day,10));loadPageData(currentPage);};});}
-function bindHwCheckboxes(){document.querySelectorAll('.hw-checkbox').forEach(cb=>{cb.onclick=async()=>{const id=cb.dataset.hw;const wasDone=cb.dataset.done==='1';const next=!wasDone;cb.dataset.done=next?'1':'0';cb.classList.toggle('on',next);if(!cacheHwStatuses)cacheHwStatuses={};cacheHwStatuses[id]=next;prefetched.hwStatuses=cacheHwStatuses;saveCacheJson(HW_CACHE_KEY,cacheHwStatuses);const u=getCurrentUser();try{await jsonp({action:'set_hw',requester:u.email,lessonId:id,done:next?'true':'false'});}catch(e){}};});}
+function bindWeekPanel(){
+  const prev=$('wpPrev'),next=$('wpNext');
+  const isMobile=window.innerWidth<=640;
+  const go = (dir)=>{
+    const pane=document.querySelector('.page-pane[data-page="schedule"]');
+    if(pane){pane.classList.remove('sched-anim-left','sched-anim-right'); void pane.offsetWidth; pane.classList.add(dir>0?'sched-anim-right':'sched-anim-left');}
+    if(isMobile){const d=new Date(selectedDate+'T00:00:00');d.setDate(d.getDate()+dir);if(d.getDay()===0)d.setDate(d.getDate()+(dir>0?1:-2));if(d.getDay()===6)d.setDate(d.getDate()+(dir>0?2:-1));selectedDate=isoOfDate(d);}else{moveWeek(dir);}
+    loadPageData(currentPage);
+  };
+  if(prev)prev.onclick=()=>go(-1);
+  if(next)next.onclick=()=>go(1);
+  document.querySelectorAll('.wp-day').forEach(b=>{
+    b.onclick=()=>{
+      if(isMobile) return;
+      const nd=parseInt(b.dataset.day,10); const cur=dowIdx(selectedDate);
+      const pane=document.querySelector('.page-pane[data-page="schedule"]');
+      if(pane){pane.classList.remove('sched-anim-left','sched-anim-right'); void pane.offsetWidth; pane.classList.add(nd>=cur?'sched-anim-right':'sched-anim-left');}
+      setDayOfWeek(nd);loadPageData(currentPage);
+    };
+  });
+  document.querySelectorAll('[data-hw-toggle]').forEach(btn=>{
+    btn.onclick=()=>{
+      const id=btn.dataset.hwToggle;
+      const card=btn.closest('.lesson-card');
+      const panel=document.getElementById(id);
+      if(!panel||!card)return;
+      const open=card.classList.toggle('hw-open');
+      panel.style.maxHeight=open?panel.scrollHeight+'px':'0px';
+      btn.textContent = open ? (currentLang==='en'?'Hide':(currentLang==='kz'?'Жасыру':'Скрыть')) : (currentLang==='en'?'View':(currentLang==='kz'?'Көру':'Посмотреть'));
+    };
+  });
+  document.querySelectorAll('[data-edit-lesson]').forEach(btn=>{
+    btn.onclick=(e)=>{e.stopPropagation();const id=btn.dataset.editLesson;const l=(cacheLessons||[]).find(x=>String(x.id)===String(id)); if(l&&typeof openModal==='function') openModal(l); else if(typeof window.editLesson==='function') window.editLesson(id);};
+  });
+  document.querySelectorAll('[data-del-lesson]').forEach(btn=>{
+    btn.onclick=async(e)=>{e.stopPropagation();const id=btn.dataset.delLesson;const ok=await showConfirm(currentLang==='en'?'Delete lesson?':'Удалить урок?', currentLang==='en'?'Lesson':'Урок'); if(ok){ if(typeof deleteLessonById==='function') deleteLessonById(id); else if(typeof window.deleteLesson==='function') window.deleteLesson(id); }};
+  });
+}
 function bindAttachmentOpeners(){document.querySelectorAll('.lesson-att-chip').forEach(chip=>{chip.onclick=e=>{e.preventDefault();openAttachViewer(chip.dataset.attUrl,chip.dataset.attType,chip.dataset.attTitle);};});}
 function openAttachViewer(url,type,title){const m=$('attachViewer'),b=$('attachViewerBody');$('attachViewerTitle').textContent=title||url;$('attachViewerExternal').href=url;b.innerHTML='';const yt=getYouTubeId(url),drive=getDrivePreview(url);if(type==='video'&&yt)b.innerHTML=`<iframe src="https://www.youtube.com/embed/${yt}?autoplay=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;else if(drive)b.innerHTML=`<iframe src="${drive}" allow="autoplay; fullscreen"></iframe>`;else if(type==='video'&&/\.(mp4|webm|mov|m4v)(\?|$)/i.test(url))b.innerHTML=`<video controls autoplay src="${esc(url)}"></video>`;else if(type==='file'&&/\.(png|jpe?g|gif|webp|svg|bmp)(\?|$)/i.test(url))b.innerHTML=`<img src="${esc(url)}" alt="">`;else if(type==='file'&&/\.pdf(\?|$)/i.test(url))b.innerHTML=`<iframe src="${esc(url)}"></iframe>`;else b.innerHTML=`<div class="av-fallback">${ic('icon-external')}<a href="${esc(url)}" target="_blank" rel="noopener">${currentLang==='en'?'Open in new tab':(currentLang==='kz'?'Жаңа қойындыда ашу':'Открыть в новой вкладке')}</a></div>`;m.classList.add('open');}
 $('attachViewerClose').onclick=()=>{$('attachViewer').classList.remove('open');$('attachViewerBody').innerHTML='';};
@@ -818,23 +1157,122 @@ $('attachLinkSave').onclick=async()=>{const t=$('attachLinkTitle').value.trim();
 $('attachFilePicker').onclick=()=>$('attachFileInput').click();
 $('attachFileInput').onchange=async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;if(f.size>MAX_UPLOAD_MB*1024*1024){showToast(currentLang==='en'?'File >200MB':'Файл >200 МБ');e.target.value='';return;}if(!$('attachFileTitle').value.trim())$('attachFileTitle').value=f.name.replace(/\.[^.]+$/,'');$('attachFilePicker').classList.add('has-file');$('attachFilePickerText').textContent=f.name+' ('+formatSize(f.size)+')';$('attachUploadProgress').classList.remove('hidden');$('attachFilePicker').disabled=true;try{const url=await uploadToCatbox(f,(l,t)=>{const p=Math.round(l/t*100);$('attachProgressFill').style.width=p+'%';$('attachProgressText').textContent=(currentLang==='en'?'Uploading... ':'Загрузка... ')+p+'%';});const type=f.type.startsWith('video/')?'video':'file';const title=$('attachFileTitle').value.trim()||f.name;editingAttachments.push({id:'a'+Date.now(),type,title,url,size:f.size,mime:f.type});renderAttachList();setTimeout(()=>{resetFileForm();hideInlineForms();showToast(currentLang==='en'?'File added':'Файл добавлен');},500);}catch(err){showToast(err.message);resetFileForm();}};
 function renderAttachList(){const list=$('attachList');if(!list)return;if(!editingAttachments.length){list.innerHTML='<div class="attach-empty">'+(currentLang==='en'?'No materials':'Материалов пока нет')+'</div>';return;}list.innerHTML=editingAttachments.map((a,idx)=>{const icon=attachIcon(a.type);const size=a.size?formatSize(a.size):'';const meta=attachShortUrl(a.url)+(size?' · '+size:'');return`<div class="attach-item">${ic(icon,'attach-icon')}<div class="attach-info"><div class="attach-title">${esc(a.title)}</div><div class="attach-meta">${esc(meta)}</div></div><a class="attach-open" href="${esc(a.url)}" target="_blank" rel="noopener">${ic('icon-external','sm')}</a><button type="button" class="attach-del" data-attach-del="${idx}">${ic('icon-x-circle','sm')}</button></div>`;}).join('');list.querySelectorAll('[data-attach-del]').forEach(b=>{b.onclick=()=>{const i=parseInt(b.dataset.attachDel,10);editingAttachments.splice(i,1);renderAttachList();};});}
-function calcDiaryAverages(){const u=getCurrentUser();if(!u)return{overall:null,days:{}};const email=u.email;const all=[];const days={};getLast5SchoolDays().forEach(iso=>{const ls=prefetched.scheduleByDate[iso]||[];const dg=[];ls.forEach(l=>{const e=getGrade(iso,l.id,email);if(e&&e.status==='ЕСТЬ'&&typeof e.grade==='number'){all.push(e.grade);dg.push(e.grade);}});days[iso]=dg.length?+(dg.reduce((a,b)=>a+b,0)/dg.length).toFixed(1):null;});const overall=all.length?+(all.reduce((a,b)=>a+b,0)/all.length).toFixed(1):null;return{overall,days};}
+function calcDiaryAverages(){const u=getCurrentUser();if(!u)return{overall:null,days:{},hasAny:false};const email=u.email;const all=[];const days={};let hasAny=false;getLast5SchoolDays().forEach(iso=>{const ls=prefetched.scheduleByDate[iso]||[];const dg=[];ls.forEach(l=>{const e=getGrade(iso,l.id,email);if(e&&e.status==='ЕСТЬ'&&typeof e.grade==='number'){all.push(e.grade);dg.push(e.grade);hasAny=true;}});days[iso]=dg.length?+(dg.reduce((a,b)=>a+b,0)/dg.length).toFixed(1):null;});const overall=all.length?+(all.reduce((a,b)=>a+b,0)/all.length).toFixed(1):null;return{overall,days,hasAny};}
+
+/* Material You (Expressive): плавный морфинг фигур — шестиугольник, пятиугольник, cookie, треугольник, sunny, квадрат, овал.
+   Фигуры задаются радиусом по углу, углы скругляются сглаживанием, между фигурами интерполируются радиусы. */
+const DiaryMorph=(function(){
+  var N=180,TAU=Math.PI*2,RMS=34,PERIOD=0.72,HOLD=0.62,SHAPES=null,raf=0,t0=0;
+  var reduce=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  function polygon(n){return function(a){var seg=TAU/n,f=(((a+Math.PI/2)%seg)+seg)%seg;return Math.cos(Math.PI/n)/Math.cos(f-Math.PI/n);};}
+  function cookie(n,amp){return function(a){return 1+amp*Math.cos(n*(a+Math.PI/2));};}
+  function oval(ra,rb){return function(a){var c=Math.cos(a),s=Math.sin(a);return 1/Math.sqrt(c*c/(ra*ra)+s*s/(rb*rb));};}
+  function smooth(r,sigma){
+    if(!sigma)return r;
+    var k=Math.ceil(sigma*3),w=[],sum=0,i,j;
+    for(i=-k;i<=k;i++){var g=Math.exp(-(i*i)/(2*sigma*sigma));w.push(g);sum+=g;}
+    var out=new Array(N);
+    for(i=0;i<N;i++){var acc=0;for(j=-k;j<=k;j++)acc+=r[(i+j+N*4)%N]*w[j+k];out[i]=acc/sum;}
+    return out;
+  }
+  function build(){
+    var defs=[[polygon(6),6],[polygon(5),6],[cookie(9,.1),0],[polygon(3),9],[cookie(8,.14),3],[polygon(4),8],[oval(1,.64),0]];
+    SHAPES=defs.map(function(df){
+      var r=[],i;
+      for(i=0;i<N;i++)r.push(df[0](i/N*TAU));
+      r=smooth(r,df[1]);
+      var sq=0;for(i=0;i<N;i++)sq+=r[i]*r[i];
+      var k=RMS/Math.sqrt(sq/N);
+      return r.map(function(v){return v*k;});
+    });
+  }
+  function easeOutBack(x){var c1=1.15,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2);}
+  function draw(now){
+    var p=document.getElementById('diaryMorphPath');
+    if(!p)return false;
+    var T=Math.max(0,(now-t0)/1000),S=SHAPES.length,idx=Math.floor(T/PERIOD),t=T/PERIOD-idx;
+    var e=easeOutBack(Math.min(t/HOLD,1));
+    var a=SHAPES[idx%S],b=SHAPES[(idx+1)%S],rot=(idx+e)*0.95,d='',i;
+    for(i=0;i<N;i++){
+      var r=a[i]+(b[i]-a[i])*e,ang=i/N*TAU+rot;
+      d+=(i?'L':'M')+(r*Math.cos(ang)).toFixed(1)+' '+(r*Math.sin(ang)).toFixed(1);
+    }
+    p.setAttribute('d',d+'Z');
+    return true;
+  }
+  function frame(now){
+    if(!draw(now)){raf=0;return;}
+    raf=requestAnimationFrame(frame);
+  }
+  function start(){
+    if(!SHAPES)build();
+    if(reduce){t0=performance.now();draw(t0);return;}
+    if(raf){draw(performance.now());return;} /* страницу перерисовали — продолжаем с того же места */
+    t0=performance.now();
+    draw(t0);
+    raf=requestAnimationFrame(frame);
+  }
+  return{start:start};
+})();
+
+function diaryIntroHTML(){
+  return `<div class="diary-intro" id="diaryIntro"><div class="diary-intro-inner"><div class="diary-morph" aria-hidden="true"><span class="diary-morph-shape"><svg viewBox="-50 -50 100 100" class="diary-morph-svg"><path id="diaryMorphPath" fill="var(--p)"/></svg></span></div></div></div>`;
+}
 
 function diaryContentHTML(){
   const u=getCurrentUser();
   if(!u)return emptyStateHTML(currentLang==='en'?'Sign in':'Войдите в аккаунт','','icon-user');
-  if(diaryIsLoading){
-      return `<div id="diaryBannerWrapper"><div class="diary-banner" style="background:var(--s1); box-shadow:var(--shadow); display:flex; justify-content:center; align-items:center; min-height:120px; padding:20px; overflow:hidden;"><div id="diaryLoaderContainer" style="width:80px; height:80px; display:flex; align-items:center; justify-content:center;"></div></div></div><div id="diaryContentBlocks"></div>`;
-  }
   const data=diaryData||calcDiaryAverages();
-  return `<div id="diaryBannerWrapper">${getDiaryBannerHTML(data,u)}</div>`+`<div id="diaryContentBlocks">${getDiaryBlocksHTML(data)}</div>`;
+  const intro = !window._diaryIntroDone ? diaryIntroHTML() : '';
+  const banner = (window._diaryIntroDone && data.hasAny) ? getDiaryBannerHTML(data,u) : '';
+  const blocks = window._diaryIntroDone ? getDiaryBlocksHTML(data) : '';
+  return `<div id="diaryBannerWrap">${intro}${banner}</div><div id="diaryContentBlocks">${blocks}</div>`;
+}
+
+function initDiaryIntro(){
+  if(window._diaryIntroDone) return;
+  const intro=document.getElementById('diaryIntro');
+  if(!intro) { window._diaryIntroDone=true; return; }
+  DiaryMorph.start();
+  setTimeout(()=>{
+    if(!document.getElementById('diaryIntro')) return;
+    intro.classList.add('hide');
+    setTimeout(()=>{
+      window._diaryIntroDone=true;
+      if(currentPage==='diary') refreshCurrentPage();
+    }, 450);
+  }, 5000);
+}
+function dayAvgTo5(avg10){
+  if(avg10==null || isNaN(avg10)) return null;
+  const v = Math.round((avg10/10)*5);
+  return Math.max(1, Math.min(5, v));
 }
 function getDiaryBannerHTML(data, u) {
-  const {overall}=data;const t100=overall!==null?Math.round(overall*10):0;const circ=2*Math.PI*55;const ratio=overall!==null?Math.min(overall/10,1):0;const fl=(circ*ratio).toFixed(2);
-  return `<div class="diary-banner">
-      <div class="diary-circle"><svg viewBox="0 0 120 120"><circle class="dc-bg" cx="60" cy="60" r="55" stroke-dasharray="${circ.toFixed(2)} ${circ.toFixed(2)}"/><circle class="dc-fill" cx="60" cy="60" r="55" stroke-dasharray="${fl} ${circ.toFixed(2)}"/></svg><div class="dc-inner"><div class="dc-value">${overall!==null?overall.toFixed(1):'—'}</div><div class="dc-label">${T('avg_score')}</div></div></div>
-      <div class="diary-title-wrap"><div class="diary-title">${T('menu_diary')}</div><div class="diary-sub">${esc(u.name||(currentLang==='en'?'Student':'Ученик'))}</div></div>
-      <div class="diary-score"><div class="diary-score-value"><span>${t100}</span><span class="sep">/</span><span class="max">100</span></div><div class="diary-score-label">${T('total_score')}</div></div>
+  const {overall,hasAny}=data;
+  if(!hasAny) return '';
+  const avg10 = overall!=null ? Number(overall) : null;
+  const avg5 = dayAvgTo5(avg10);
+  const pct = avg10!=null ? Math.max(0,Math.min(100,(avg10/10)*100)) : 0;
+  const circ=2*Math.PI*44;
+  const fl=(circ*(pct/100)).toFixed(2);
+  const avgLabel = currentLang==='en'?'Average grade':'Средняя оценка';
+  return `<div class="diary-banner diary-banner-new">
+    <div class="diary-avg-ring">
+      <svg viewBox="0 0 100 100" class="diary-avg-svg">
+        <circle class="diary-avg-bg" cx="50" cy="50" r="44"></circle>
+        <circle class="diary-avg-fill" cx="50" cy="50" r="44" stroke-dasharray="${fl} ${circ.toFixed(2)}"></circle>
+      </svg>
+      <div class="diary-avg-center">${avg5!=null?avg5:'—'}</div>
+    </div>
+    <div class="diary-banner-mid">
+      <div class="diary-banner-name">${esc(u.name||(currentLang==='en'?'Student':'Ученик'))}</div>
+      <div class="diary-banner-sub">${currentLang==='en'?'Nothing':'Ничего'}</div>
+    </div>
+    <div class="diary-banner-right">
+      <div class="diary-banner-right-label">${avgLabel}</div>
+      <div class="diary-banner-right-value">${avg10!=null?avg10.toFixed(1):'—'}</div>
+    </div>
   </div>`;
 }
 function getDiaryBlocksHTML(data) {
@@ -843,10 +1281,33 @@ function getDiaryBlocksHTML(data) {
   return days5.map(iso=>{
       const ls=prefetched.scheduleByDate[iso]||[];const info=formatRuDate(iso);const wd=locW.short[new Date(iso+'T00:00:00').getDay()];const da=days[iso];
       let lh='';
-      if(!ls.length){lh=`<div class="diary-lesson" style="opacity:.6"><div class="diary-lesson-info"><div class="diary-lesson-subject" style="white-space:normal">${T('no_lessons')}</div></div></div>`;}
-      else{lh=ls.map(l=>{const e=getGrade(iso,l.id,email);let g='—',gc='diary-grade';if(e&&e.status==='Н'){g='Н';gc+=' filled g1';}else if(e&&typeof e.grade==='number'){g=e.grade;gc+=' filled '+gradeColorClass(e.grade);}return `<div class="diary-lesson"><div class="diary-lesson-info"><div class="diary-lesson-subject">${esc(l.subject||'—')}</div><div class="diary-lesson-meta">${l.teacher?`<span>${ic('icon-user','sm')}<b>${esc(l.teacher)}</b></span>`:''}${l.room?`<span>${ic('icon-location','sm')}<b>${esc(l.room)}</b></span>`:''}</div></div><div class="${gc}">${g}</div></div>`;}).join('');}
-      const tot=da!==null?`<div class="day-total"><div class="day-total-label">${T('total')}</div><div class="day-total-value">${da.toFixed(1)}</div><div class="day-total-sub">${T('day')}</div></div>`:`<div class="day-total"><div class="day-total-label">${T('total')}</div><div class="day-total-value empty">—</div><div class="day-total-sub">${T('no_grades')}</div></div>`;
-      return `<div class="day-block"><div class="day-head"><div class="day-date">${esc(info)} <span class="day-weekday">${esc(wd)}</span></div></div><div class="day-grid"><div class="lessons-col">${lh}</div>${tot}</div></div>`;
+      if(!ls.length){
+        lh=`<div class="diary-lesson diary-lesson-empty"><div class="diary-lesson-info"><div class="diary-lesson-subject">${esc(T('no_lessons'))}</div></div><div class="diary-grade-box empty"><span class="diary-grade-dash"></span></div></div>`;
+      } else {
+        lh=ls.map(l=>{
+          const e=getGrade(iso,l.id,email);
+          let g='<span class="diary-grade-dash"></span>', cls='diary-grade-box empty';
+          if(e&&e.status==='Н'){ g='Н'; cls='diary-grade-box filled g1'; }
+          else if(e&&typeof e.grade==='number'){ g=String(e.grade); cls='diary-grade-box filled '+gradeColorClass(e.grade); }
+          return `<div class="diary-lesson">
+            <div class="diary-lesson-info">
+              <div class="diary-lesson-subject">${esc(l.subject||'—')}</div>
+              <div class="diary-lesson-meta">${l.teacher?`<span>${ic('icon-user','sm')}<b>${esc(l.teacher)}</b></span>`:''}${l.room?`<span>${ic('icon-location','sm')}<b>${esc(l.room)}</b></span>`:''}</div>
+            </div>
+            <div class="${cls}">${g}</div>
+          </div>`;
+        }).join('');
+      }
+      const day5 = da!==null ? dayAvgTo5(da) : null;
+      const tot = `<div class="day-total day-total-5"><div class="day-total-label">${T('total')}</div><div class="day-total-value ${day5==null?'empty':''}">${day5!=null?day5:'—'}</div><div class="day-total-sub">${day5!=null?(currentLang==='en'?'for day':'за день'):T('no_grades')}</div></div>`;
+      return `<div class="day-block diary-day-block">
+        <div class="day-head"><div class="day-date">${esc(info)} <span class="day-weekday">${esc(wd)}</span></div></div>
+        <div class="day-grid diary-day-grid">
+          <div class="lessons-col">${lh}</div>
+          <div class="day-total-sep" aria-hidden="true"></div>
+          ${tot}
+        </div>
+      </div>`;
   }).join('');
 }
 
@@ -914,7 +1375,8 @@ function bindVacationModal(){
 
 function usersContentHTML(){
   if(!canEditSchedule())return`<div class="banner">${ic('icon-lock')}<div class="banner-title">${currentLang==='en'?'No access':'Нет доступа'}</div></div>`;
-  const tabs=[{key:'grades',icon:'icon-chart',label:currentLang==='en'?'Grades':'Оценки'},{key:'users',icon:'icon-users',label:currentLang==='en'?'Users':'Пользователи'}];
+  const tabs=[{key:'grades',icon:'icon-chart',label:currentLang==='en'?'Grades':'Оценки'},{key:'users',icon:'icon-users',label:currentLang==='en'?'Users':'Пользователи'}].filter(t=>t.key!=='users'||canManageUsers());
+  if(manageTab==='users'&&!canManageUsers())manageTab='grades';
   const tabsHtml=`<div class="mgmt-tabs" id="mgmtTabs">${tabs.map(t=>`<button class="mgmt-tab${manageTab===t.key?' active':''}" data-mgmt-tab="${t.key}" type="button">${ic(t.icon,'sm')}<span>${t.label}</span></button>`).join('')}</div>`;
   let content='';
   if(manageTab==='grades'){if(currentTableDate)content=gradesTableForDateHTML(currentTableDate);else content=gradesDatesHTML();}
@@ -1041,7 +1503,7 @@ window.deleteLesson=async function(id){
 $$('[data-logout]').forEach(b=>b.onclick=()=>{showLoader();prefetched.scheduleByDate={};prefetched.hwStatuses=null;prefetched.users=null;try{localStorage.removeItem(LESSONS_CACHE_KEY);localStorage.removeItem(HW_CACHE_KEY);localStorage.removeItem(USERS_CACHE_KEY);}catch(e){}clearSession();setTimeout(()=>location.reload(),3500);});
 document.addEventListener('click',e=>{const mb=e.target.closest('.menu-item');if(mb&&mb.dataset.page){renderPage(mb.dataset.page);return;}const mbb=e.target.closest('.mb-item');if(mbb&&mbb.dataset.page){renderPage(mbb.dataset.page);return;}});
 const _origBindPage=bindPage;
-bindPage=function(key){_origBindPage(key);if(key==='homework')bindHwCheckboxes();if(key==='ministry'){bindSchoolModal();bindVacationModal();}};
+bindPage=function(key){_origBindPage(key);if(key==='ministry'){bindSchoolModal();bindVacationModal();}};
 const _accSaveEl=$('accSave');
 if(_accSaveEl){_accSaveEl.addEventListener('click',async(e)=>{e.stopImmediatePropagation();await Account.saveProfile();},true);}
 
@@ -1050,24 +1512,30 @@ window.addEventListener('online',updateOnlineStatus);
 window.addEventListener('offline',updateOnlineStatus);
 
 (async function init(){
+  const revealAuth=()=>{ try{hideLoader();}catch(e){} const a=$('authView'),ap=$('appView'); if(ap) ap.classList.add('hidden'); if(a) a.classList.remove('hidden'); try{updateDocTitle();}catch(e){} };
   try{
-    checkFields();
-    initAllSelects();buildGradesGrid();Theme.init();I18N.init();initAuthLanguage();UserMenu.init();Account.init();Account.applyAvatar();updateOnlineStatus();
+    try{checkFields();}catch(e){console.error(e);}
+    try{initAllSelects();buildGradesGrid();}catch(e){console.error(e);}
+    try{Theme.init();I18N.init();initAuthLanguage();}catch(e){console.error(e);}
+    try{UserMenu.init(); try{UserMenu.close();}catch(e){}}catch(e){console.error(e);}
+    try{Account.init();Account.applyAvatar();}catch(e){console.error(e);}
+    try{updateOnlineStatus();}catch(e){console.error(e);}
     const authThemeBtn=$('authThemeToggle');
     if(authThemeBtn){ authThemeBtn.addEventListener('click',()=>{ Theme.apply(Theme.current()==='dark'?'light':'dark'); applyAuthTranslations(); }); }
-    setTimeout(()=>{ fitFormHeight(); updateAuthBrand(); updateAuthMerge(); }, 50);
-    const finishAuthIntro=()=>{ const l=$('authLayout'); if(l){l.classList.remove('auth-intro'); l.classList.add('auth-ready');} }; if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) finishAuthIntro(); else setTimeout(finishAuthIntro, 4100);
+    setTimeout(()=>{ try{fitFormHeight(); updateAuthBrand(); updateAuthMerge();}catch(e){} }, 50);
+    const finishAuthIntro=()=>{ const l=$('authLayout'); if(l){l.classList.remove('auth-intro'); l.classList.add('auth-ready');} };
+    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) finishAuthIntro(); else setTimeout(finishAuthIntro, 1200);
     const s=getSession();
     if(s&&s.user){
       showLoader();$('authView').classList.add('hidden');$('appView').classList.remove('hidden');
-      applyUserToUI();rebuildMenu();renderPage('home');updateDocTitle();
-      requestAnimationFrame(()=>{$('appView').classList.add('ready');moveIndicator();});
+      try{applyUserToUI();rebuildMenu();renderPage('home');updateDocTitle();}catch(e){console.error(e);}
+      requestAnimationFrame(()=>{ const av=$('appView'); if(av) av.classList.add('ready'); try{moveIndicator();}catch(e){} });
       hideLoader();
-      prefetchAll(s.user).then(()=>{if(['schedule','homework','diary','users','journal','ministry'].includes(currentPage))refreshCurrentPage();}).catch(()=>{});
+      prefetchAll(s.user).then(()=>{if(['schedule','diary','users','journal','ministry'].includes(currentPage))refreshCurrentPage();}).catch(()=>{});
     } else {
-      showLoader();hideLoader();$('authView').classList.remove('hidden');updateDocTitle();
+      revealAuth();
     }
-  }catch(err){console.error('Init error:',err);hideLoader();$('authView').classList.remove('hidden');}
+  }catch(err){console.error('Init error:',err); revealAuth();}
 })();
 
 (function(){
@@ -1100,9 +1568,188 @@ new MutationObserver(function(){var s=b.querySelector('.m3-spin');
 if(b.disabled&&!s){var x=load(22,0,'#fff');x.classList.add('m3-spin');b.insertBefore(x,b.firstChild)}
 else if(!b.disabled&&s)s.remove()}).observe(b,{attributes:true,attributeFilter:['disabled']})});
 function frame(t){
-var e=typeof _loaderAt==='number'?Date.now()-_loaderAt:0,m=typeof LOADER_MIN_MS==='number'?LOADER_MIN_MS:3000;
-LV=e>=m?1:.03+.97*sm(e/m);
+var e=typeof _loaderAt==='number'?Date.now()-_loaderAt:0,mn=typeof LOADER_MIN_MS==='number'?LOADER_MIN_MS:3000;
+LV=e>=mn?1:.03+.97*sm(e/mn);
 for(var i=run.length-1;i>=0;i--){var r=run[i];if(!r.n.isConnected){run.splice(i,1);continue}if(r.n.getBoundingClientRect().width>0)r.f(t)}
 requestAnimationFrame(frame)}
 requestAnimationFrame(frame);
+
+})();
+
+
+const DesktopShell=(function(){
+  function isDesktop(){ return !!(window.pywebview && window.pywebview.api); }
+  async function init(){
+    if(!isDesktop()) return;
+    document.body.classList.add('has-titlebar');
+    const tb=appTitlebar; if(tb){tb.classList.remove('hidden'); tb.setAttribute('aria-hidden','false');}
+    const min=tbMin, max=tbMax, close=tbClose;
+    if(min) min.onclick=()=>{ try{window.pywebview.api.minimize();}catch(e){} };
+    if(max) max.onclick=async()=>{ try{await window.pywebview.api.toggle_maximize();}catch(e){} };
+    if(close) close.onclick=()=>{ try{window.pywebview.api.close();}catch(e){ window.close(); } };
+    document.addEventListener('keydown',(e)=>{ if(e.key==='F11'){ e.preventDefault(); try{window.pywebview.api.toggle_fullscreen();}catch(_){}} });
+  }
+  return {init,isDesktop};
+})();
+window.addEventListener('pywebviewready', ()=>{ DesktopShell.init(); try{UserMenu.close();}catch(e){} });
+document.addEventListener('DOMContentLoaded', ()=>{ setTimeout(()=>{ try{DesktopShell.init();}catch(e){} try{UserMenu.close();}catch(e){} }, 0); });
+
+
+/* NovaClass — естественный снег (canvas, один слой на весь сайт) */
+(function () {
+  'use strict';
+
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion) return;
+
+  var canvas = document.createElement('canvas');
+  canvas.id = 'snowCanvas';
+  canvas.setAttribute('aria-hidden', 'true');
+  canvas.style.cssText =
+    'position:fixed;left:0;top:0;width:100%;height:100%;' +
+    'pointer-events:none;z-index:99990;display:block;';
+  document.body.appendChild(canvas);
+
+  var ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  var W = 0, H = 0, dpr = 1;
+  var flakes = [];
+  var sprites = {};
+  var theme = 'dark';
+  var rafId = 0, last = 0, time = 0;
+
+  function rand(a, b) { return a + Math.random() * (b - a); }
+
+  /* Мягкая снежинка рисуется один раз в спрайт, дальше только drawImage */
+  function makeSprite(kind) {
+    var s = 64, c = document.createElement('canvas');
+    c.width = c.height = s;
+    var g = c.getContext('2d');
+    var grad = g.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+    if (kind === 'light') {
+      grad.addColorStop(0, 'rgba(255,255,255,1)');
+      grad.addColorStop(0.45, 'rgba(214,230,252,0.95)');
+      grad.addColorStop(0.75, 'rgba(150,185,235,0.55)');
+      grad.addColorStop(1, 'rgba(150,185,235,0)');
+    } else {
+      grad.addColorStop(0, 'rgba(255,255,255,1)');
+      grad.addColorStop(0.5, 'rgba(255,255,255,0.85)');
+      grad.addColorStop(1, 'rgba(255,255,255,0)');
+    }
+    g.fillStyle = grad;
+    g.beginPath();
+    g.arc(s / 2, s / 2, s / 2, 0, Math.PI * 2);
+    g.fill();
+    return c;
+  }
+
+  function readTheme() {
+    theme = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+  }
+
+  function targetCount() {
+    var n = Math.round((W * H) / 9000);
+    return Math.max(50, Math.min(n, 200));
+  }
+
+  function createFlake(scatter) {
+    /* больше мелких (далёких), меньше крупных (близких) */
+    var depth = Math.pow(Math.random(), 1.8); // 0..1
+    var r = 1.3 + depth * 3.4;
+    return {
+      x: rand(0, W),
+      y: scatter ? rand(-20, H) : rand(-60, -r * 2),
+      r: r,
+      vy: 22 + depth * 48 + rand(-6, 6),
+      alpha: 0.35 + depth * 0.55,
+      phase: rand(0, Math.PI * 2),
+      swayAmp: rand(8, 22) * (0.5 + depth),
+      swaySpeed: rand(0.4, 1.2),
+      depth: depth
+    };
+  }
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    var want = targetCount();
+    while (flakes.length < want) flakes.push(createFlake(true));
+    if (flakes.length > want) flakes.length = want;
+    for (var i = 0; i < flakes.length; i++) {
+      if (flakes[i].x > W) flakes[i].x = rand(0, W);
+    }
+  }
+
+  function frame(now) {
+    rafId = requestAnimationFrame(frame);
+    var dt = (now - last) / 1000;
+    last = now;
+    if (dt > 0.05) dt = 0.05; // защита от скачков после паузы
+    if (dt <= 0) return;
+    time += dt;
+
+    /* плавный порывистый ветер */
+    var wind = Math.sin(time * 0.17) * 14 + Math.sin(time * 0.53 + 1.3) * 7;
+
+    ctx.clearRect(0, 0, W, H);
+    var sprite = sprites[theme];
+
+    for (var i = 0; i < flakes.length; i++) {
+      var f = flakes[i];
+      f.y += f.vy * dt;
+      f.x += (wind * (0.4 + f.depth) + Math.sin(time * f.swaySpeed + f.phase) * f.swayAmp) * dt;
+
+      if (f.x < -f.r * 2) f.x = W + f.r;
+      else if (f.x > W + f.r * 2) f.x = -f.r;
+
+      if (f.y > H + f.r * 2) {
+        /* заново сверху в случайном месте со случайными параметрами */
+        flakes[i] = f = createFlake(false);
+      }
+
+      ctx.globalAlpha = f.alpha;
+      var d = f.r * 2;
+      ctx.drawImage(sprite, f.x - f.r, f.y - f.r, d, d);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function start() {
+    if (rafId) return;
+    last = performance.now();
+    rafId = requestAnimationFrame(frame);
+  }
+  function stop() {
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = 0;
+  }
+
+  sprites.dark = makeSprite('dark');
+  sprites.light = makeSprite('light');
+  readTheme();
+  resize();
+
+  var rt = 0;
+  window.addEventListener('resize', function () {
+    clearTimeout(rt);
+    rt = setTimeout(resize, 120);
+  });
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) stop(); else start();
+  });
+
+  /* смена светлой/тёмной темы подхватывается сразу */
+  new MutationObserver(readTheme).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme']
+  });
+
+  start();
 })();
