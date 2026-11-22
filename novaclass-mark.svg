@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">NovaClass</title>
+  <defs>
+    <linearGradient id="nova-blue" x1="20" y1="12" x2="108" y2="116" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5B9BFF"/>
+      <stop offset="1" stop-color="#2563D9"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="112" height="112" rx="32" fill="url(#nova-blue)"/>
+  <path d="M26 46c14-7 28-4 38 6v43c-10-8-24-10-38-3V46Z" fill="#fff"/>
+  <path d="M102 46c-14-7-28-4-38 6v43c10-8 24-10 38-3V46Z" fill="#fff"/>
+  <path d="M64 54v39" stroke="#B9D2FF" stroke-width="4" stroke-linecap="round"/>
+  <path d="m64 26 3.8 9.2L77 39l-9.2 3.8L64 52l-3.8-9.2L51 39l9.2-3.8L64 26Z" fill="#fff"/>
+</svg>
