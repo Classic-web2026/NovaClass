@@ -69,6 +69,7 @@
        ========================================= -->
   <symbol id="icon-home" viewBox="0 -960 960 960"><path fill="currentColor" d="M220-180h150v-220q0-12.75 8.63-21.38Q387.25-430 400-430h160q12.75 0 21.38 8.62Q590-412.75 590-400v220h150v-390L480-765 220-570v390Zm-60 0v-390q0-14.25 6.38-27 6.37-12.75 17.62-21l260-195q15.68-12 35.84-12Q500-825 516-813l260 195q11.25 8.25 17.63 21 6.37 12.75 6.37 27v390q0 24.75-17.62 42.37Q764.75-120 740-120H560q-12.75 0-21.37-8.63Q530-137.25 530-150v-220H430v220q0 12.75-8.62 21.37Q412.75-120 400-120H220q-24.75 0-42.37-17.63Q160-155.25 160-180Zm320-293Z"/></symbol>
   <symbol id="icon-close" viewBox="0 -960 960 960"><path fill="currentColor" d="M480-438 270-228q-9 9-21 9t-21-9q-9-9-9-21t9-21l210-210-210-210q-9-9-9-21t9-21q9-9 21-9t21 9l210 210 210-210q9-9 21-9t21 9q9 9 9 21t-9 21L522-480l210 210q9 9 9 21t-9 21q-9 9-21 9t-21-9L480-438Z"/></symbol>
+  <symbol id="icon-payments" viewBox="0 -960 960 960"><path fill="currentColor" d="M540-420q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35ZM220-280q-24.75 0-42.37-17.63Q160-315.25 160-340v-400q0-24.75 17.63-42.38Q195.25-800 220-800h640q24.75 0 42.38 17.62Q920-764.75 920-740v400q0 24.75-17.62 42.37Q884.75-280 860-280H220Zm100-60h440q0-42 29-71t71-29v-200q-42 0-71-29t-29-71H320q0 42-29 71t-71 29v200q42 0 71 29t29 71Zm450 180H100q-24.75 0-42.37-17.63Q40-195.25 40-220v-430q0-12.75 8.68-21.38 8.67-8.62 21.5-8.62 12.82 0 21.32 8.62 8.5 8.63 8.5 21.38v430h670q12.75 0 21.38 8.68 8.62 8.67 8.62 21.5 0 12.82-8.62 21.32-8.63 8.5-21.38 8.5ZM220-340v-400 400Z"/></symbol>
   <symbol id="icon-more-h" viewBox="0 -960 960 960"><path fill="currentColor" d="M207.86-432Q188-432 174-446.14t-14-34Q160-500 174.14-514t34-14Q228-528 242-513.86t14 34Q256-460 241.86-446t-34 14Zm272 0Q460-432 446-446.14t-14-34Q432-500 446.14-514t34-14Q500-528 514-513.86t14 34Q528-460 513.86-446t-34 14Zm272 0Q732-432 718-446.14t-14-34Q704-500 718.14-514t34-14Q772-528 786-513.86t14 34Q800-460 785.86-446t-34 14Z"/></symbol>
   <symbol id="icon-more-v" viewBox="0 -960 960 960"><path fill="currentColor" d="M479.86-160Q460-160 446-174.14t-14-34Q432-228 446.14-242t34-14Q500-256 514-241.86t14 34Q528-188 513.86-174t-34 14Zm0-272Q460-432 446-446.14t-14-34Q432-500 446.14-514t34-14Q500-528 514-513.86t14 34Q528-460 513.86-446t-34 14Zm0-272Q460-704 446-718.14t-14-34Q432-772 446.14-786t34-14Q500-800 514-785.86t14 34Q528-732 513.86-718t-34 14Z"/></symbol>
   <symbol id="icon-arrow-left" viewBox="0 -960 960 960"><path fill="currentColor" d="m274-450 227 227q9 9 9 21t-9 21q-9 9-21 9t-21-9L181-459q-5-5-7-10t-2-11q0-6 2-11t7-10l278-278q9-9 21-9t21 9q9 9 9 21t-9 21L274-510h496q13 0 21.5 8.5T800-480q0 13-8.5 21.5T770-450H274Z"/></symbol>
@@ -258,9 +259,12 @@
     <div class="content-wrap">
       <header class="topbar" id="topbar">
         <button class="burger" id="burgerBtn" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="sidebar"><svg class="burger-icon burger-menu" aria-hidden="true"><use href="#icon-menu"></use></svg><svg class="burger-icon burger-close" aria-hidden="true"><use href="#icon-close"></use></svg></button>
+        <img class="topbar-logo" src="novaclass-mark.svg" alt="NovaClass" aria-hidden="true">
         <div class="topbar-title" id="topbarTitle" data-i18n="menu_home">Главная</div>
         <div class="topbar-right">
           <button class="topbar-add hidden" id="topbarAddBtn"><svg class="ui-icon"><use href="#icon-plus"></use></svg> <span class="txt" data-i18n="add">Добавить</span></button>
+          <button class="topbar-action hidden" id="pcCoinBtn" type="button" aria-label="NovaCoins"><svg class="ui-icon"><use href="#icon-payments"></use></svg><span class="topbar-coin-value" id="pcCoinValue">0</span></button>
+          <button class="topbar-action hidden" id="pcMoreBtn" type="button" aria-label="Ещё" aria-haspopup="menu" aria-expanded="false"><svg class="ui-icon"><use href="#icon-more-v"></use></svg></button>
           <div class="user-menu-wrap" id="userMenuWrap">
             <button class="topbar-chip" id="userChip" type="button"><div class="user-ava" data-user-ava>?</div><span class="user-name" data-user-name>Имя Ф.</span><svg class="ui-icon chip-arrow"><use href="#icon-more-v"></use></svg></button>
                         <div class="user-dropdown" id="userDropdown">
@@ -288,13 +292,89 @@
               </div>
             </div>
           </div>
+          <div class="more-menu pc-more-menu" id="pcMoreMenu" aria-hidden="true"><div class="more-menu-title" data-i18n="more">Ещё</div><div class="more-menu-list" id="pcMoreList"></div></div>
         </div>
       </header>
       <div class="pages-viewport" id="pagesViewport"></div>
     </div>
   </div>
   
-  <nav class="dock mobile-bottom" id="mobileBottom" aria-label="Навигация снизу"></nav>
+  <nav class="dock mobile-bottom hidden-dock" id="mobileBottom" aria-label="Навигация снизу"></nav>
+  <div class="mobile-nav-cluster" id="mobileNavCluster">
+    <nav class="mobile-nav-capsule" id="mobileNavCapsule" aria-label="Навигация снизу">
+      <button class="mobile-nav-btn active" type="button" data-page="home" aria-label="Главная"><svg class="ui-icon"><use href="#icon-home"></use></svg><span data-i18n="menu_home">Главная</span></button>
+      <button class="mobile-nav-btn" type="button" data-page="schedule" aria-label="Расписание"><svg class="ui-icon"><use href="#icon-calendar"></use></svg><span data-i18n="menu_schedule">Расписание</span></button>
+      <button class="mobile-nav-btn" type="button" data-page="diary" aria-label="Дневник"><svg class="ui-icon"><use href="#icon-book"></use></svg><span data-i18n="menu_diary">Дневник</span></button>
+      <button class="mobile-nav-btn" type="button" data-open-settings data-set-open="account" aria-label="Настройки"><svg class="ui-icon"><use href="#icon-settings"></use></svg><span data-i18n="settings">Настройки</span></button>
+    </nav>
+    <button class="coin-pill" id="coinBtn" type="button" aria-label="NovaCoins"><svg class="ui-icon"><use href="#icon-payments"></use></svg><span class="coin-value" id="coinValue">0</span><span class="coin-name">NovaCoins</span><span class="coin-more-label" data-i18n="nav_more_label">Остальное</span></button>
+  </div>
+  <div class="more-menu" id="mobileMoreMenu" aria-hidden="true"><div class="more-menu-title" data-i18n="more">Ещё</div><div class="more-menu-list" id="mobileMoreList"></div></div>
+
+  <div class="ms-modal-backdrop" id="msModalBackdrop"></div>
+  <div class="ms-screen" id="mobileSettings" aria-hidden="true">
+    <div class="ms-head">
+      <button class="ms-back" id="msBack" type="button" aria-label="Назад"><svg class="ui-icon"><use href="#icon-arrow-left"></use></svg></button>
+      <div class="ms-head-title" id="msTitle">Настройки</div>
+      <button class="ms-close" id="msClose" type="button" aria-label="Закрыть"><svg class="ui-icon"><use href="#icon-close"></use></svg></button>
+    </div>
+    <div class="ms-body">
+      <section class="ms-page active" data-ms-page="main">
+        <div class="ms-profile">
+          <label class="ms-avatar" for="accAvatarInput" data-user-ava>?</label>
+          <div class="ms-profile-name" data-user-name>Имя Фамилия</div>
+          <div class="ms-profile-email" id="msEmail">user@nova.class</div>
+        </div>
+        <div class="ms-section">
+          <div class="ms-label" data-i18n="settings_group">Оформление и язык</div>
+          <div class="ms-group">
+            <button class="ms-item" id="msThemes" type="button"><svg class="ui-icon"><use href="#icon-theme"></use></svg><span data-i18n="themes">Темы</span></button>
+            <button class="ms-item" id="msLanguage" type="button"><svg class="ui-icon"><use href="#icon-globe"></use></svg><span data-i18n="language">Язык</span></button>
+          </div>
+        </div>
+        <div class="ms-section ms-danger-section">
+          <div class="ms-label danger" data-i18n="danger_zone">Опасная зона</div>
+          <div class="ms-group">
+            <button class="ms-item" id="msLogout" type="button" data-logout><svg class="ui-icon"><use href="#icon-logout"></use></svg><span data-i18n="logout">Выйти</span></button>
+            <button class="ms-item danger" id="msDeleteAccount" type="button" data-delete-account><svg class="ui-icon"><use href="#icon-user-x"></use></svg><span data-i18n="delete_account">Удалить аккаунт</span></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="ms-page" data-ms-page="theme">
+        <div class="ms-section">
+          <div class="ms-label" data-i18n="appearance">Оформление</div>
+          <div class="ms-switch-row">
+            <span data-i18n="theme_light">Светлая</span>
+            <button class="ms-switch" id="msThemeSwitch" type="button" role="switch" aria-checked="true"><i></i></button>
+            <span data-i18n="theme_dark">Тёмная</span>
+          </div>
+        </div>
+        <div class="ms-preview"><div class="ms-preview-a">А</div><div class="ms-preview-line"></div></div>
+        <div class="ms-section">
+          <div class="ms-label" data-i18n="primary_color">Основной цвет</div>
+          <div class="ms-group ms-colors">
+            <button class="ms-item ms-color" type="button" data-ms-color="blue"><span class="ms-color-dot" style="--dot:#4285F4"></span><span data-i18n="color_blue">Синий</span><span class="ms-price"></span><svg class="ui-icon ms-color-check"><use href="#icon-check"></use></svg></button>
+            <button class="ms-item ms-color" type="button" data-ms-color="gray"><span class="ms-color-dot" style="--dot:#5F6368"></span><span data-i18n="color_gray">Серый</span><span class="ms-price"></span><svg class="ui-icon ms-color-check"><use href="#icon-lock"></use></svg></button>
+            <button class="ms-item ms-color" type="button" data-ms-color="green"><span class="ms-color-dot" style="--dot:#188038"></span><span data-i18n="color_green">Зеленый</span><span class="ms-price"></span><svg class="ui-icon ms-color-check"><use href="#icon-lock"></use></svg></button>
+            <button class="ms-item ms-color" type="button" data-ms-color="pink"><span class="ms-color-dot" style="--dot:#D01884"></span><span data-i18n="color_pink">Розовый</span><span class="ms-price"></span><svg class="ui-icon ms-color-check"><use href="#icon-lock"></use></svg></button>
+            <button class="ms-item ms-color" type="button" data-ms-color="yellow"><span class="ms-color-dot" style="--dot:#F9AB00"></span><span data-i18n="color_yellow">Желтый</span><span class="ms-price"></span><svg class="ui-icon ms-color-check"><use href="#icon-lock"></use></svg></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="ms-page" data-ms-page="language">
+        <div class="ms-section">
+          <div class="ms-label" data-i18n="language">Язык</div>
+          <div class="ms-group ms-langs">
+            <button class="ms-item ms-lang" type="button" data-ms-lang="en"><svg class="ui-icon ms-lang-check"><use href="#icon-check"></use></svg><span data-i18n="lang_en_name">Английский</span><small data-i18n="default_lang">по умолчанию</small></button>
+            <button class="ms-item ms-lang" type="button" data-ms-lang="kz"><svg class="ui-icon ms-lang-check"><use href="#icon-check"></use></svg><span data-i18n="lang_kz_name">Казахский</span></button>
+            <button class="ms-item ms-lang" type="button" data-ms-lang="ru"><svg class="ui-icon ms-lang-check"><use href="#icon-check"></use></svg><span data-i18n="lang_ru_name">Русский</span></button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
   
   <div class="pop-overlay" id="popOverlay"></div>
   <div class="popover" id="popover">
@@ -319,6 +399,8 @@
   
   <div class="modal-backdrop mini" id="miniModal"><div class="modal"><div class="modal-head"><div class="modal-title" id="miniTitle">Название</div><button class="modal-close" id="miniClose"><svg class="ui-icon"><use href="#icon-x-circle"></use></svg></button></div><div class="modal-body"><div class="field"><label id="miniLabel">Значение</label><input type="text" id="miniInput" placeholder="Введите значение"></div></div><div class="modal-foot"><button class="btn btn-ghost" id="miniCancel" data-i18n="cancel">Отмена</button><button class="btn" id="miniSave" data-i18n="ok">ОК</button></div></div></div>
   
+  <div class="modal-backdrop mini" id="coinsModal"><div class="modal coins-modal" id="coinsModalInner"><div class="modal-head"><div class="modal-title" data-i18n="currency">Валюта</div><button class="modal-close" id="coinClose" type="button" aria-label="Закрыть"><svg class="ui-icon"><use href="#icon-x-circle"></use></svg></button></div><div class="modal-body coins-body"><div class="coin-balance"><span data-i18n="coin_balance_label">Ваши NovaCoins</span><strong id="coinBalance">0</strong></div><div class="coins-rules"><div class="coins-rules-title" data-i18n="coin_rules_title">Правила!</div><p data-i18n="coin_rules">Правила! Теперь в NovaClass есть игровая валюта. Ее можно получить за: хорошие оценки за урок - 10NovaCoins, за отзыв и вы можете сказать ошибку за нее 100novacoins, мы поправим и убедимся что правда потом заплатим вам. На что можно потратить: можно потратить на оформление темы поменять цвет а также придумать идею для NovaClass, мы ее рассмотрим в течении 10 дней а потом примемся за работу!</p></div></div></div></div>
+
   <div class="modal-backdrop mini" id="customDialog">
     <div class="modal">
       <div class="modal-head">
@@ -340,7 +422,26 @@
 
   <div class="attach-viewer" id="attachViewer"><div class="attach-viewer-inner"><div class="attach-viewer-head"><svg class="ui-icon"><use href="#icon-external"></use></svg><div class="attach-viewer-title" id="attachViewerTitle">—</div><a class="attach-viewer-close" id="attachViewerExternal" href="#" target="_blank" rel="noopener"><svg class="ui-icon"><use href="#icon-external"></use></svg></a><button class="attach-viewer-close" id="attachViewerClose" type="button"><svg class="ui-icon"><use href="#icon-x-circle"></use></svg></button></div><div class="attach-viewer-body" id="attachViewerBody"></div></div></div>
   
-  <div class="modal-backdrop" id="modalBackdrop"><div class="modal"><div class="modal-head"><div class="modal-title" id="modalTitle" data-i18n="new_lesson">Новый урок</div><button class="modal-close" id="modalClose"><svg class="ui-icon"><use href="#icon-x-circle"></use></svg></button></div><div class="modal-body"><div class="grid-2"><div class="field"><label data-i18n="date_star">Дата *</label><input type="date" id="mDate"></div><div class="field"><label data-i18n="lesson_num">Номер урока</label><div class="cs-wrap" id="csLessonNum" data-kind="lessonNum" data-value=""><button type="button" class="cs-input placeholder" data-cs-toggle data-i18n="choose_num">Выберите номер</button><div class="cs-panel"><div class="cs-search"><input type="text" data-cs-search placeholder="Поиск..."></div><div class="cs-list" data-cs-list></div></div></div></div></div><div class="field"><label data-i18n="time_star">Время *</label><div class="cs-wrap" id="csTime" data-kind="time" data-value=""><button type="button" class="cs-input placeholder" data-cs-toggle data-i18n="choose_time">Выберите время</button><div class="cs-panel"><div class="cs-search"><input type="text" data-cs-search placeholder="Поиск..."></div><div class="cs-list" data-cs-list></div></div></div></div><div class="field"><label data-i18n="subject_star">Предмет *</label><div class="cs-wrap" id="csSubject" data-kind="subject" data-value=""><button type="button" class="cs-input placeholder" data-cs-toggle data-i18n="choose_subject">Выберите предмет</button><div class="cs-panel"><div class="cs-search"><input type="text" data-cs-search placeholder="Поиск..."></div><div class="cs-list" data-cs-list></div></div></div></div><div class="grid-2"><div class="field"><label data-i18n="teacher_star">Учитель *</label><div class="cs-wrap" id="csTeacher" data-kind="teacher" data-value=""><button type="button" class="cs-input placeholder" data-cs-toggle data-i18n="choose_teacher">Выберите учителя</button><div class="cs-panel"><div class="cs-search"><input type="text" data-cs-search placeholder="Поиск..."></div><div class="cs-list" data-cs-list></div></div></div></div><div class="field"><label data-i18n="room_star">Кабинет *</label><div class="cs-wrap" id="csRoom" data-kind="room" data-value=""><button type="button" class="cs-input placeholder" data-cs-toggle data-i18n="choose_room">Выберите кабинет</button><div class="cs-panel"><div class="cs-search"><input type="text" data-cs-search placeholder="Поиск..."></div><div class="cs-list" data-cs-list></div></div></div></div></div><div class="field"><label data-i18n="homework_label">Домашнее задание</label><textarea id="mHomework" placeholder="Выучить параграф 12..."></textarea></div><div class="attach-section"><div class="attach-section-title"><svg class="ui-icon"><use href="#icon-upload"></use></svg> <span data-i18n="materials">Материалы, ссылки и видео</span></div><div class="attach-list" id="attachList"></div><div class="attach-actions"><button type="button" class="attach-add-btn" id="attachAddLink"><svg class="ui-icon"><use href="#icon-link"></use></svg> <span data-i18n="link_video">Ссылка / видео</span></button><button type="button" class="attach-add-btn" id="attachAddFile"><svg class="ui-icon"><use href="#icon-upload"></use></svg> <span data-i18n="file_200">Файл (≤200 МБ)</span></button></div><div class="attach-inline-form hidden" id="attachLinkForm"><div class="field"><input type="text" id="attachLinkTitle" placeholder="Название"></div><div class="field"><input type="text" id="attachLinkUrl" placeholder="https://..."></div><div class="attach-inline-actions"><button type="button" class="btn btn-ghost" id="attachLinkCancel" data-i18n="cancel">Отмена</button><button type="button" class="btn" id="attachLinkSave" data-i18n="add">Добавить</button></div></div><div class="attach-inline-form hidden" id="attachFileForm"><div class="field"><input type="text" id="attachFileTitle" placeholder="Название (необязательно)"></div><input type="file" id="attachFileInput" hidden><button type="button" class="attach-file-picker" id="attachFilePicker"><svg class="ui-icon"><use href="#icon-upload"></use></svg><span id="attachFilePickerText">Выбрать файл (≤200 МБ)</span></button><div class="attach-upload-progress hidden" id="attachUploadProgress"><div class="attach-progress-track"><div class="attach-progress-fill" id="attachProgressFill"></div></div><div class="attach-progress-text" id="attachProgressText">Загрузка...</div></div><div class="attach-inline-actions" style="grid-template-columns:1fr"><button type="button" class="btn btn-ghost" id="attachFileCancel" data-i18n="cancel">Отмена</button></div></div><div class="attach-hint"><svg class="ui-icon"><use href="#icon-info"></use></svg><div><span data-i18n="attach_hint_1">YouTube, Google Drive и другие ссылки. Файлы до</span> <b>200 МБ</b>.</div></div></div><label class="check-field sor"><input type="checkbox" id="mSor"><span class="check-text"><span data-i18n="sor">СОР</span><div class="check-hint" data-i18n="sor_hint">Суммативное за раздел</div></span></label><label class="check-field soch"><input type="checkbox" id="mSoch"><span class="check-text"><span data-i18n="soch">СОЧ</span><div class="check-hint" data-i18n="soch_hint">Суммативное за четверть</div></span></label><label class="check-field danger"><input type="checkbox" id="mCancelled"><span class="check-text"><span data-i18n="cancel_lesson">Отменить урок</span><div class="check-hint" data-i18n="cancel_lesson_hint">Будет красным</div></span></label></div><div class="modal-foot"><button class="btn btn-ghost" id="modalCancel" data-i18n="cancel">Отмена</button><button class="btn" id="modalSave" data-i18n="save">Сохранить</button></div></div></div>
+  <div class="modal-backdrop" id="modalBackdrop"><div class="modal lesson-modal">
+    <div class="modal-head"><div class="modal-title" id="modalTitle" data-i18n="new_lesson">Добавить Урок</div><button class="modal-close" id="modalClose" type="button" aria-label="Закрыть"><svg class="ui-icon"><use href="#icon-close"></use></svg></button></div>
+    <div class="modal-body lesson-modal-body">
+      <div class="m3-field"><div class="input-wrapper date-field"><input type="date" id="mDate" placeholder=" "><label class="floating-label" for="mDate" data-i18n="date_star">Дата</label></div></div>
+      <div class="m3-field"><div class="input-wrapper cs-field"><div class="cs-wrap" id="csLessonNum" data-kind="lessonNum" data-value=""><button type="button" class="cs-input placeholder" data-cs-toggle data-i18n="choose_num">Выберите номер</button><div class="cs-panel"><div class="cs-search"><input type="text" data-cs-search placeholder="Поиск..."></div><div class="cs-list" data-cs-list></div></div></div><label class="floating-label" data-i18n="lesson_num">Номер урока</label></div></div>
+      <div class="m3-field"><div class="input-wrapper cs-field"><div class="cs-wrap" id="csTime" data-kind="time" data-value=""><button type="button" class="cs-input placeholder" data-cs-toggle data-i18n="choose_time">Выберите время</button><div class="cs-panel"><div class="cs-search"><input type="text" data-cs-search placeholder="Поиск..."></div><div class="cs-list" data-cs-list></div></div></div><label class="floating-label" data-i18n="time_star">Время</label></div></div>
+      <div class="m3-field"><div class="input-wrapper cs-field"><div class="cs-wrap" id="csSubject" data-kind="subject" data-value=""><button type="button" class="cs-input placeholder" data-cs-toggle data-i18n="choose_subject">Выберите предмет</button><div class="cs-panel"><div class="cs-search"><input type="text" data-cs-search placeholder="Поиск..."></div><div class="cs-list" data-cs-list></div></div></div><label class="floating-label" data-i18n="subject_star">Предмет</label></div></div>
+      <div class="m3-field"><div class="input-wrapper cs-field"><div class="cs-wrap" id="csTeacher" data-kind="teacher" data-value=""><button type="button" class="cs-input placeholder" data-cs-toggle data-i18n="choose_teacher">Выберите учителя</button><div class="cs-panel"><div class="cs-search"><input type="text" data-cs-search placeholder="Поиск..."></div><div class="cs-list" data-cs-list></div></div></div><label class="floating-label" data-i18n="teacher_star">Учитель</label></div></div>
+      <div class="m3-field"><div class="input-wrapper cs-field"><div class="cs-wrap" id="csRoom" data-kind="room" data-value=""><button type="button" class="cs-input placeholder" data-cs-toggle data-i18n="choose_room">Выберите кабинет</button><div class="cs-panel"><div class="cs-search"><input type="text" data-cs-search placeholder="Поиск..."></div><div class="cs-list" data-cs-list></div></div></div><label class="floating-label" data-i18n="room_star">Кабинет</label></div></div>
+      <div class="m3-field"><div class="input-wrapper textarea-wrapper"><textarea id="mHomework" placeholder=" "></textarea><label class="floating-label" for="mHomework" data-i18n="homework_label">Домашние Задание:</label></div></div>
+      <div class="attach-section lesson-link-section">
+        <div class="attach-section-title"><svg class="ui-icon"><use href="#icon-link"></use></svg> <span data-i18n="link_video">Ссылка / видео</span></div>
+        <div class="attach-list" id="attachList"></div>
+        <button type="button" class="attach-add-btn" id="attachAddLink"><svg class="ui-icon"><use href="#icon-link"></use></svg> <span data-i18n="add_material">Добавить</span></button>
+        <div class="attach-inline-form hidden" id="attachLinkForm"><div class="field"><input type="text" id="attachLinkTitle" placeholder="Название"></div><div class="field"><input type="text" id="attachLinkUrl" placeholder="https://..."></div><div class="attach-inline-actions"><button type="button" class="btn btn-ghost" id="attachLinkCancel" data-i18n="cancel">Отмена</button><button type="button" class="btn" id="attachLinkSave" data-i18n="add">Добавить</button></div></div>
+      </div>
+      <div class="lesson-flags"><button type="button" class="lesson-flag" id="mSor" aria-pressed="false" data-i18n="sor">СОР</button><button type="button" class="lesson-flag" id="mSoch" aria-pressed="false" data-i18n="soch">СОЧ</button><button type="button" class="lesson-flag" id="mCancelled" aria-pressed="false" data-i18n="cancel_lesson">Урок отменен</button></div>
+    </div>
+    <div class="modal-foot lesson-modal-foot"><button class="btn btn-ghost" id="modalCancel" data-i18n="cancel">Отмена</button><button class="btn" id="modalSave" data-i18n="save">Сохранить</button></div>
+  </div></div>
   
   <div class="modal-backdrop" id="accountModal"><div class="modal account-modal" id="accountModalInner"><div class="modal-head"><div class="modal-title" data-i18n="account">Аккаунт</div><button class="modal-close" id="accModalClose"><svg class="ui-icon"><use href="#icon-x-circle"></use></svg></button></div><div class="modal-body"><div class="acc-avatar-wrap"><label class="acc-avatar" for="accAvatarInput"><div class="acc-avatar-img" id="accAvatarImg" data-user-ava>?</div><div class="acc-avatar-overlay"><svg class="ui-icon"><use href="#icon-upload"></use></svg></div></label><input type="file" id="accAvatarInput" accept="image/*" hidden><div class="acc-avatar-hint" data-i18n="click_to_change">Нажмите чтобы изменить</div></div><div class="field"><label data-i18n="name_label">Имя и фамилия</label><input type="text" id="accName"></div><div class="field"><label data-i18n="login_label">Логин / Email</label><input type="text" id="accEmail"></div><div class="field"><label data-i18n="password_label">Пароль</label><input type="text" id="accPass" value="••••••••" disabled></div><div class="acc-divider"></div><div class="acc-actions"><button class="btn btn-ghost" id="accChangeName"><svg class="ui-icon"><use href="#icon-edit"></use></svg> <span data-i18n="change_name">Изменить имя</span></button><button class="btn btn-ghost" id="accChangeEmail"><svg class="ui-icon"><use href="#icon-mail"></use></svg> <span data-i18n="change_email">Изменить email</span></button><button class="btn btn-ghost" id="accChangePass"><svg class="ui-icon"><use href="#icon-lock"></use></svg> <span data-i18n="change_pass">Изменить пароль</span></button></div></div><div class="modal-foot"><button class="btn btn-ghost" id="accClose" data-i18n="close">Закрыть</button><button class="btn" id="accSave" data-i18n="save">Сохранить</button></div></div></div>
   
@@ -390,6 +491,16 @@
               <div class="theme-preview theme-preview-sample dark"><span class="theme-preview-a">А</span><span class="theme-preview-line"></span></div>
               <div class="theme-name" data-i18n="theme_dark">Тёмная</div>
             </button>
+          </div>
+          <div class="set-color-wrap">
+            <div class="set-block-title" data-i18n="primary_color">Основной цвет</div>
+            <div class="ms-group ms-colors">
+              <button class="ms-item ms-color" type="button" data-ms-color="blue"><span class="ms-color-dot" style="--dot:#4285F4"></span><span data-i18n="color_blue">Синий</span><span class="ms-price"></span><svg class="ui-icon ms-color-check"><use href="#icon-check"></use></svg></button>
+              <button class="ms-item ms-color" type="button" data-ms-color="gray"><span class="ms-color-dot" style="--dot:#5F6368"></span><span data-i18n="color_gray">Серый</span><span class="ms-price"></span><svg class="ui-icon ms-color-check"><use href="#icon-lock"></use></svg></button>
+              <button class="ms-item ms-color" type="button" data-ms-color="green"><span class="ms-color-dot" style="--dot:#188038"></span><span data-i18n="color_green">Зеленый</span><span class="ms-price"></span><svg class="ui-icon ms-color-check"><use href="#icon-lock"></use></svg></button>
+              <button class="ms-item ms-color" type="button" data-ms-color="pink"><span class="ms-color-dot" style="--dot:#D01884"></span><span data-i18n="color_pink">Розовый</span><span class="ms-price"></span><svg class="ui-icon ms-color-check"><use href="#icon-lock"></use></svg></button>
+              <button class="ms-item ms-color" type="button" data-ms-color="yellow"><span class="ms-color-dot" style="--dot:#F9AB00"></span><span data-i18n="color_yellow">Желтый</span><span class="ms-price"></span><svg class="ui-icon ms-color-check"><use href="#icon-lock"></use></svg></button>
+            </div>
           </div>
         </div>
 
