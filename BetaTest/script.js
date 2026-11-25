@@ -11,7 +11,7 @@ const CREATOR_EMAILS = ['maksimsuhomlinov37@gmail.com','maksimsuhomlinov37@nova.
 const EMAIL_DOMAIN = '@nova.class';
 const SESSION_KEY='nc_session',SESSION_MS=30*24*60*60*1000;
 const THEME_KEY='nc_theme',LANG_KEY='nc_lang',AVATAR_KEY='nc_avatar';
-const CUSTOM_REFS_KEY='nc_custom_refs_v1',GRADES_KEY='nc_grades_v3',TABLE_KEY='nc_grades_table_v3';
+const CUSTOM_REFS_KEY='nc_custom_refs_v1',REMOVED_REFS_KEY='nc_removed_refs_v1',REFS_MIGRATED_KEY='nc_refs_migrated_v1',GRADES_KEY='nc_grades_v3',TABLE_KEY='nc_grades_table_v3';
 const LESSONS_CACHE_KEY='nc_lessons_cache_v1',HW_CACHE_KEY='nc_hw_cache_v1',USERS_CACHE_KEY='nc_users_cache_v1';
 const DELETED_USERS_KEY='nc_deleted_users_v1';
 const CATBOX_URL='https://catbox.moe/user/api.php',MAX_UPLOAD_MB=200;
@@ -39,44 +39,71 @@ const WEEKDAYS=['Воскресенье','Понедельник','Вторни�
 const WEEKDAYS_SHORT=['ВС','ПН','ВТ','СР','ЧТ','ПТ','СБ'];
 const REF_LESSON_NUMS=['0','1','2','3','4','5','6'];
 const REF_TIMES=['12:55 - 13:35','13:40 - 14:20','14:30 - 15:10','15:25 - 16:05','16:15 - 16:55','17:00 - 17:40','17:45 - 18:25'];
-const REF_SUBJECTS=['Классный час','Казахский язык','Математика','Русский язык','История Казахстана','Физическая культура','Иностранный язык (Английский язык)','Русская литература','Художественный труд','Естествознание','Всемирная история','Музыка','Информация и Искусственный интеллект'];
-const REF_TEACHERS=['Күлжиһан Ибтанқыз','Жулдыз Сейдоловна','Елизавета Юрьевна','Камшат Айсиновна','Александра Сергеевна','Лаура Жамбоуловна','Лидия Васильевна','Гульмира Жумагалеевна','Игорь Вячеславович'];
-const REF_ROOMS=['308 - Кабинет английского языка','305 - Кабинет математики','214 - Кабинет истории','215 - СпортЗал','307 - Кабинет НВиТП','207 - Кабинет географии'];
+const REF_SUBJECTS=['Классный час','Казахский язык','Математика','Русский язык','История Казахстана','Физическая культура','Иностранный язык','Русская литература','Художественный труд','Естествознание','Всемирная История','Музыка','Информатика и Искусственный Интеллект'];
+const REF_TEACHERS=['Күлжиһан Ибтанқыз','Жулдыз Сейдоловна','Айгелим Нагашбаевна','Лаура Жамбоуловна','Игорь Вячеславович','Лидия Васильевна','Гульмира Жумагалеевна'];
+const ROOM_FULL={
+  '308':'308 - Кабинет английского языка',
+  '305':'305 - Кабинет математики',
+  '214':'214 - Кабинет истории',
+  '215':'215 - СпортЗал',
+  '307':'307 - Кабинет НВиТП',
+  '207':'207 - Кабинет географии',
+  '301':'301 - Кабинет музыки'
+};
+const REF_ROOMS=Object.values(ROOM_FULL);
+function fullRoomName(v){const s=String(v||'').trim();return s?(ROOM_FULL[s]||s):'';}
+const SUBJECT_AUTO={
+  'Классный час':{teacher:'Күлжиһан Ибтанқыз',room:ROOM_FULL['308']},
+  'Казахский язык':{teacher:'',room:''},
+  'Математика':{teacher:'Жулдыз Сейдоловна',room:ROOM_FULL['305']},
+  'Русский язык':{teacher:'Айгелим Нагашбаевна',room:ROOM_FULL['308']},
+  'История Казахстана':{teacher:'Лаура Жамбоуловна',room:ROOM_FULL['214']},
+  'Физическая культура':{teacher:'Игорь Вячеславович',room:ROOM_FULL['215']},
+  'Иностранный язык':{teacher:'',room:''},
+  'Русская литература':{teacher:'Айгелим Нагашбаевна',room:ROOM_FULL['307']},
+  'Художественный труд':{teacher:'',room:''},
+  'Естествознание':{teacher:'Лидия Васильевна',room:ROOM_FULL['207']},
+  'Всемирная История':{teacher:'Лаура Жамбоуловна',room:ROOM_FULL['214']},
+  'Музыка':{teacher:'Гульмира Жумагалеевна',room:ROOM_FULL['301']},
+  'Информатика и Искусственный Интеллект':{teacher:'',room:''}
+};
 
 const TRANSLATIONS = {
   ru: {
     menu_home: 'Главная', menu_schedule: 'Расписание', menu_homework: 'Домашние задания', menu_diary: 'Дневник', 
     menu_journal: 'Журнал', menu_users: 'Пользователи', menu_sgu: 'ОУП', sgu_full: 'Оценки Учеников и Пользователи', menu_ministry: 'Министерство', more: 'Ещё',
     login: 'Вход', register: 'Регистрация', login_label: 'Логин', password_label: 'Пароль', name_label: 'Имя и фамилия', repeat_password: 'Повтор пароля',
-    btn_login: 'Войти', btn_register: 'Зарегистрироваться', account: 'Аккаунт', settings: 'Настройки', profile: 'Профиль', app_settings: 'Настройки приложения',
+    btn_login: 'Войти', btn_register: 'Зарегистрироваться', account: 'Аккаунт', settings: 'Настройки', profile: 'Профиль', app_settings: 'Настройки приложения', main: 'Основная', error: 'Ошибка', edit: 'Редактировать',
     danger_zone: 'Опасная зона', logout: 'Выйти', delete_account: 'Удалить аккаунт', add: 'Добавить', status: 'Статус', grade_label: 'Оценка (1–10)',
     clear: 'Очистить', save: 'Сохранить', actions: 'Действия', rename: 'Переименовать', delete: 'Удалить', cancel: 'Отмена', add_date: 'Добавить дату',
     date_label: 'Дата', date_format: 'Формат: ДД/ММ/ГГГГ', pick_from_schedule: 'Выбрать из расписания', dates_with_lessons: 'Даты, где есть уроки:',
-    ok: 'ОК', confirm: 'Подтверждение', new_lesson: 'Новый урок', date_star: 'Дата *', lesson_num: 'Номер урока', choose_num: 'Выберите номер',
-    time_star: 'Время *', choose_time: 'Выберите время', subject_star: 'Предмет *', choose_subject: 'Выберите предмет', teacher_star: 'Учитель *',
-    choose_teacher: 'Выберите учителя', room_star: 'Кабинет *', choose_room: 'Выберите кабинет', homework_label: 'Домашнее задание',
+    ok: 'ОК', confirm: 'Подтверждение', new_lesson: 'Добавить Урок', date_star: 'Дата', lesson_num: 'Номер урока', choose_num: 'Выберите номер',
+    time_star: 'Время', choose_time: 'Выберите время', subject_star: 'Предмет', choose_subject: 'Выберите предмет', teacher_star: 'Учитель',
+    choose_teacher: 'Выберите учителя', room_star: 'Кабинет', choose_room: 'Выберите кабинет', homework_label: 'Домашние Задание:',
     materials: 'Материалы, ссылки и видео', link_video: 'Ссылка / видео', file_200: 'Файл (≤200 МБ)', attach_hint_1: 'YouTube, Google Drive и другие ссылки. Файлы до',
-    sor: 'СОР', sor_hint: 'Суммативное за раздел', soch: 'СОЧ', soch_hint: 'Суммативное за четверть', cancel_lesson: 'Отменить урок',
+    sor: 'СОР', sor_hint: 'Суммативное за раздел', soch: 'СОЧ', soch_hint: 'Суммативное за четверть', cancel_lesson: 'Урок отменен',
     cancel_lesson_hint: 'Будет красным', click_to_change: 'Нажмите чтобы изменить', change_name: 'Изменить имя', change_email: 'Изменить email',
     change_pass: 'Изменить пароль', close: 'Закрыть', open_profile: 'Открыть профиль', theme: 'Тема оформления', theme_light: 'Светлая', theme_dark: 'Тёмная',
     language: 'Язык', today: 'Сегодня', tomorrow: 'Завтра', yesterday: 'Вчера', no_lessons: 'Расписание уроков отсутствует?', no_lessons_sub: 'Пожалуйста, обратитесь к своему школьному администратору для составления расписания.', 
     no_homework: 'Домашних заданий нет', no_homework_sub: 'Отдыхайте или повторите пройденный материал!',
     no_users: 'Пользователей нет', welcome: 'Добро пожаловать в NovaClass', welcome_sub: 'Портал для школьного сообщества',
-    journal: 'Журнал оценок', ministry: 'Министерство образования', grades_mgmt: 'Управление оценками', stats: 'Статистика', system_status: 'Статус системы', active_users: 'Активные пользователи', total_lessons: 'Всего уроков', avg_grade: 'Средний балл', online: 'Онлайн', database: 'База данных', api: 'API Сервера', stable: 'Стабильно',
+    journal: 'Журнал оценок', ministry: 'Министерство образования', grades_mgmt: 'Управление оценками', stats: 'Статистика', system_status: 'Статус сервера', active_users: 'Активные пользователи', total_lessons: 'Всего уроков', avg_grade: 'Средний балл', online: 'Онлайн', database: 'База данных', api: 'API Сервера', stable: 'Стабильно',
     news: 'Новости',
+    student_grades: 'Оценки учеников', nav_more_label: 'Остальное', settings_group: 'Оформление и язык', themes: 'Темы', appearance: 'Оформление', primary_color: 'Основной цвет', color_blue: 'Синий', color_gray: 'Серый', color_green: 'Зеленый', color_pink: 'Розовый', color_yellow: 'Желтый', color_price: '100 NovaCoins', color_unlocked: 'Разблокировано', color_selected: 'Выбрано', not_enough_coins: 'Недостаточно NovaCoins', color_unlocked_msg: 'Цвет разблокирован', lang_en_name: 'Английский', lang_kz_name: 'Казахский', lang_ru_name: 'Русский', default_lang: 'по умолчанию', currency: 'Валюта', coin_balance_label: 'Ваши NovaCoins', coin_rules_title: 'Правила!',
+    coin_rules: 'Правила! Теперь в NovaClass есть игровая валюта. Ее можно получить за: хорошие оценки за урок - 10NovaCoins, за отзыв и вы можете сказать ошибку за нее 100novacoins, мы поправим и убедимся что правда потом заплатим вам. На что можно потратить: можно потратить на оформление темы поменять цвет а также придумать идею для NovaClass, мы ее рассмотрим в течении 10 дней а потом примемся за работу!',
     avg_score: 'Средняя', total_score: 'Общий балл', total: 'Итог', day: 'за день', no_grades: 'нет оценок', no_access: 'Нет доступа', creator_only: 'Только для Создателя', back: 'Назад', role_updated: 'Роль обновлена', deleted: 'Удалён', created: 'Создан', right_click_menu: 'ПКМ — меню действий', enter_password: 'Введите пароль', input_data: 'Ввод данных', enter_login: 'Введите логин', login_rules: 'Логин: 2–32 симв., латиница, цифры, . _ -', session_ended: 'Сессия завершена', account_deleted: 'Ваш аккаунт был удалён. Вы можете создать новый аккаунт.', account_blocked: 'Ваш аккаунт был заблокирован или удалён администратором.', role_updated_by_system: 'Ваша роль обновлена', account_inactive: 'Ваш аккаунт больше не активен.', theme_changed: 'Тема изменена', nothing_found: 'Ничего не найдено', photo_updated: 'Фото обновлено', fill_fields: 'Заполните поля', enter_pass_delete: 'Введите пароль для удаления аккаунта.', not_signed_in: 'Вы не вошли', wrong_password: 'Неверный пароль', account_deleted_toast: 'Аккаунт удалён', open_menu: 'Открыть меню', close_menu: 'Закрыть меню', enter_data: 'Введите данные', password_placeholder: 'Введите пароль', dialog_input_title: 'Ввод данных', enter_login: 'Введите логин', login_rules: 'Логин: 2–32 симв., латиница, цифры, . _ -', session_ended: 'Сессия завершена', account_deleted_msg: 'Ваш аккаунт был удалён. Вы можете создать новый аккаунт.', account_blocked_msg: 'Ваш аккаунт был заблокирован или удалён администратором.', role_updated_msg: 'Ваша роль обновлена', account_inactive_msg: 'Ваш аккаунт больше не активен.', theme_changed_msg: 'Тема изменена', add_material: 'Добавить', nothing_found: 'Ничего не найдено', photo_updated_msg: 'Фото обновлено', fill_fields_msg: 'Заполните поля', domain_only: 'Только @nova.class', wrong_password_msg: 'Неверный пароль', account_deleted_toast_msg: 'Аккаунт удалён', enter_data_msg: 'Введите данные', password_min_msg: 'Пароль минимум 6 символов', empty_response_msg: 'Пустой ответ', homework_label_msg: 'Домашнее задание', no_homework_msg: 'Домашнее задание не задано', cancelled_msg: 'ОТМЕНЕНО', delete_lesson_confirm: 'Удалить урок?', delete_lesson_title: 'Урок', student_label: 'Ученик', mark_n_msg: 'Отметить Н', delete_student_confirm: 'Удалить ученика?', no_rights_msg: 'Нет прав', edit_btn: 'Редактировать', save_btn: 'Сохранить', loading_msg: 'Загрузка', student_name_col: 'Ф.И. ученика', homework_added_msg: 'Добавлено', file_added_msg: 'Файл добавлен', no_materials_msg: 'Материалов пока нет', paste_link_msg: 'Вставьте ссылку', average_grade_msg: 'Средняя оценка', sign_in_msg: 'Войдите в аккаунт', nothing_msg: 'Ничего', for_day_msg: 'за день', choose_file_msg: 'Выбрать файл (≤200 МБ)', file_over_200_msg: 'Файл >200 МБ', uploading_msg: 'Загрузка... ', saved: 'Сохранено'
   },
   en: {
     menu_home: 'Home', menu_schedule: 'Schedule', menu_homework: 'Homework', menu_diary: 'Diary', 
     menu_journal: 'Journal', menu_users: 'Users', menu_sgu: 'SGU', sgu_full: 'Student Grades User Management', menu_ministry: 'Ministry', more: 'More',
     login: 'Login', register: 'Register', login_label: 'Login', password_label: 'Password', name_label: 'Full Name', repeat_password: 'Repeat Password',
-    btn_login: 'Sign In', btn_register: 'Create Account', account: 'Account', settings: 'Settings', profile: 'Profile', app_settings: 'App Settings',
+    btn_login: 'Sign In', btn_register: 'Create Account', account: 'Account', settings: 'Settings', profile: 'Profile', app_settings: 'App Settings', main: 'General', error: 'Error', edit: 'Edit',
     danger_zone: 'Danger Zone', logout: 'Logout', delete_account: 'Delete Account', add: 'Add', status: 'Status', grade_label: 'Grade (1–10)',
     clear: 'Clear', save: 'Save', actions: 'Actions', rename: 'Rename', delete: 'Delete', cancel: 'Cancel', add_date: 'Add date',
     date_label: 'Date', date_format: 'Format: DD/MM/YYYY', pick_from_schedule: 'Pick from schedule', dates_with_lessons: 'Dates with lessons:',
-    ok: 'OK', confirm: 'Confirmation', new_lesson: 'New Lesson', date_star: 'Date *', lesson_num: 'Lesson Number', choose_num: 'Choose number',
-    time_star: 'Time *', choose_time: 'Choose time', subject_star: 'Subject *', choose_subject: 'Choose subject', teacher_star: 'Teacher *',
-    choose_teacher: 'Choose teacher', room_star: 'Room *', choose_room: 'Choose room', homework_label: 'Homework',
+    ok: 'OK', confirm: 'Confirmation', new_lesson: 'Add Lesson', date_star: 'Date', lesson_num: 'Lesson Number', choose_num: 'Choose number',
+    time_star: 'Time', choose_time: 'Choose time', subject_star: 'Subject', choose_subject: 'Choose subject', teacher_star: 'Teacher',
+    choose_teacher: 'Choose teacher', room_star: 'Room', choose_room: 'Choose room', homework_label: 'Homework:',
     materials: 'Materials, links and videos', link_video: 'Link / video', file_200: 'File (≤200 MB)', attach_hint_1: 'YouTube, Google Drive and other links. Files up to',
     sor: 'SOR', sor_hint: 'Summative for section', soch: 'SOCH', soch_hint: 'Summative for quarter', cancel_lesson: 'Cancel lesson',
     cancel_lesson_hint: 'Will be red', click_to_change: 'Click to change', change_name: 'Change Name', change_email: 'Change Email',
@@ -84,21 +111,23 @@ const TRANSLATIONS = {
     language: 'Language', today: 'Today', tomorrow: 'Tomorrow', yesterday: 'Yesterday', no_lessons: 'No schedule available?', no_lessons_sub: 'Please contact your school administrator to create a schedule.', 
     no_homework: 'No homework', no_homework_sub: 'Relax or review the material covered!',
     no_users: 'No users', welcome: 'Welcome to NovaClass', welcome_sub: 'School community portal',
-    journal: 'Grades Journal', ministry: 'Ministry of Education', grades_mgmt: 'Grades Management', stats: 'Statistics', system_status: 'System Status', active_users: 'Active Users', total_lessons: 'Total Lessons', avg_grade: 'Average Grade', online: 'Online', database: 'Database', api: 'Server API', stable: 'Stable',
+    journal: 'Grades Journal', ministry: 'Ministry of Education', grades_mgmt: 'Grades Management', stats: 'Statistics', system_status: 'Server Status', active_users: 'Active Users', total_lessons: 'Total Lessons', avg_grade: 'Average Grade', online: 'Online', database: 'Database', api: 'Server API', stable: 'Stable',
     news: 'News',
+    student_grades: 'Student Grades', nav_more_label: 'More', settings_group: 'Appearance & language', themes: 'Themes', appearance: 'Appearance', primary_color: 'Primary color', color_blue: 'Blue', color_gray: 'Gray', color_green: 'Green', color_pink: 'Pink', color_yellow: 'Yellow', color_price: '100 NovaCoins', color_unlocked: 'Unlocked', color_selected: 'Selected', not_enough_coins: 'Not enough NovaCoins', color_unlocked_msg: 'Color unlocked', lang_en_name: 'English', lang_kz_name: 'Kazakh', lang_ru_name: 'Russian', default_lang: 'default', currency: 'Currency', coin_balance_label: 'Your NovaCoins', coin_rules_title: 'Правила!',
+    coin_rules: 'Правила! Теперь в NovaClass есть игровая валюта. Ее можно получить за: хорошие оценки за урок - 10NovaCoins, за отзыв и вы можете сказать ошибку за нее 100novacoins, мы поправим и убедимся что правда потом заплатим вам. На что можно потратить: можно потратить на оформление темы поменять цвет а также придумать идею для NovaClass, мы ее рассмотрим в течении 10 дней а потом примемся за работу!',
     avg_score: 'Average', total_score: 'Total Score', total: 'Total', day: 'per day', no_grades: 'no grades', no_access: 'No access', creator_only: 'Creator Only', back: 'Back', role_updated: 'Role updated', deleted: 'Deleted', created: 'Created', right_click_menu: 'Right click — actions menu', enter_password: 'Enter password', input_data: 'Input data', enter_login: 'Enter login', login_rules: 'Login: 2-32 chars, latin, digits, . _ -', session_ended: 'Session ended', account_deleted: 'Your account was deleted. You can create a new account.', account_blocked: 'Your account was blocked or deleted by administrator.', role_updated_by_system: 'Your role was updated', account_inactive: 'Your account is no longer active.', theme_changed: 'Theme changed', nothing_found: 'Nothing found', photo_updated: 'Photo updated', fill_fields: 'Fill fields', enter_pass_delete: 'Enter your password to delete account.', not_signed_in: 'Not signed in', wrong_password: 'Wrong password', account_deleted_toast: 'Account deleted', open_menu: 'Open menu', close_menu: 'Close menu', enter_data: 'Enter data', password_placeholder: 'Enter password', dialog_input_title: 'Input data', enter_login: 'Enter login', login_rules: 'Login: 2-32 chars, latin, digits, . _ -', session_ended: 'Session ended', account_deleted_msg: 'Your account was deleted. You can create a new account.', account_blocked_msg: 'Your account was blocked or deleted by administrator.', role_updated_msg: 'Your role was updated', account_inactive_msg: 'Your account is no longer active.', theme_changed_msg: 'Theme changed', add_material: 'Add', nothing_found: 'Nothing found', photo_updated_msg: 'Photo updated', fill_fields_msg: 'Fill fields', domain_only: 'Only @nova.class', wrong_password_msg: 'Wrong password', account_deleted_toast_msg: 'Account deleted', enter_data_msg: 'Enter data', password_min_msg: 'Password min 6 chars', empty_response_msg: 'Empty response', homework_label_msg: 'Homework', no_homework_msg: 'No homework assigned', cancelled_msg: 'CANCELLED', delete_lesson_confirm: 'Delete lesson?', delete_lesson_title: 'Lesson', student_label: 'Student', mark_n_msg: 'Mark N', delete_student_confirm: 'Delete student?', no_rights_msg: 'No rights', edit_btn: 'Edit', save_btn: 'Save', loading_msg: 'Loading', student_name_col: 'Student Name', homework_added_msg: 'Added', file_added_msg: 'File added', no_materials_msg: 'No materials', paste_link_msg: 'Paste link', average_grade_msg: 'Average grade', sign_in_msg: 'Sign in', nothing_msg: 'Nothing', for_day_msg: 'per day', choose_file_msg: 'Choose file (≤200 MB)', file_over_200_msg: 'File >200MB', uploading_msg: 'Uploading... ', saved: 'Saved'
   },
   kz: {
     menu_home: 'Басты бет', menu_schedule: 'Кесте', menu_homework: 'Үй тапсырмасы', menu_diary: 'Күнделік', 
-    menu_journal: 'Журнал', menu_users: 'Қолданушылар', menu_sgu: 'ОУП', sgu_full: 'Оценки Учеников и Пользователи', menu_ministry: 'Министрлік', more: 'Тағы',
+    menu_journal: 'Журнал', menu_users: 'Қолданушылар', menu_sgu: 'ОУП', sgu_full: 'Оқушы бағалары мен қолданушылар', menu_ministry: 'Министрлік', more: 'Тағы',
     login: 'Кіру', register: 'Тіркелу', login_label: 'Логин', password_label: 'Құпия сөз', name_label: 'Аты-жөні', repeat_password: 'Құпия сөзді қайталаңыз',
-    btn_login: 'Кіру', btn_register: 'Аккаунт жасау', account: 'Аккаунт', settings: 'Параметрлер', profile: 'Профиль', app_settings: 'Қолданба параметрлері',
+    btn_login: 'Кіру', btn_register: 'Аккаунт жасау', account: 'Аккаунт', settings: 'Параметрлер', profile: 'Профиль', app_settings: 'Қолданба параметрлері', main: 'Негізгі', error: 'Қате', edit: 'Өзгерту',
     danger_zone: 'Қауіпті аймақ', logout: 'Шығу', delete_account: 'Аккаунтты жою', add: 'Қосу', status: 'Мәртебе', grade_label: 'Баға (1–10)',
     clear: 'Тазалау', save: 'Сақтау', actions: 'Әрекеттер', rename: 'Қайта атау', delete: 'Жою', cancel: 'Бас тарту', add_date: 'Күн қосу',
     date_label: 'Күн', date_format: 'Формат: КК/АА/ЖЖЖЖ', pick_from_schedule: 'Кестеден таңдау', dates_with_lessons: 'Сабақтары бар күндер:',
-    ok: 'ОК', confirm: 'Растау', new_lesson: 'Жаңа сабақ', date_star: 'Күн *', lesson_num: 'Сабақ нөмірі', choose_num: 'Нөмірді таңдаңыз',
-    time_star: 'Уақыт *', choose_time: 'Уақытты таңдаңыз', subject_star: 'Пән *', choose_subject: 'Пәнді таңдаңыз', teacher_star: 'Мұғалім *',
-    choose_teacher: 'Мұғалімді таңдаңыз', room_star: 'Кабинет *', choose_room: 'Кабинетті таңдаңыз', homework_label: 'Үй тапсырмасы',
+    ok: 'ОК', confirm: 'Растау', new_lesson: 'Сабақ қосу', date_star: 'Күн', lesson_num: 'Сабақ нөмірі', choose_num: 'Нөмірді таңдаңыз',
+    time_star: 'Уақыт', choose_time: 'Уақытты таңдаңыз', subject_star: 'Пән', choose_subject: 'Пәнді таңдаңыз', teacher_star: 'Мұғалім',
+    choose_teacher: 'Мұғалімді таңдаңыз', room_star: 'Кабинет', choose_room: 'Кабинетті таңдаңыз', homework_label: 'Үй тапсырмасы:',
     materials: 'Материалдар, сілтемелер және бейнелер', link_video: 'Сілтеме / бейне', file_200: 'Файл (≤200 МБ)', attach_hint_1: 'YouTube, Google Drive және басқа сілтемелер. Файлдар',
     sor: 'БЖБ', sor_hint: 'Бөлім бойынша жиынтық', soch: 'ТЖБ', soch_hint: 'Тоқсан бойынша жиынтық', cancel_lesson: 'Сабақты болдырмау',
     cancel_lesson_hint: 'Қызыл түспен белгіленеді', click_to_change: 'Өзгерту үшін басыңыз', change_name: 'Атын өзгерту', change_email: 'Email өзгерту',
@@ -106,8 +135,10 @@ const TRANSLATIONS = {
     language: 'Тіл', today: 'Бүгін', tomorrow: 'Ертең', yesterday: 'Кеше', no_lessons: 'Сабақ кестесі жоқ па?', no_lessons_sub: 'Кесте жасау үшін мектеп әкімшілігіне хабарласыңыз.', 
     no_homework: 'Үй тапсырмасы жоқ', no_homework_sub: 'Демалыңыз немесе өткен материалды қайталаңыз!',
     no_users: 'Қолданушылар жоқ', welcome: 'NovaClass-ға қош келдіңіз', welcome_sub: 'Мектеп қауымдастығының порталы',
-    journal: 'Бағалар журналы', ministry: 'Білім министрлігі', grades_mgmt: 'Бағаларды басқару', stats: 'Статистика', system_status: 'Жүйе мәртебесі', active_users: 'Белсенді қолданушылар', total_lessons: 'Барлық сабақтар', avg_grade: 'Орташа баға', online: 'Желіде', database: 'Дерекқор', api: 'Сервер API', stable: 'Тұрақты',
+    journal: 'Бағалар журналы', ministry: 'Білім министрлігі', grades_mgmt: 'Бағаларды басқару', stats: 'Статистика', system_status: 'Сервер мәртебесі', active_users: 'Белсенді қолданушылар', total_lessons: 'Барлық сабақтар', avg_grade: 'Орташа баға', online: 'Желіде', database: 'Дерекқор', api: 'Сервер API', stable: 'Тұрақты',
     news: 'Жаңалықтар',
+    student_grades: 'Оқушы бағалары', nav_more_label: 'Тағы', settings_group: 'Көрініс және тіл', themes: 'Тақырыптар', appearance: 'Көрініс', primary_color: 'Негізгі түс', color_blue: 'Көк', color_gray: 'Сұр', color_green: 'Жасыл', color_pink: 'Қызғылт', color_yellow: 'Сары', color_price: '100 NovaCoins', color_unlocked: 'Ашылды', color_selected: 'Таңдалды', not_enough_coins: 'NovaCoins жеткіліксіз', color_unlocked_msg: 'Түс ашылды', lang_en_name: 'Ағылшын', lang_kz_name: 'Қазақ', lang_ru_name: 'Орыс', default_lang: 'әдепкі', currency: 'Валюта', coin_balance_label: 'Сіздің NovaCoins', coin_rules_title: 'Правила!',
+    coin_rules: 'Правила! Теперь в NovaClass есть игровая валюта. Ее можно получить за: хорошие оценки за урок - 10NovaCoins, за отзыв и вы можете сказать ошибку за нее 100novacoins, мы поправим и убедимся что правда потом заплатим вам. На что можно потратить: можно потратить на оформление темы поменять цвет а также придумать идею для NovaClass, мы ее рассмотрим в течении 10 дней а потом примемся за работу!',
     avg_score: 'Орташа', total_score: 'Жалпы балл', total: 'Қорытынды', day: 'күніне', no_grades: 'бағалар жоқ', no_access: 'Рұқсат жоқ', creator_only: 'Тек жасаушы үшін', back: 'Артқа', role_updated: 'Рөл жаңартылды', deleted: 'Жойылды', created: 'Жасалды', right_click_menu: 'ПКМ — әрекеттер менюсі', enter_password: 'Құпия сөзді енгізіңіз', input_data: 'Деректерді енгізу', enter_login: 'Логинді енгізіңіз', login_rules: 'Логин: 2–32 таңба, латин, цифр, . _ -', session_ended: 'Сессия аяқталды', account_deleted: 'Сіздің аккаунтыңыз жойылды. Жаңа аккаунт құра аласыз.', account_blocked: 'Сіздің аккаунтыңыз әкімшіліктен жойылды немесе блокуланды.', role_updated_by_system: 'Сіздің рөліңіз жаңартылды', account_inactive: 'Сіздің аккаунтыңыз белсенді емес.', theme_changed: 'Тақырып өзгертілді', nothing_found: 'Ештеңе табылмады', photo_updated: 'Фото жаңартылды', fill_fields: 'Майдандарды толтырыңыз', enter_pass_delete: 'Аккаунтты жою үшін құпия сөзді енгізіңіз.', not_signed_in: 'Кірмегенсіз', wrong_password: 'Қате құпия сөз', account_deleted_toast: 'Аккаунт жойылды', open_menu: 'Менюні ашу', close_menu: 'Менюні жабу', enter_data: 'Деректерді енгізіңіз', password_placeholder: 'Құпия сөзді енгізіңіз', dialog_input_title: 'Деректерді енгізу', enter_login: 'Логинді енгізіңіз', login_rules: 'Логин: 2–32 таңба, латин, цифр, . _ -', session_ended: 'Сессия аяқталды', account_deleted_msg: 'Сіздің аккаунтыңыз жойылды. Жаңа аккаунт құра аласыз.', account_blocked_msg: 'Сіздің аккаунтыңыз әкімшіліктен жойылды немесе блокуланды.', role_updated_msg: 'Сіздің рөліңіз жаңартылды', account_inactive_msg: 'Сіздің аккаунтыңыз әлі актив емес.', theme_changed_msg: 'Тақырып өзгертілді', add_material: 'Қосу', nothing_found: 'Ештеңе табылмады', photo_updated_msg: 'Фото жаңартылды', fill_fields_msg: 'Майдандарды толтырыңыз', domain_only: 'Тек @nova.class', wrong_password_msg: 'Қате құпия сөз', account_deleted_toast_msg: 'Аккаунт жойылды', enter_data_msg: 'Деректерді енгізіңіз', password_min_msg: 'Құпия сөз кемінде 6 таңба', empty_response_msg: 'Бос жауап', homework_label_msg: 'Үй тапсырмасы', no_homework_msg: 'Үй тапсырмасы берілмеген', cancelled_msg: 'БОЛДЫРЫЛМАДЫ', delete_lesson_confirm: 'Сабақты жою ма?', delete_lesson_title: 'Сабақ', student_label: 'Оқушы', mark_n_msg: 'Н белгілеу', delete_student_confirm: 'Оқушыны жою ма?', no_rights_msg: 'Өкілеттік жоқ', edit_btn: 'Өзгерту', save_btn: 'Сақтау', loading_msg: 'Жүктелуде', student_name_col: 'Оқушы аты-жөні', homework_added_msg: 'Қосылды', file_added_msg: 'Файл қосылды', no_materials_msg: 'Материалдар жоқ', paste_link_msg: 'Сілтемені жазыңыз', average_grade_msg: 'Орташа баға', sign_in_msg: 'Кіріңіз', nothing_msg: 'Ештеңе', for_day_msg: 'күніне', choose_file_msg: 'Файлді таңдаңыз (≤200 МБ)', file_over_200_msg: 'Файл >200 МБ', uploading_msg: 'Жүктелуде... ', saved: 'Сақталды'
   }
 };
@@ -145,6 +176,8 @@ function applyTranslations() {
   applyAuthTranslations();
   $('offlineTitle').textContent = currentLang === 'en' ? 'No internet connection' : (currentLang === 'kz' ? 'Интернет байланысы жоқ' : 'Нет подключения к интернету');
   $('offlineSub').textContent = currentLang === 'en' ? 'Please check your connection and try again.' : (currentLang === 'kz' ? 'Қосылымды тексеріп, қайталап көріңіз.' : 'Пожалуйста, проверьте ваше соединение и попробуйте снова.');
+  applyCoinButtonMode();
+  renderNavMoreMenu();
   rebuildMenu();
   updateDocTitle();
 }
@@ -202,7 +235,7 @@ function initAuthLanguage(){
 
 function ic(name,cls){return '<svg class="ui-icon'+(cls?' '+cls:'')+'"><use href="#'+name+'"></use></svg>';}
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function showToast(m){let t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2400);}
+function showToast(m,type){let t=$('toast');t.textContent=m;t.classList.toggle('toast-error',type==='error');t.classList.toggle('toast-success',type==='success');t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2400);}
 function uid(p){return (p||'id')+'_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);}
 
 /* Ripple Effect for all interactive elements */
@@ -258,6 +291,7 @@ function showPrompt(text, defVal) {
     $('dialogText').textContent = text;
     $('dialogInputWrap').classList.remove('hidden');
     $('dialogInput').value = defVal || '';
+    $('dialogInput').type = 'text';
     $('customDialog').classList.add('show');
     setTimeout(() => $('dialogInput').focus(), 100);
   });
@@ -322,7 +356,7 @@ function userRole(){const u=getCurrentUser();let r=u&&u.role?u.role:'Учени�
 function canEditSchedule(){return EDITOR_ROLES.indexOf(userRole())!==-1;}
 function isAdmin(){const r=userRole();return r==='Администратор'||r==='Создатель';}
 function canManageUsers(){return isAdmin();}
-function canViewMinistry(){return isAdmin();}
+function canViewMinistry(){return isCreator();}
 function canViewJournal(){const r=userRole();return EDITOR_ROLES.indexOf(r)!==-1;}
 function canOpenPage(page){
   if(page==='ministry') return isCreator();
@@ -415,6 +449,7 @@ function getYouTubeId(u){const m=String(u||'').match(/(?:youtu\.be\/|youtube\.co
 function getDrivePreview(u){const m=String(u||'').match(/\/file\/d\/([\w-]+)/);if(m)return'https://drive.google.com/file/d/'+m[1]+'/preview';const m2=String(u||'').match(/[?&]id=([\w-]+)/);if(m2&&/drive\.google\.com/.test(u))return'https://drive.google.com/file/d/'+m2[1]+'/preview';return'';}
 function uploadToCatbox(file,onProg){return new Promise((res,rej)=>{const xhr=new XMLHttpRequest();xhr.open('POST',CATBOX_URL);const fd=new FormData();fd.append('reqtype','fileupload');fd.append('fileToUpload',file);xhr.upload.onprogress=e=>{if(e.lengthComputable&&onProg)onProg(e.loaded,e.total);};xhr.onload=()=>{const t=String(xhr.responseText||'').trim();if(xhr.status===200&&/^https?:\/\//.test(t))res(t);else rej(new Error('Ошибка загрузки'));};xhr.onerror=()=>rej(new Error('Ошибка сети'));xhr.send(fd);});}
 let currentPage='home',selectedDate=initialDate(),animating=false;
+function isPhone(){try{return matchMedia('(max-width:640px)').matches;}catch(e){return window.innerWidth<=640;}}
 let cacheLessons=[],cacheHwStatuses={},editingId=null;
 let editingAttachments=[],currentTableDate=null,miniCallback=null,ctxData=null;
 let popState={status:'ЕСТЬ',grade:null},popTarget=null;
@@ -437,38 +472,130 @@ const I18N=(function(){
 })();
 
 const Theme=(function(){function apply(mode){document.documentElement.setAttribute('data-theme',mode==='dark'?'dark':'light');try{localStorage.setItem(THEME_KEY,mode);}catch(e){}document.querySelectorAll('.theme-card').forEach(c=>c.classList.toggle('active',c.dataset.theme===mode));}function current(){try{return localStorage.getItem(THEME_KEY)||'dark';}catch(e){return'dark';}}function init(){apply(current());document.querySelectorAll('.theme-card').forEach(c=>c.onclick=()=>{apply(c.dataset.theme);showToast(currentLang==='en'?'Theme changed':(currentLang==='kz'?'Тақырып өзгертілді':'Тема изменена'));});}return{apply,current,init};})();
-function getCustomRefs(){try{const r=localStorage.getItem(CUSTOM_REFS_KEY);if(!r)return{lessonNum:[],time:[],subject:[],teacher:[],room:[]};const o=JSON.parse(r);return{lessonNum:o.lessonNum||[],time:o.time||[],subject:o.subject||[],teacher:o.teacher||[],room:o.room||[]};}catch(e){return{lessonNum:[],time:[],subject:[],teacher:[],room:[]};}}
+function emptyRefMap(){return{lessonNum:[],time:[],subject:[],teacher:[],room:[]};}
+function getCustomRefs(){try{const r=localStorage.getItem(CUSTOM_REFS_KEY);if(!r)return emptyRefMap();const o=JSON.parse(r);return{lessonNum:o.lessonNum||[],time:o.time||[],subject:o.subject||[],teacher:o.teacher||[],room:o.room||[]};}catch(e){return emptyRefMap();}}
 function saveCustomRefs(o){try{localStorage.setItem(CUSTOM_REFS_KEY,JSON.stringify(o));}catch(e){}}
+function getRemovedRefs(){try{const r=localStorage.getItem(REMOVED_REFS_KEY);if(!r)return emptyRefMap();const o=JSON.parse(r);return{lessonNum:o.lessonNum||[],time:o.time||[],subject:o.subject||[],teacher:o.teacher||[],room:o.room||[]};}catch(e){return emptyRefMap();}}
+function saveRemovedRefs(o){try{localStorage.setItem(REMOVED_REFS_KEY,JSON.stringify(o));}catch(e){}}
 function normKey(s){return String(s||'').trim().toLowerCase();}
-function contains(list,v){const k=normKey(v);return list.some(x=>normKey(x)===k);}
+function sameRef(a,b){return String(a||'').trim()===String(b||'').trim();}
+function contains(list,v){const k=normKey(v);return (list||[]).some(x=>normKey(x)===k);}
 function mergeRefs(base,custom){const s=new Set();const o=[];(base||[]).forEach(v=>{const k=normKey(v);if(!k||s.has(k))return;s.add(k);o.push(v);});(custom||[]).forEach(v=>{const k=normKey(v);if(!k||s.has(k))return;s.add(k);o.push(v);});return o;}
-function rememberValue(kind,value){const v=String(value||'').trim();if(!v)return;const refs=getCustomRefs();if(!refs[kind])refs[kind]=[];if(contains(refs[kind],v))return;const baseMap={lessonNum:REF_LESSON_NUMS,time:REF_TIMES,subject:REF_SUBJECTS,teacher:REF_TEACHERS,room:REF_ROOMS};if(baseMap[kind]&&contains(baseMap[kind],v))return;refs[kind].push(v);saveCustomRefs(refs);}
+function refBase(kind){return {lessonNum:REF_LESSON_NUMS,time:REF_TIMES,subject:REF_SUBJECTS,teacher:REF_TEACHERS,room:REF_ROOMS}[kind]||[];}
+function isRefRemoved(kind,value){return (getRemovedRefs()[kind]||[]).some(x=>sameRef(x,value));}
+function getRefOptions(kind){const removed=getRemovedRefs()[kind]||[];const custom=(getCustomRefs()[kind]||[]).filter(v=>!removed.some(x=>sameRef(x,v)));return mergeRefs((refBase(kind)||[]).filter(v=>!removed.some(x=>sameRef(x,v))),custom);}
+function restoreFullRooms(){
+  const full=Object.values(ROOM_FULL),short=Object.keys(ROOM_FULL);
+  const removed=getRemovedRefs();
+  removed.room=(removed.room||[]).filter(x=>!full.some(r=>sameRef(r,x)));
+  short.forEach(v=>{if(!removed.room.some(x=>sameRef(x,v)))removed.room.push(v);});
+  saveRemovedRefs(removed);
+  const custom=getCustomRefs();
+  custom.room=(custom.room||[]).filter(x=>!full.some(r=>sameRef(r,x))&&!short.some(s=>sameRef(s,x)));
+  saveCustomRefs(custom);
+}
+function migrateCustomRefs(){
+  try{if(localStorage.getItem(REFS_MIGRATED_KEY))return;}catch(e){}
+  const old={subject:['Иностранный язык (Английский язык)','Информация и Искусственный интеллект','Всемирная история'],teacher:['Елизавета Юрьевна','Камшат Айсиновна','Александра Сергеевна'],room:Object.keys(ROOM_FULL)};
+  const removed=getRemovedRefs(),custom=getCustomRefs();
+  Object.keys(old).forEach(kind=>{(old[kind]||[]).forEach(v=>{if(!(removed[kind]||[]).some(x=>sameRef(x,v)))removed[kind].push(v);custom[kind]=(custom[kind]||[]).filter(x=>!sameRef(x,v));});});
+  saveRemovedRefs(removed);saveCustomRefs(custom);
+  try{localStorage.setItem(REFS_MIGRATED_KEY,'1');}catch(e){}
+}
+function refreshCustomSelects(){$$('.cs-wrap').forEach(w=>{if(w._cs&&typeof w._cs.setOptions==='function')w._cs.setOptions(getRefOptions(w.dataset.kind));});}
+function removeRef(kind,value){
+  const v=String(value||'').trim();if(!v||!kind)return;
+  const removed=getRemovedRefs();if(!removed[kind])removed[kind]=[];
+  if(!removed[kind].some(x=>sameRef(x,v)))removed[kind].push(v);
+  saveRemovedRefs(removed);
+  const custom=getCustomRefs();custom[kind]=(custom[kind]||[]).filter(x=>!sameRef(x,v));saveCustomRefs(custom);
+  $$('.cs-wrap').forEach(w=>{if(w.dataset.kind!==kind)return;if(normKey(w.dataset.value)===normKey(v)){w.dataset.value='';if(w._cs)w._cs.setSilent('');const iw=w.closest('.input-wrapper');if(iw)iw.classList.remove('has-value');}});
+  refreshCustomSelects();
+}
+function rememberValue(kind,value){
+  const v=String(value||'').trim();if(!v||!kind)return;
+  if(!contains(refBase(kind),v)&&!contains(getCustomRefs()[kind]||[],v)){const refs=getCustomRefs();if(!refs[kind])refs[kind]=[];refs[kind].push(v);saveCustomRefs(refs);}
+  const removed=getRemovedRefs();if(removed[kind]&&removed[kind].some(x=>sameRef(x,v))){removed[kind]=removed[kind].filter(x=>!sameRef(x,v));saveRemovedRefs(removed);}
+  refreshCustomSelects();
+}
 
 const CustomSelect=(function(){
   function e2(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
   function init(wrap,options,opts){
     opts=opts||{};const toggle=wrap.querySelector('[data-cs-toggle]');const search=wrap.querySelector('[data-cs-search]');const list=wrap.querySelector('[data-cs-list]');let allOptions=(options||[]).slice();let filtered=allOptions.slice();
-    function renderList(){const cur=wrap.dataset.value||'';const q=search?search.value.trim():'';let html='';if(q&&!filtered.some(v=>normKey(v)===normKey(q)))html+=`<div class="cs-option" data-cs-add="1" style="color:var(--p);font-weight:700">+ ${currentLang==='en'?'Add':(currentLang==='kz'?'Қосу':'Добавить')} «${e2(q)}»</div>`;if(!filtered.length&&!q)html+=`<div class="cs-empty">${currentLang==='en'?'Nothing found':(currentLang==='kz'?'Ештеңе табылмады':'Ничего не найдено')}</div>`;else html+=filtered.map(v=>`<div class="cs-option ${v===cur?'selected':''}" data-val="${e2(v)}">${e2(v)}</div>`).join('');list.innerHTML=html;}
-    function open(){document.querySelectorAll('.cs-wrap.open').forEach(w=>{if(w!==wrap)w.classList.remove('open');});wrap.classList.add('open');const rect=wrap.getBoundingClientRect();const spaceBelow=window.innerHeight-rect.bottom;if(spaceBelow<320){wrap.classList.add('drop-up');}else{wrap.classList.remove('drop-up');}if(search){search.value='';filtered=allOptions.slice();renderList();setTimeout(()=>search.focus(),40);}}
+    function renderList(){
+      const cur=wrap.dataset.value||'';const q=search?search.value.trim():'';let html='';
+      if(q&&!filtered.some(v=>normKey(v)===normKey(q)))html+=`<div class="cs-option cs-add" data-cs-add="1">+ ${currentLang==='en'?'Add':(currentLang==='kz'?'Қосу':'Добавить')} «${e2(q)}»</div>`;
+      if(!filtered.length&&!q)html+=`<div class="cs-empty">${currentLang==='en'?'Nothing found':(currentLang==='kz'?'Ештеңе табылмады':'Ничего не найдено')}</div>`;
+      else html+=filtered.map(v=>`<div class="cs-option ${normKey(v)===normKey(cur)?'selected':''}" data-val="${e2(v)}"><span class="cs-label">${e2(v)}</span><button type="button" class="cs-del" data-cs-del="${e2(v)}" aria-label="${currentLang==='en'?'Delete':(currentLang==='kz'?'Жою':'Удалить')}" tabindex="-1">${ic('icon-close')}</button></div>`).join('');
+      list.innerHTML=html;
+    }
+    function open(){
+      document.querySelectorAll('.cs-wrap.open').forEach(w=>{if(w!==wrap)w.classList.remove('open');});
+      wrap.classList.add('open');
+      const rect=wrap.getBoundingClientRect(),panel=wrap.querySelector('.cs-panel');
+      const modal=wrap.closest('.modal');
+      const mb=modal?modal.getBoundingClientRect():{top:0,bottom:window.innerHeight};
+      const below=Math.min(window.innerHeight,mb.bottom)-rect.bottom-12;
+      const above=rect.top-Math.max(0,mb.top)-12;
+      const up=below<320&&above>below;
+      wrap.classList.toggle('drop-up',up);
+      if(panel)panel.style.maxHeight=Math.max(120,Math.min(320,up?above:below))+'px';
+      if(search){search.value='';filtered=allOptions.slice();renderList();setTimeout(()=>search.focus(),40);}
+    }
     function close(){wrap.classList.remove('open');}
     toggle.addEventListener('click',e=>{e.stopPropagation();wrap.classList.contains('open')?close():open();});
-    if(search){search.addEventListener('input',()=>{const q=search.value.trim().toLowerCase();filtered=!q?allOptions.slice():allOptions.filter(v=>v.toLowerCase().includes(q));renderList();});search.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const q=search.value.trim();if(filtered.length)setValue(filtered[0]);else if(q)addAndSelect(q);}else if(e.key==='Escape')close();});}
-    list.addEventListener('click',e=>{const a=e.target.closest('[data-cs-add]');if(a){e.stopPropagation();const q=search.value.trim();if(q)addAndSelect(q);return;}const o=e.target.closest('.cs-option[data-val]');if(!o)return;setValue(o.dataset.val);});
-    function addAndSelect(v){rememberValue(wrap.dataset.kind,v);if(!allOptions.some(x=>normKey(x)===normKey(v)))allOptions.push(v);filtered=allOptions.slice();setValue(v);}
-    function setValue(v){wrap.dataset.value=v;toggle.textContent=v;toggle.classList.remove('placeholder');close();}
-    function setSilent(v){wrap.dataset.value=v||'';if(v){toggle.textContent=v;toggle.classList.remove('placeholder');}else{toggle.textContent=opts.placeholder||'Выберите';toggle.classList.add('placeholder');}}
-    document.addEventListener('click',e=>{if(!wrap.contains(e.target))close();});renderList();wrap._cs={setValue,setSilent,get value(){return wrap.dataset.value;}};
+    if(search){search.addEventListener('input',()=>{const q=search.value.trim().toLowerCase();filtered=!q?allOptions.slice():allOptions.filter(v=>normKey(v).includes(q));renderList();});search.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const q=search.value.trim();if(filtered.length)setValue(filtered[0]);else if(q)addAndSelect(q);}else if(e.key==='Escape')close();});}
+    list.addEventListener('click',e=>{
+      const d=e.target.closest('[data-cs-del]');if(d){e.stopPropagation();removeRef(wrap.dataset.kind,d.dataset.csDel);return;}
+      const a=e.target.closest('[data-cs-add]');if(a){e.stopPropagation();const q=search?search.value.trim():'';if(q)addAndSelect(q);return;}
+      const o=e.target.closest('.cs-option[data-val]');if(!o)return;setValue(o.dataset.val);
+    });
+    function addAndSelect(v){rememberValue(wrap.dataset.kind,v);setValue(v);}
+    function setValue(v){wrap.dataset.value=v;toggle.textContent=v;toggle.classList.remove('placeholder');const iw=wrap.closest('.input-wrapper');if(iw)iw.classList.add('has-value');close();try{wrap.dispatchEvent(new CustomEvent('cschange',{detail:v,bubbles:true}));}catch(err){}}
+    function setSilent(v){wrap.dataset.value=v||'';if(v){toggle.textContent=v;toggle.classList.remove('placeholder');}else{toggle.textContent=opts.placeholder||'Выберите';toggle.classList.add('placeholder');}const iw=wrap.closest('.input-wrapper');if(iw)iw.classList.toggle('has-value',!!v);}
+    function setOptions(options){allOptions=(options||[]).slice();filtered=allOptions.slice();renderList();}
+    document.addEventListener('click',e=>{if(!wrap.contains(e.target))close();});renderList();wrap._cs={setValue,setSilent,setOptions,get value(){return wrap.dataset.value;}};
   }
   return{init};
 })();
 
-function initAllSelects(){const r=getCustomRefs();CustomSelect.init($('csLessonNum'),mergeRefs(REF_LESSON_NUMS,r.lessonNum),{placeholder:T('choose_num')});CustomSelect.init($('csTime'),mergeRefs(REF_TIMES,r.time),{placeholder:T('choose_time')});CustomSelect.init($('csSubject'),mergeRefs(REF_SUBJECTS,r.subject),{placeholder:T('choose_subject')});CustomSelect.init($('csTeacher'),mergeRefs(REF_TEACHERS,r.teacher),{placeholder:T('choose_teacher')});CustomSelect.init($('csRoom'),mergeRefs(REF_ROOMS,r.room),{placeholder:T('choose_room')});}
+function initAllSelects(){
+  restoreFullRooms();
+  migrateCustomRefs();
+  CustomSelect.init($('csLessonNum'),getRefOptions('lessonNum'),{placeholder:T('choose_num')});
+  CustomSelect.init($('csTime'),getRefOptions('time'),{placeholder:T('choose_time')});
+  CustomSelect.init($('csSubject'),getRefOptions('subject'),{placeholder:T('choose_subject')});
+  CustomSelect.init($('csTeacher'),getRefOptions('teacher'),{placeholder:T('choose_teacher')});
+  CustomSelect.init($('csRoom'),getRefOptions('room'),{placeholder:T('choose_room')});
+}
+function applyLessonNumAuto(v){
+  const i=REF_LESSON_NUMS.indexOf(String(v||''));
+  if(i>=0)setSelectValue('csTime',REF_TIMES[i]);
+}
+function applySubjectAuto(v){
+  let auto=null;
+  Object.keys(SUBJECT_AUTO).forEach(s=>{if(!auto&&normKey(s)===normKey(v))auto=SUBJECT_AUTO[s];});
+  if(!auto)return;
+  const teacher=auto.teacher&&!isRefRemoved('teacher',auto.teacher)?auto.teacher:'';
+  const room=auto.room&&!isRefRemoved('room',auto.room)?auto.room:'';
+  setSelectValue('csTeacher',teacher);
+  setSelectValue('csRoom',room);
+}
+function bindLessonAutofill(){
+  const n=$('csLessonNum'),s=$('csSubject');
+  if(n)n.addEventListener('cschange',e=>applyLessonNumAuto(e.detail));
+  if(s)s.addEventListener('cschange',e=>applySubjectAuto(e.detail));
+}
 function setSelectValue(id,v){const w=$(id);if(w&&w._cs)w._cs.setSilent(v);}
 function getSelectValue(id){const w=$(id);return w?(w.dataset.value||''):'';}
 async function fetchSched(date,user,force){if(!force&&prefetched.scheduleByDate[date]!==undefined)return prefetched.scheduleByDate[date];if(inflight.has(date))return inflight.get(date);const p=jsonp({action:'get_sched',requester:user.email,date}).then(res=>{if(res&&res.status==='ok'){const lessons=filterByDate(res.lessons,date).map(l=>Object.assign({},l,{attachments:normalizeAttachments(l.attachments)}));prefetched.scheduleByDate[date]=lessons;saveCacheJson(LESSONS_CACHE_KEY,prefetched.scheduleByDate);return lessons;}if(prefetched.scheduleByDate[date]===undefined){prefetched.scheduleByDate[date]=[];saveCacheJson(LESSONS_CACHE_KEY,prefetched.scheduleByDate);}return prefetched.scheduleByDate[date];}).catch(e=>{if(prefetched.scheduleByDate[date]===undefined)prefetched.scheduleByDate[date]=[];throw e;}).finally(()=>inflight.delete(date));inflight.set(date,p);return p;}
 async function prefetchAll(user){if(!user||!user.email)return;const mon=mondayOf(new Date(selectedDate+'T00:00:00'));const dates=[];for(let w=-1;w<=1;w++)for(let i=0;i<5;i++){const d=new Date(mon);d.setDate(mon.getDate()+w*7+i);dates.push(isoOfDate(d));}const jobs=dates.map(date=>fetchSched(date,user,true).catch(()=>{}));jobs.push(jsonp({action:'hw_status',requester:user.email}).then(hr=>{if(hr&&hr.status==='ok'){prefetched.hwStatuses=hr.statuses||{};saveCacheJson(HW_CACHE_KEY,prefetched.hwStatuses);}}).catch(()=>{}));jobs.push(jsonp({action:'users_list',requester:user.email}).then(ur=>{if(ur&&ur.status==='ok')saveUsersList(ur.users||[]);}).catch(()=>{}));jobs.push(pullGradesFromServer(user).catch(()=>{}));await Promise.all(jobs);}
 function prefetchWeek(user,baseDate){if(!user||!user.email)return;const mon=mondayOf(new Date(baseDate+'T00:00:00'));for(let i=0;i<5;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);const iso=isoOfDate(d);if(prefetched.scheduleByDate[iso]===undefined)fetchSched(iso,user,true).catch(()=>{});}}
-const Account=(function(){function loadAvatar(){try{return localStorage.getItem(AVATAR_KEY)||'';}catch(e){return'';}}function saveAvatar(u){try{localStorage.setItem(AVATAR_KEY,u);}catch(e){}}function applyAvatar(){const url=loadAvatar();const u=getCurrentUser();const letter=(u?formatShortName(u.name,u.email):'?').charAt(0).toUpperCase()||'?';document.querySelectorAll('[data-user-ava]').forEach(el=>{if(url){el.style.backgroundImage=`url(${url})`;el.style.backgroundSize='cover';el.style.backgroundPosition='center';el.textContent='';}else{el.style.backgroundImage='';el.textContent=letter;}});}function handleFile(input){const f=input.files&&input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{saveAvatar(e.target.result);applyAvatar();showToast(currentLang==='en'?'Photo updated':'Фото обновлено');};r.readAsDataURL(f);input.value='';}function fillFields(){const u=getCurrentUser();if(!u)return;const name=u.name||(u.email?u.email.split('@')[0]:'');['accName','accName2'].forEach(id=>{const el=$(id);if(el)el.value=name;});['accEmail','accEmail2'].forEach(id=>{const el=$(id);if(el)el.value=u.email||'';});applyAvatar();}async function saveProfile(){const u=getCurrentUser();if(!u)return;const nn=($('accName')&&$('accName').value.trim())||u.name||'';let neRaw=($('accEmail')&&$('accEmail').value.trim())||u.email||'';const oe=u.email;if(!nn||!neRaw){showToast(currentLang==='en'?'Fill fields':'Заполните поля');return false;}let ne=String(neRaw).toLowerCase();if(ne.indexOf('@')===-1){ne=ne+EMAIL_DOMAIN;}else if(!isCreatorEmail(ne) && !ne.endsWith(EMAIL_DOMAIN)){showToast('Только '+EMAIL_DOMAIN);return false;}try{const res=await jsonp({action:'update_profile',requester:oe,oldEmail:oe,email:ne,name:nn});if(!res||res.status!=='ok')throw new Error((res&&res.message)||'Profile update failed');}catch(e){showToast(currentLang==='en'?'Profile update failed':'\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0441\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c \u043f\u0440\u043e\u0444\u0438\u043b\u044c');return false;}u.name=nn;u.email=ne;saveSession(u);applyUserToUI();fillFields();showToast(currentLang==='en'?'Profile saved':'Профиль сохранён');$('accountModal').classList.remove('show');updateDocTitle();return true;}async function changePassword(){const u=getCurrentUser();if(!u)return;const np=await showPrompt(currentLang==='en'?'New password (min 6):':'Новый пароль (мин. 6):');if(!np||np.length<6){showToast(currentLang==='en'?'Too short':'Слишком короткий');return;}const np2=await showPrompt(currentLang==='en'?'Repeat password:':'Повторите пароль:');if(np!==np2){showToast(currentLang==='en'?'Passwords do not match':'Не совпадают');return;}try{const res=await jsonp({action:'update_password',requester:u.email,email:u.email,pass:np});if(!res||res.status!=='ok')throw new Error((res&&res.message)||'Password update failed');}catch(e){showToast(currentLang==='en'?'Password update failed':'\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0438\u0437\u043c\u0435\u043d\u0438\u0442\u044c \u043f\u0430\u0440\u043e\u043b\u044c');return;}u.pass=np;saveSession(u);showToast(currentLang==='en'?'Password changed':'Пароль изменён');}function init(){(['accAvatarInput','accAvatarInput2']).forEach(id=>{const inp=$(id);if(inp)inp.onchange=()=>handleFile(inp);});const cn=$('accChangeName');if(cn)cn.onclick=()=>{const i=$('accName');i.disabled=false;i.focus();};const ce=$('accChangeEmail');if(ce)ce.onclick=()=>{const i=$('accEmail');i.disabled=false;i.focus();};const cp=$('accChangePass');if(cp)cp.onclick=changePassword;fillFields();}return{init,applyAvatar,fillFields,loadAvatar,saveProfile};})();
+const Account=(function(){let _avatarLoadedFor='',_avatarPushSeq=0;function loadAvatar(){try{return localStorage.getItem(AVATAR_KEY)||'';}catch(e){return'';}}function saveAvatar(u){try{localStorage.setItem(AVATAR_KEY,u);}catch(e){}}function applyAvatar(){const url=loadAvatar();const u=getCurrentUser();const letter=(u?formatShortName(u.name,u.email):'?').charAt(0).toUpperCase()||'?';document.querySelectorAll('[data-user-ava]').forEach(el=>{if(url){el.style.backgroundImage=`url(${url})`;el.style.backgroundSize='cover';el.style.backgroundPosition='center';el.textContent='';}else{el.style.backgroundImage='';el.textContent=letter;}});}function resizeAvatarImage(file){return new Promise(resolve=>{const r=new FileReader();r.onerror=()=>resolve('');r.onload=e=>{const original=e.target.result;const img=new Image();img.onerror=()=>resolve(original);img.onload=()=>{try{const size=256,c=document.createElement('canvas');c.width=size;c.height=size;const ctx=c.getContext('2d');const side=Math.min(img.width,img.height);ctx.drawImage(img,(img.width-side)/2,(img.height-side)/2,side,side,0,0,size,size);const out=c.toDataURL('image/jpeg',0.82);resolve(out.length<original.length?out:original);}catch(err){resolve(original);}};img.src=original;};r.readAsDataURL(file);});}
+async function pushAvatarToServer(data){const u=getCurrentUser();if(!u||!u.email||!data)return;const email=u.email,seq=++_avatarPushSeq,size=3500,chunks=[];for(let i=0;i<data.length;i+=size)chunks.push(data.slice(i,i+size));try{for(let i=0;i<chunks.length;i++){if(seq!==_avatarPushSeq)return;await jsonp({action:'avatar_set_chunk',requester:email,email:email,index:i,total:chunks.length,data:chunks[i]});}if(seq===_avatarPushSeq)await jsonp({action:'avatar_finalize',requester:email,email:email,total:chunks.length});}catch(e){}}
+async function pullAvatarFromServer(){const u=getCurrentUser();if(!u||!u.email||_avatarLoadedFor===u.email)return;_avatarLoadedFor=u.email;try{const res=await jsonp({action:'avatar_get',requester:u.email,email:u.email});if(res&&res.status==='ok'){if(res.avatar)saveAvatar(res.avatar);else{try{localStorage.removeItem(AVATAR_KEY);}catch(e){}}applyAvatar();}}catch(e){}}
+function handleFile(input){const f=input.files&&input.files[0];if(!f)return;resizeAvatarImage(f).then(data=>{if(!data)return;saveAvatar(data);applyAvatar();showToast(currentLang==='en'?'Photo updated':'Фото обновлено');pushAvatarToServer(data);});input.value='';}function fillFields(){const u=getCurrentUser();if(!u)return;const name=u.name||(u.email?u.email.split('@')[0]:'');['accName','accName2'].forEach(id=>{const el=$(id);if(el)el.value=name;});['accEmail','accEmail2'].forEach(id=>{const el=$(id);if(el)el.value=u.email||'';});applyAvatar();}async function saveProfile(){const u=getCurrentUser();if(!u)return;const nn=($('accName')&&$('accName').value.trim())||u.name||'';let neRaw=($('accEmail')&&$('accEmail').value.trim())||u.email||'';const oe=u.email;if(!nn||!neRaw){showToast(currentLang==='en'?'Fill fields':'Заполните поля');return false;}let ne=String(neRaw).toLowerCase();if(ne.indexOf('@')===-1){ne=ne+EMAIL_DOMAIN;}else if(!isCreatorEmail(ne) && !ne.endsWith(EMAIL_DOMAIN)){showToast('Только '+EMAIL_DOMAIN);return false;}try{const res=await jsonp({action:'update_profile',requester:oe,oldEmail:oe,email:ne,name:nn});if(!res||res.status!=='ok')throw new Error((res&&res.message)||'Profile update failed');}catch(e){showToast(currentLang==='en'?'Profile update failed':'\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0441\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c \u043f\u0440\u043e\u0444\u0438\u043b\u044c');return false;}u.name=nn;u.email=ne;saveSession(u);applyUserToUI();fillFields();showToast(currentLang==='en'?'Profile saved':'Профиль сохранён');$('accountModal').classList.remove('show');updateDocTitle();return true;}async function changePassword(){const u=getCurrentUser();if(!u)return;const np=await showPrompt(currentLang==='en'?'New password (min 6):':'Новый пароль (мин. 6):');if(!np||np.length<6){showToast(currentLang==='en'?'Too short':'Слишком короткий');return;}const np2=await showPrompt(currentLang==='en'?'Repeat password:':'Повторите пароль:');if(np!==np2){showToast(currentLang==='en'?'Passwords do not match':'Не совпадают');return;}try{const res=await jsonp({action:'update_password',requester:u.email,email:u.email,pass:np});if(!res||res.status!=='ok')throw new Error((res&&res.message)||'Password update failed');}catch(e){showToast(currentLang==='en'?'Password update failed':'\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0438\u0437\u043c\u0435\u043d\u0438\u0442\u044c \u043f\u0430\u0440\u043e\u043b\u044c');return;}u.pass=np;saveSession(u);showToast(currentLang==='en'?'Password changed':'Пароль изменён');}function init(){(['accAvatarInput','accAvatarInput2']).forEach(id=>{const inp=$(id);if(inp)inp.onchange=()=>handleFile(inp);});const cn=$('accChangeName');if(cn)cn.onclick=()=>{const i=$('accName');i.disabled=false;i.focus();};const ce=$('accChangeEmail');if(ce)ce.onclick=()=>{const i=$('accEmail');i.disabled=false;i.focus();};const cp=$('accChangePass');if(cp)cp.onclick=changePassword;fillFields();}return{init,applyAvatar,fillFields,loadAvatar,saveProfile,pullAvatarFromServer,pushAvatarToServer};})();
 
 const UserMenu=(function(){
   function close(){
@@ -496,12 +623,7 @@ const UserMenu=(function(){
     if(shouldOpen) requestAnimationFrame(()=>{moveUdSwitch(); const panes=document.querySelector('.ud-panes'); const active=panes?.querySelector('.ud-pane.active'); if(panes&&active){panes.style.transition='none'; panes.style.height=active.offsetHeight+'px'; panes.offsetHeight; panes.style.transition='';}});
   }
   function openSettingsPane(pane){
-    const k=pane||'account';
-    document.querySelectorAll('.set-tab').forEach(t=>t.classList.toggle('active',t.dataset.setTab===k));
-    document.querySelectorAll('.set-pane').forEach(p=>p.classList.toggle('active',p.dataset.setPane===k));
-    Account.fillFields();
-    $('settingsModal').classList.add('show');
-    setDocTitle('Settings');
+    openMobileSettings();
   }
   function init(){
     const chip=$('userChip');if(chip){chip.setAttribute('aria-haspopup','menu');chip.setAttribute('aria-expanded','false');chip.onclick=e=>{e.stopPropagation();toggle();};}
@@ -517,7 +639,7 @@ const UserMenu=(function(){
     setTimeout(()=>{moveUdSwitch();syncUdPaneHeight(true);close();},0);
     document.addEventListener('click',e=>{const wrap=$('userMenuWrap'); if(wrap && !wrap.contains(e.target)) close();});
     document.addEventListener('keydown',e=>{if(e.key==='Escape') close();});
-    document.querySelectorAll('[data-open-settings]').forEach(b=>b.onclick=e=>{e.stopPropagation();close();openSettingsPane(b.dataset.setOpen||'account');});
+    document.querySelectorAll('[data-open-settings]').forEach(b=>b.onclick=e=>{e.stopPropagation();close();openMobileSettings();});
     const sc=$('setModalClose');if(sc)sc.onclick=()=>{$('settingsModal').classList.remove('show');updateDocTitle();};
     const sm=$('settingsModal'); if(sm) sm.onclick=e=>{if(e.target===$('settingsModal')){$('settingsModal').classList.remove('show');updateDocTitle();}};
     const ac=$('accModalClose'); if(ac) ac.onclick=()=>{const am=$('accountModal'); if(am) am.classList.remove('show'); updateDocTitle();};
@@ -541,8 +663,9 @@ const UserMenu=(function(){
     });
     
     const burger=$('burgerBtn'),sb=$('sidebar'),bd=$('mobileSbBackdrop'),topbar=$('topbar'),mobileBottom=$('mobileBottom');
-    function hideBars(){topbar.classList.add('bar-hidden');if(mobileBottom)mobileBottom.classList.add('bar-hidden');}
-    function showBars(){topbar.classList.remove('bar-hidden');if(mobileBottom)mobileBottom.classList.remove('bar-hidden');}
+    const mobileNavCluster=$('mobileNavCluster');
+    function hideBars(){topbar.classList.add('bar-hidden');if(mobileBottom)mobileBottom.classList.add('bar-hidden');if(mobileNavCluster)mobileNavCluster.classList.add('bar-hidden');closeNavMoreMenu();}
+    function showBars(){topbar.classList.remove('bar-hidden');if(mobileBottom)mobileBottom.classList.remove('bar-hidden');if(mobileNavCluster)mobileNavCluster.classList.remove('bar-hidden');}
     function closeSb(){sb.classList.remove('open');burger.classList.remove('open');burger.setAttribute('aria-expanded','false');burger.setAttribute('aria-label',currentLang==='en'?'Open menu':'Открыть меню');bd.classList.remove('open');showBars();}
     const syncIndicator=()=>{moveIndicator();setTimeout(moveIndicator,180);setTimeout(moveIndicator,360);};
     burger.onclick=()=>{const opening=!sb.classList.contains('open');sb.classList.toggle('open',opening);burger.classList.toggle('open',opening);burger.setAttribute('aria-expanded',String(opening));burger.setAttribute('aria-label',opening?(currentLang==='en'?'Close menu':'Закрыть меню'):(currentLang==='en'?'Open menu':'Открыть меню'));bd.classList.toggle('open',opening);if(opening)hideBars();else showBars();syncIndicator();};
@@ -551,7 +674,7 @@ const UserMenu=(function(){
     bd.onclick=closeSb;
     document.addEventListener('click',e=>{const mi=e.target.closest('.menu-item');if(mi&&window.innerWidth<=640)closeSb();});
     const sbSet=document.querySelector('#sidebar .sb-settings');
-    if(sbSet) sbSet.onclick=e=>{e.stopPropagation();closeSb();openSettingsPane('account');};
+    if(sbSet) sbSet.onclick=e=>{e.stopPropagation();closeSb();openMobileSettings();};
   }
   return{close,init};
 })();
@@ -723,6 +846,7 @@ async function doRegister(){
   finally{$('btnRegister').disabled=false;}
 }
 
+let _syncEventsBound=false;
 function startRealtimeSync(){
   if(_syncTimer) clearInterval(_syncTimer);
   const tick = async()=>{
@@ -733,61 +857,17 @@ function startRealtimeSync(){
     try{
       const v = await validateCurrentSession();
       if(!v || !v.ok) return;
-      if(currentPage==='schedule'){
-        try{
-          const fresh=await fetchSched(selectedDate,getCurrentUser(),true);
-          const arr=Array.isArray(fresh)?fresh:[];
-          const sig=_lessonsSig(arr);
-          if(sig!==_lastLessonsSig){
-            _lastLessonsSig=sig;
-            cacheLessons=arr;
-            if(currentPage==='schedule') refreshCurrentPage();
-          }
-        }catch(e){}
-      } else if(['users','journal','ministry','diary'].includes(currentPage)){
-        await loadPageData(currentPage,{silent:true});
-      }
-    } finally { _syncInFlight=false; }
-  };
-  _syncTimer=setInterval(tick, 8000);
-  document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ _syncFastUntil=Date.now()+30000; tick(); } });
-  window.addEventListener('focus',()=>{ _syncFastUntil=Date.now()+15000; tick(); });
-  _syncFastUntil=Date.now()+15000;
-  tick();
-}
-
-function startRealtimeSync(){
-  if(_syncTimer) clearInterval(_syncTimer);
-  const tick = async()=>{
-    if(_syncInFlight) return;
-    const u=getCurrentUser(); if(!u||!u.email) return;
-    if(document.hidden && Date.now()>_syncFastUntil) return;
-    _syncInFlight=true;
-    try{
-      const v = await validateCurrentSession();
-      if(!v || !v.ok) return;
-      if(currentPage==='schedule' || currentPage==='diary'){
-        try{
-          const fresh=await fetchSched(selectedDate,getCurrentUser(),true);
-          const arr=Array.isArray(fresh)?fresh:[];
-          const sig=_lessonsSig(arr);
-          if(sig!==_lastLessonsSig){
-            _lastLessonsSig=sig;
-            cacheLessons=arr;
-            if(currentPage==='schedule' || currentPage==='diary') refreshCurrentPage();
-          } else if(currentPage==='diary' && !window._diaryIntroDone){
-            // allow intro to finish naturally
-          }
-        }catch(e){}
-      }
       if(['users','journal','ministry','schedule','diary'].includes(currentPage)){
         await loadPageData(currentPage,{silent:true});
       }
     } finally { _syncInFlight=false; }
   };
+  if(!_syncEventsBound){
+    _syncEventsBound=true;
+    document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ _syncFastUntil=Date.now()+30000; tick(); } });
+    window.addEventListener('focus',()=>{ _syncFastUntil=Date.now()+15000; tick(); });
+  }
   _syncTimer=setInterval(tick, 8000);
-  document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ _syncFastUntil=Date.now()+30000; tick(); } });
-  window.addEventListener('focus',()=>{ _syncFastUntil=Date.now()+15000; tick(); });
   _syncFastUntil=Date.now()+15000;
   tick();
 }
@@ -804,6 +884,38 @@ function formatShortName(raw,fallback){
   if(/[.!]$/.test(last)) return first+' '+last;
   return first+' '+last.charAt(0).toUpperCase()+'.';
 }
+const AVATAR_URL_CACHE=new Map();
+function avatarUrlFor(email){
+  const em=String(email||'').toLowerCase().trim();
+  const me=getCurrentUser();
+  if(me&&String(me.email||'').toLowerCase().trim()===em)return Account.loadAvatar()||AVATAR_URL_CACHE.get(em)||'';
+  return AVATAR_URL_CACHE.get(em)||'';
+}
+function paintUserAvatar(el,email,initials){
+  if(!el)return;
+  const url=avatarUrlFor(email);
+  if(url){el.style.backgroundImage=`url("${url}")`;el.style.backgroundSize='cover';el.style.backgroundPosition='center';el.textContent='';}
+  else{el.style.backgroundImage='';el.textContent=initials||'?';}
+}
+async function fetchAvatarFor(email){
+  const em=String(email||'').toLowerCase().trim();
+  if(!em||AVATAR_URL_CACHE.has(em))return;
+  AVATAR_URL_CACHE.set(em,'');
+  try{
+    const res=await jsonp({action:'avatar_get',requester:(getCurrentUser()||{}).email||em,email:em});
+    AVATAR_URL_CACHE.set(em,(res&&res.status==='ok'&&res.avatar)?res.avatar:'');
+  }catch(e){AVATAR_URL_CACHE.set(em,'');}
+}
+async function applyCardAvatars(){
+  const cards=Array.from($$('.ucard[data-user-email]'));
+  if(!cards.length)return;
+  cards.forEach(c=>paintUserAvatar(c.querySelector('.ucard-ava'),c.dataset.userEmail,c.querySelector('.ucard-ava').dataset.initials));
+  const pending=Array.from(new Set(cards.map(c=>String(c.dataset.userEmail||'').toLowerCase().trim()).filter(e=>e&&!AVATAR_URL_CACHE.has(e))));
+  if(!pending.length)return;
+  let i=0;const worker=async()=>{while(i<pending.length){const e=pending[i++];await fetchAvatarFor(e);}};
+  await Promise.all(Array.from({length:Math.min(4,pending.length)},worker));
+  Array.from($$('.ucard[data-user-email]')).forEach(c=>{const av=c.querySelector('.ucard-ava');if(av)paintUserAvatar(av,c.dataset.userEmail,av.dataset.initials);});
+}
 function applyUserToUI(){
   const u=getCurrentUser(); if(!u) return;
   const short=formatShortName(u.name,u.email);
@@ -811,6 +923,7 @@ function applyUserToUI(){
   document.querySelectorAll('[data-user-ava]').forEach(el=>{el.textContent=letter;});
   document.querySelectorAll('[data-user-name],[data-user-short-name]').forEach(el=>{el.textContent=short;});
   document.querySelectorAll('[data-user-role]').forEach(el=>{el.textContent=u.role||'Ученик';});
+  try{Account.applyAvatar();Account.pullAvatarFromServer();}catch(e){}
 }
 function rebuildMenu(){
   const u=getCurrentUser(); if(!u) return;
@@ -830,6 +943,8 @@ function rebuildMenu(){
   });
   if(ind) box.insertBefore(frag, ind); else box.appendChild(frag);
   buildDock($('mobileBottom'),items);
+  applyCoinButtonMode();
+  renderNavMoreMenu();
   if(!canOpenPage(currentPage)){ renderPage('home'); return; }
   try{moveIndicator();moveMobileIndicator();}catch(e){}
 }
@@ -902,7 +1017,17 @@ function moveMobileIndicator(){
   i.style.transform='translateX('+a.offsetLeft+'px)';
   i.classList.add('ready');
 }
-window.addEventListener('resize',()=>setTimeout(()=>{moveIndicator();moveMobileIndicator();},50));
+let _lastPhoneMode=isPhone();
+window.addEventListener('resize',()=>setTimeout(()=>{
+  moveIndicator();moveMobileIndicator();
+  const phone=isPhone();
+  if(phone!==_lastPhoneMode){_lastPhoneMode=phone;if(currentPage==='schedule')refreshCurrentPage();}
+  if(!phone){
+    ['sidebar','burgerBtn','mobileSbBackdrop'].forEach(id=>{const el=$(id);if(el)el.classList.remove('open');});
+    ['topbar','mobileBottom','mobileNavCluster'].forEach(id=>{const el=$(id);if(el)el.classList.remove('bar-hidden');});
+  }
+  try{lockPhoneTopbar();}catch(e){}
+},50));
 
 const TITLES={home:'menu_home',schedule:'menu_schedule',diary:'menu_diary',users:'sgu_full',journal:'menu_journal',ministry:'menu_ministry'};
 function buildPane(key){const p=document.createElement('div');p.className='page-pane';p.dataset.page=key;p.innerHTML=getPaneHTML(key);return p;}
@@ -933,12 +1058,15 @@ function renderPage(key){
   if(!canOpenPage(key)) return;
   try{ if(typeof UserMenu!=='undefined' && UserMenu && UserMenu.close) UserMenu.close(); }catch(e){}
   closeMobileMoreMenu();
+  closeNavMoreMenu();
   if(key==='diary') window._diaryIntroDone = false;
   const vp=$('pagesViewport');
   $$('.menu-item').forEach(b=>b.classList.toggle('active',b.dataset.page===key));
   $$('.dock-item').forEach(b=>{const active=b.dataset.page===key;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+  $$('.mobile-nav-btn[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===key));
   requestAnimationFrame(()=>{moveIndicator();moveMobileIndicator();});
   $('topbarTitle').textContent=T(TITLES[key]||'menu_home');
+  try{Account.applyAvatar();Account.pullAvatarFromServer();}catch(e){}
   if(activeDiarySpinner){activeDiarySpinner.cleanup();activeDiarySpinner=null;}
   if(key==='diary'){diaryIsLoading=true;diaryData=null;}
   else{diaryIsLoading=false;if(diaryTimer){clearTimeout(diaryTimer);diaryTimer=null;}}
@@ -964,7 +1092,6 @@ function bindPage(key){
   if(key==='users'||key==='journal'||key==='ministry')bindUsersPage();
   bindAttachmentOpeners();
   if(key==='diary'){
-      window._diaryIntroDone = false;
       diaryData=calcDiaryAverages();
       initDiaryIntro();
   }
@@ -1054,7 +1181,7 @@ function lessonRowHTML(l,mode,hwStatuses,i){
   const numRaw = String(l.lessonNum ?? '').trim();
   const num = esc(numRaw !== '' ? numRaw : '—');
   const subject = esc(l.subject||'');
-  const timeRoom = [l.room?esc(l.room):'', l.time?esc(l.time):''].filter(Boolean).join(' • ');
+  const timeRoom = [l.room?esc(fullRoomName(l.room)):'', l.time?esc(l.time):''].filter(Boolean).join(' • ');
   const teacher = l.teacher ? esc(l.teacher) : '';
   const hw = (l.homework||'').trim();
   const hwId = 'hw_'+String(l.id||i||Math.random()).replace(/[^a-zA-Z0-9_-]/g,'');
@@ -1071,7 +1198,7 @@ function lessonRowHTML(l,mode,hwStatuses,i){
         <div class="lesson-subject">${subject}${badges.join('')}</div>
         ${teacher?`<div class="lesson-teacher">${teacher}</div>`:''}
       </div>
-      <div class="lesson-right">
+      <div class="lesson-right${canManage?' with-admin':''}">
         <button class="lesson-view-btn" type="button" data-hw-toggle="${hwId}">${hwLabel}</button>
         ${canManage?`<div class="lesson-admin-actions"><button class="icon-btn sm lesson-edit-btn" type="button" data-edit-lesson="${esc(l.id||'')}" aria-label="${T('edit')}">${ic('icon-edit','sm')}</button><button class="icon-btn sm red lesson-del-btn" type="button" data-del-lesson="${esc(l.id||'')}" aria-label="${T('delete')}">${ic('icon-trash','sm')}</button></div>`:''}
       </div>
@@ -1086,9 +1213,9 @@ function lessonRowHTML(l,mode,hwStatuses,i){
 function weekPanelHTML(){
   const ai=dowIdx(selectedDate);
   const locW = getLocalizedWeekdays();
-  const isMobile = window.innerWidth <= 640;
+  const mobileMode=isPhone();
   const days=[];
-  if(isMobile){
+  if(mobileMode){
     days.push(`<button class="wp-day active" data-day="${ai}"><span class="wp-day-name">${esc(locW.full[ai+1])}</span></button>`);
   } else {
     for(let i=1;i<=5;i++){
@@ -1106,18 +1233,17 @@ function weekPanelHTML(){
 }
 function bindWeekPanel(){
   const prev=$('wpPrev'),next=$('wpNext');
-  const isMobile=window.innerWidth<=640;
   const go = (dir)=>{
     const pane=document.querySelector('.page-pane[data-page="schedule"]');
     if(pane){pane.classList.remove('sched-anim-left','sched-anim-right'); void pane.offsetWidth; pane.classList.add(dir>0?'sched-anim-right':'sched-anim-left');}
-    if(isMobile){const d=new Date(selectedDate+'T00:00:00');d.setDate(d.getDate()+dir);if(d.getDay()===0)d.setDate(d.getDate()+(dir>0?1:-2));if(d.getDay()===6)d.setDate(d.getDate()+(dir>0?2:-1));selectedDate=isoOfDate(d);}else{moveWeek(dir);}
+    if(isPhone()){const d=new Date(selectedDate+'T00:00:00');d.setDate(d.getDate()+dir);if(d.getDay()===0)d.setDate(d.getDate()+(dir>0?1:-2));if(d.getDay()===6)d.setDate(d.getDate()+(dir>0?2:-1));selectedDate=isoOfDate(d);}else{moveWeek(dir);}
     loadPageData(currentPage);
   };
   if(prev)prev.onclick=()=>go(-1);
   if(next)next.onclick=()=>go(1);
   document.querySelectorAll('.wp-day').forEach(b=>{
     b.onclick=()=>{
-      if(isMobile) return;
+      if(isPhone()) return;
       const nd=parseInt(b.dataset.day,10); const cur=dowIdx(selectedDate);
       const pane=document.querySelector('.page-pane[data-page="schedule"]');
       if(pane){pane.classList.remove('sched-anim-left','sched-anim-right'); void pane.offsetWidth; pane.classList.add(nd>=cur?'sched-anim-right':'sched-anim-left');}
@@ -1146,16 +1272,11 @@ function bindAttachmentOpeners(){document.querySelectorAll('.lesson-att-chip').f
 function openAttachViewer(url,type,title){const m=$('attachViewer'),b=$('attachViewerBody');$('attachViewerTitle').textContent=title||url;$('attachViewerExternal').href=url;b.innerHTML='';const yt=getYouTubeId(url),drive=getDrivePreview(url);if(type==='video'&&yt)b.innerHTML=`<iframe src="https://www.youtube.com/embed/${yt}?autoplay=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;else if(drive)b.innerHTML=`<iframe src="${drive}" allow="autoplay; fullscreen"></iframe>`;else if(type==='video'&&/\.(mp4|webm|mov|m4v)(\?|$)/i.test(url))b.innerHTML=`<video controls autoplay src="${esc(url)}"></video>`;else if(type==='file'&&/\.(png|jpe?g|gif|webp|svg|bmp)(\?|$)/i.test(url))b.innerHTML=`<img src="${esc(url)}" alt="">`;else if(type==='file'&&/\.pdf(\?|$)/i.test(url))b.innerHTML=`<iframe src="${esc(url)}"></iframe>`;else b.innerHTML=`<div class="av-fallback">${ic('icon-external')}<a href="${esc(url)}" target="_blank" rel="noopener">${currentLang==='en'?'Open in new tab':(currentLang==='kz'?'Жаңа қойындыда ашу':'Открыть в новой вкладке')}</a></div>`;m.classList.add('open');}
 $('attachViewerClose').onclick=()=>{$('attachViewer').classList.remove('open');$('attachViewerBody').innerHTML='';};
 $('attachViewer').onclick=e=>{if(e.target===$('attachViewer')){$('attachViewer').classList.remove('open');$('attachViewerBody').innerHTML='';}};
-function hideInlineForms(){$('attachLinkForm').classList.add('hidden');$('attachFileForm').classList.add('hidden');$('attachAddLink').classList.remove('active');$('attachAddFile').classList.remove('active');}
-function resetLinkForm(){$('attachLinkTitle').value='';$('attachLinkUrl').value='';}
-function resetFileForm(){$('attachUploadProgress').classList.add('hidden');$('attachProgressFill').style.width='0%';$('attachFilePicker').disabled=false;$('attachFilePicker').classList.remove('has-file');$('attachFilePickerText').textContent=currentLang==='en'?'Choose file (≤200 MB)':'Выбрать файл (≤200 МБ)';$('attachFileTitle').value='';$('attachFileInput').value='';}
-$('attachAddLink').onclick=()=>{const h=$('attachLinkForm').classList.contains('hidden');$('attachFileForm').classList.add('hidden');$('attachAddFile').classList.remove('active');if(h){$('attachLinkForm').classList.remove('hidden');$('attachAddLink').classList.add('active');}else{$('attachLinkForm').classList.add('hidden');$('attachAddLink').classList.remove('active');}};
-$('attachAddFile').onclick=()=>{const h=$('attachFileForm').classList.contains('hidden');$('attachLinkForm').classList.add('hidden');$('attachAddLink').classList.remove('active');if(h){$('attachFileForm').classList.remove('hidden');$('attachAddFile').classList.add('active');}else{$('attachFileForm').classList.add('hidden');$('attachAddFile').classList.remove('active');}};
-$('attachLinkCancel').onclick=()=>{resetLinkForm();hideInlineForms();};
-$('attachFileCancel').onclick=()=>{resetFileForm();hideInlineForms();};
-$('attachLinkSave').onclick=async()=>{const t=$('attachLinkTitle').value.trim();let u=$('attachLinkUrl').value.trim();if(!u){showToast(currentLang==='en'?'Paste link':'Вставьте ссылку');return;}if(!/^https?:\/\//i.test(u))u='https://'+u;const type=detectTypeFromUrl(u);editingAttachments.push({id:'a'+Date.now(),type,title:t||u.split('/').pop()||'Материал',url:u});renderAttachList();resetLinkForm();hideInlineForms();showToast(currentLang==='en'?'Added':'Добавлено');};
-$('attachFilePicker').onclick=()=>$('attachFileInput').click();
-$('attachFileInput').onchange=async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;if(f.size>MAX_UPLOAD_MB*1024*1024){showToast(currentLang==='en'?'File >200MB':'Файл >200 МБ');e.target.value='';return;}if(!$('attachFileTitle').value.trim())$('attachFileTitle').value=f.name.replace(/\.[^.]+$/,'');$('attachFilePicker').classList.add('has-file');$('attachFilePickerText').textContent=f.name+' ('+formatSize(f.size)+')';$('attachUploadProgress').classList.remove('hidden');$('attachFilePicker').disabled=true;try{const url=await uploadToCatbox(f,(l,t)=>{const p=Math.round(l/t*100);$('attachProgressFill').style.width=p+'%';$('attachProgressText').textContent=(currentLang==='en'?'Uploading... ':'Загрузка... ')+p+'%';});const type=f.type.startsWith('video/')?'video':'file';const title=$('attachFileTitle').value.trim()||f.name;editingAttachments.push({id:'a'+Date.now(),type,title,url,size:f.size,mime:f.type});renderAttachList();setTimeout(()=>{resetFileForm();hideInlineForms();showToast(currentLang==='en'?'File added':'Файл добавлен');},500);}catch(err){showToast(err.message);resetFileForm();}};
+function hideInlineForms(){const f=$('attachLinkForm');if(f)f.classList.add('hidden');const b=$('attachAddLink');if(b)b.classList.remove('active');}
+function resetLinkForm(){const a=$('attachLinkTitle'),u=$('attachLinkUrl');if(a)a.value='';if(u)u.value='';}
+const addLinkBtn=$('attachAddLink');if(addLinkBtn)addLinkBtn.onclick=()=>{const f=$('attachLinkForm');if(!f)return;const h=f.classList.contains('hidden');f.classList.toggle('hidden',!h);addLinkBtn.classList.toggle('active',h);if(h)setTimeout(()=>{const u=$('attachLinkUrl');if(u)u.focus();},40);};
+const linkCancel=$('attachLinkCancel');if(linkCancel)linkCancel.onclick=()=>{resetLinkForm();hideInlineForms();};
+const linkSave=$('attachLinkSave');if(linkSave)linkSave.onclick=()=>{const t=$('attachLinkTitle')?$('attachLinkTitle').value.trim():'';let u=$('attachLinkUrl')?$('attachLinkUrl').value.trim():'';if(!u){showToast(currentLang==='en'?'Paste link':'Вставьте ссылку');return;}if(!/^https?:\/\//i.test(u))u='https://'+u;const type=detectTypeFromUrl(u);editingAttachments.push({id:'a'+Date.now(),type,title:t||u.split('/').pop()||'Материал',url:u});renderAttachList();resetLinkForm();hideInlineForms();showToast(currentLang==='en'?'Added':'Добавлено');};
 function renderAttachList(){const list=$('attachList');if(!list)return;if(!editingAttachments.length){list.innerHTML='<div class="attach-empty">'+(currentLang==='en'?'No materials':'Материалов пока нет')+'</div>';return;}list.innerHTML=editingAttachments.map((a,idx)=>{const icon=attachIcon(a.type);const size=a.size?formatSize(a.size):'';const meta=attachShortUrl(a.url)+(size?' · '+size:'');return`<div class="attach-item">${ic(icon,'attach-icon')}<div class="attach-info"><div class="attach-title">${esc(a.title)}</div><div class="attach-meta">${esc(meta)}</div></div><a class="attach-open" href="${esc(a.url)}" target="_blank" rel="noopener">${ic('icon-external','sm')}</a><button type="button" class="attach-del" data-attach-del="${idx}">${ic('icon-x-circle','sm')}</button></div>`;}).join('');list.querySelectorAll('[data-attach-del]').forEach(b=>{b.onclick=()=>{const i=parseInt(b.dataset.attachDel,10);editingAttachments.splice(i,1);renderAttachList();};});}
 function calcDiaryAverages(){const u=getCurrentUser();if(!u)return{overall:null,days:{},hasAny:false};const email=u.email;const all=[];const days={};let hasAny=false;getLast5SchoolDays().forEach(iso=>{const ls=prefetched.scheduleByDate[iso]||[];const dg=[];ls.forEach(l=>{const e=getGrade(iso,l.id,email);if(e&&e.status==='ЕСТЬ'&&typeof e.grade==='number'){all.push(e.grade);dg.push(e.grade);hasAny=true;}});days[iso]=dg.length?+(dg.reduce((a,b)=>a+b,0)/dg.length).toFixed(1):null;});const overall=all.length?+(all.reduce((a,b)=>a+b,0)/all.length).toFixed(1):null;return{overall,days,hasAny};}
 
@@ -1292,7 +1413,7 @@ function getDiaryBlocksHTML(data) {
           return `<div class="diary-lesson">
             <div class="diary-lesson-info">
               <div class="diary-lesson-subject">${esc(l.subject||'—')}</div>
-              <div class="diary-lesson-meta">${l.teacher?`<span>${ic('icon-user','sm')}<b>${esc(l.teacher)}</b></span>`:''}${l.room?`<span>${ic('icon-location','sm')}<b>${esc(l.room)}</b></span>`:''}</div>
+              <div class="diary-lesson-meta">${l.teacher?`<span>${ic('icon-user','sm')}<b>${esc(l.teacher)}</b></span>`:''}${l.room?`<span>${ic('icon-location','sm')}<b>${esc(fullRoomName(l.room))}</b></span>`:''}</div>
             </div>
             <div class="${cls}">${g}</div>
           </div>`;
@@ -1325,7 +1446,7 @@ function ministryContentHTML() {
   const totalLessons=Object.values(prefetched.scheduleByDate).reduce((acc,curr)=>acc+curr.length,0);
   let html=`
   <div class="banner" style="background:var(--on); color:var(--bg)"><div class="banner-title">${T('ministry')}</div></div>
-  <div class="ministry-grid">
+  <div class="ministry-sections">
     <div class="ministry-card"><div class="ministry-title">${ic('icon-chart')} ${T('stats')}</div><div class="stat-row"><div class="stat-box"><div class="stat-val">${totalUsers}</div><div class="stat-label">${T('active_users')}</div></div><div class="stat-box"><div class="stat-val">${totalLessons}</div><div class="stat-label">${T('total_lessons')}</div></div><div class="stat-box"><div class="stat-val">8.4</div><div class="stat-label">${T('avg_grade')}</div></div><div class="stat-box"><div class="stat-val" style="color:#1E8E3E">94%</div><div class="stat-label">${T('online')}</div></div></div></div>
     <div class="ministry-card"><div class="ministry-title">${ic('icon-settings')} ${T('system_status')}</div><div class="ministry-list"><div class="ministry-item"><span>${T('database')}</span><span style="color:#1E8E3E">${T('stable')}</span></div><div class="ministry-item"><span>${T('api')}</span><span style="color:#1E8E3E">${T('stable')}</span></div><div class="ministry-item"><span>Cloud Storage</span><span style="color:#1E8E3E">${T('stable')}</span></div></div></div>
   </div>`;
@@ -1377,7 +1498,8 @@ function gradesDatesHTML(){
 }
 function usersListSectionHTML(){
   if(!canManageUsers())return'';
-  const users=(prefetched.users||[]).slice().sort((a,b)=>String(a.name||a.email||'').localeCompare(String(b.name||b.email||''),'ru',{sensitivity:'base'}));
+  const locale=currentLang==='en'?'en':(currentLang==='kz'?'kk':'ru');
+  const users=(prefetched.users||[]).slice().sort((a,b)=>String(a.name||a.email||'').localeCompare(String(b.name||b.email||''),locale,{sensitivity:'base'}));
   const list=users.length?users.map(u=>userCardHTML(u)).join(''):emptyStateHTML(T('no_users'),'','icon-users');
   return`<div class="banner sgu-banner"><div class="banner-title">${sguT('bUsers')}</div></div><div class="ucards" id="usersList">${list}</div>`;
 }
@@ -1387,7 +1509,7 @@ function userCardHTML(u){
   const isSelf=String(u.email).toLowerCase()===String((getCurrentUser()||{}).email||'').toLowerCase();
   const isCU=isCreatorEmail(u.email);
   const blocked=isSelf||isCU;
-  return`<div class="ucard" data-user-email="${esc(u.email)}"><div class="ucard-ava">${esc(initialsOf(full,u.email))}</div><div class="ucard-main"><div class="ucard-name" title="${esc(full)}">${esc(full)}</div><div class="ucard-role">${esc(role)}</div><div class="ucard-rects"><div class="ucard-rect">${esc(u.email||'')}</div></div></div><div class="ucard-side"><button class="ucard-action" data-edit-user="${esc(u.email)}" ${blocked?'disabled':''} type="button" title="${sguT('edit')}">${ic('icon-edit','sm')}<span>${sguT('edit')}</span></button><button class="ucard-action danger" data-del-user="${esc(u.email)}" ${blocked?'disabled':''} type="button" title="${sguT('delUser')}">${ic('icon-trash','sm')}<span>${sguT('delUser')}</span></button></div></div>`;
+  return`<div class="ucard" data-user-email="${esc(u.email)}"><div class="ucard-ava" data-initials="${esc(initialsOf(full,u.email))}">${esc(initialsOf(full,u.email))}</div><div class="ucard-main"><div class="ucard-email">${esc(u.email||'')}</div><div class="ucard-name" title="${esc(full)}">${esc(full)}</div><div class="ucard-role">${esc(role)}</div></div><div class="ucard-side"><button class="ucard-action" data-edit-user="${esc(u.email)}" ${blocked?'disabled':''} type="button" title="${sguT('edit')}">${ic('icon-edit','sm')}<span>${sguT('edit')}</span></button><button class="ucard-action danger" data-del-user="${esc(u.email)}" ${blocked?'disabled':''} type="button" title="${sguT('delUser')}">${ic('icon-trash','sm')}<span>${sguT('delUser')}</span></button></div></div>`;
 }
 function gradesTableForDateHTML(dateIso){
   const cfg=getTableCfg();const students=cfg.students;const dl=formatRuDate(dateIso);const locW=getLocalizedWeekdays();const wd=locW.full[new Date(dateIso+'T00:00:00').getDay()];const lessons=prefetched.scheduleByDate[dateIso]||[];
@@ -1432,6 +1554,7 @@ function bindUsersPage(){
         const me=getCurrentUser();rememberDeletedUser(email);prefetched.users=(prefetched.users||[]).filter(u=>String(u.email).toLowerCase()!==String(email).toLowerCase());saveCacheJson(USERS_CACHE_KEY,prefetched.users);refreshCurrentPage();showToast(T('deleted'));try{await jsonp({action:'delete_user',requester:me.email,email});}catch(e){}
     };});
   }
+  applyCardAvatars();
 }
 let editingDateIso=null;
 function openDatePicker(){
@@ -1588,22 +1711,25 @@ $('popClear').onclick=()=>{if(!popTarget)return;setGrade(popTarget.dateIso,popTa
 $('popSave').onclick=()=>{if(!popTarget)return;const entry={status:popState.status,grade:null};if(popState.status==='ЕСТЬ'&&popState.grade)entry.grade=popState.grade;setGrade(popTarget.dateIso,popTarget.lessonId,popTarget.email,entry);closePopover();refreshCurrentPage();};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePopover();hideCtxMenu();closeDatePicker();closeMobileMoreMenu();}});
 
+function setLessonFlag(id,on){const b=$(id);if(!b)return;b.classList.toggle('active',!!on);b.setAttribute('aria-pressed',on?'true':'false');}
+function getLessonFlag(id){const b=$(id);return !!(b&&b.classList.contains('active'));}
+['mSor','mSoch','mCancelled'].forEach(id=>{const b=$(id);if(b)b.onclick=()=>setLessonFlag(id,!getLessonFlag(id));});
 window.openModal=function(lesson){
   if(!canEditSchedule()){showToast(T('no_rights_msg'));return;}
   editingId=lesson?lesson.id:null;editingAttachments=lesson?normalizeAttachments(lesson.attachments):[];
-  $('modalTitle').textContent=lesson?(currentLang==='en'?'Edit':'Редактировать'):T('new_lesson');
+  $('modalTitle').textContent=lesson?(currentLang==='en'?'Edit':(currentLang==='kz'?'Өзгерту':'Изменить')):T('new_lesson');
   $('mDate').value=lesson?normDate(lesson.date):(currentTableDate||selectedDate);
   setSelectValue('csLessonNum',lesson?String(lesson.lessonNum||''):'');
   setSelectValue('csTime',lesson?lesson.time:'');
   setSelectValue('csSubject',lesson?lesson.subject:'');
   setSelectValue('csTeacher',lesson?lesson.teacher:'');
-  setSelectValue('csRoom',lesson?lesson.room:'');
-  $('mHomework').value=lesson?lesson.homework:'';
-  $('mSor').checked=lesson?!!lesson.sor:false;$('mSoch').checked=lesson?!!lesson.soch:false;$('mCancelled').checked=lesson?!!lesson.cancelled:false;
-  renderAttachList();hideInlineForms();resetLinkForm();resetFileForm();$('modalBackdrop').classList.add('show');
+  setSelectValue('csRoom',lesson?fullRoomName(lesson.room):'');
+  $('mHomework').value=lesson?(lesson.homework||''):'';
+  setLessonFlag('mSor',!!(lesson&&lesson.sor));setLessonFlag('mSoch',!!(lesson&&lesson.soch));setLessonFlag('mCancelled',!!(lesson&&lesson.cancelled));
+  renderAttachList();hideInlineForms();resetLinkForm();$('modalBackdrop').classList.add('show');
   setDocTitle(lesson?'Edit - Subject':'New - Subject');
 };
-function closeModal(){$('modalBackdrop').classList.remove('show');editingId=null;editingAttachments=[];hideInlineForms();resetLinkForm();resetFileForm();updateDocTitle();}
+function closeModal(){$('modalBackdrop').classList.remove('show');editingId=null;editingAttachments=[];hideInlineForms();resetLinkForm();updateDocTitle();}
 $('modalClose').onclick=closeModal;$('modalCancel').onclick=closeModal;
 $('modalBackdrop').onclick=e=>{if(e.target===$('modalBackdrop'))closeModal();};
 $('topbarAddBtn').onclick=()=>{
@@ -1616,10 +1742,10 @@ $('topbarAddBtn').onclick=()=>{
 $('modalSave').onclick=async()=>{
   const user=getCurrentUser();if(!user)return;
   const dv=$('mDate').value,sv=getSelectValue('csSubject'),tv=getSelectValue('csTime'),thv=getSelectValue('csTeacher'),rv=getSelectValue('csRoom'),nv=getSelectValue('csLessonNum');
-  if(!dv||!sv||!tv||!thv||!rv){showToast(currentLang==='en'?'Fill fields':'Заполните поля');return;}
+  if(!dv||!nv||!sv||!tv){showToast(currentLang==='en'?'Fill fields':'Заполните поля');return;}
   if(nv)rememberValue('lessonNum',nv);if(tv)rememberValue('time',tv);if(sv)rememberValue('subject',sv);if(thv)rememberValue('teacher',thv);if(rv)rememberValue('room',rv);
   const atts=normalizeAttachments(editingAttachments);
-  const payload={action:'save_sched',requester:user.email,role:userRole(),id:editingId||'',date:dv,lessonNum:nv,time:tv,subject:sv,teacher:thv,room:rv,homework:$('mHomework').value.trim(),sor:$('mSor').checked?'true':'false',soch:$('mSoch').checked?'true':'false',cancelled:$('mCancelled').checked?'true':'false',attachments:JSON.stringify(atts)};
+  const payload={action:'save_sched',requester:user.email,role:userRole(),id:editingId||'',date:dv,lessonNum:nv,time:tv,subject:sv,teacher:thv,room:rv,homework:$('mHomework').value.trim(),sor:getLessonFlag('mSor')?'true':'false',soch:getLessonFlag('mSoch')?'true':'false',cancelled:getLessonFlag('mCancelled')?'true':'false',attachments:JSON.stringify(atts)};
   const dk=normDate(payload.date);const lid=editingId||('tmp_'+Date.now());
   const ll={id:lid,date:payload.date,lessonNum:payload.lessonNum,time:payload.time,subject:payload.subject,teacher:payload.teacher,room:payload.room,homework:payload.homework,sor:payload.sor==='true',soch:payload.soch==='true',cancelled:payload.cancelled==='true',attachments:atts};
   if(prefetched.scheduleByDate[dk]){let arr=prefetched.scheduleByDate[dk].slice();if(editingId){const i=arr.findIndex(x=>String(x.id)===String(editingId));if(i>=0)arr[i]=ll;else arr.push(ll);}else arr.push(ll);arr.sort((a,b)=>(parseInt(a.lessonNum)||0)-(parseInt(b.lessonNum)||0));prefetched.scheduleByDate[dk]=arr;}else prefetched.scheduleByDate[dk]=[ll];
@@ -1634,9 +1760,217 @@ window.deleteLesson=async function(id){
     const u=getCurrentUser();const dk=selectedDate;if(prefetched.scheduleByDate[dk]){prefetched.scheduleByDate[dk]=prefetched.scheduleByDate[dk].filter(x=>String(x.id)!==String(id));saveCacheJson(LESSONS_CACHE_KEY,prefetched.scheduleByDate);cacheLessons=prefetched.scheduleByDate[dk];refreshCurrentPage();}jsonp({action:'del_sched',requester:u.email,role:userRole(),id}).catch(()=>{});
 };
 $$('[data-logout]').forEach(b=>b.onclick=()=>{showLoader();prefetched.scheduleByDate={};prefetched.hwStatuses=null;prefetched.users=null;try{localStorage.removeItem(LESSONS_CACHE_KEY);localStorage.removeItem(HW_CACHE_KEY);localStorage.removeItem(USERS_CACHE_KEY);}catch(e){}clearSession();setTimeout(()=>location.reload(),3500);});
-document.addEventListener('click',e=>{if(!e.target.closest('.mb-more-wrap'))closeMobileMoreMenu();const mb=e.target.closest('.menu-item');if(mb&&mb.dataset.page){renderPage(mb.dataset.page);return;}const mbb=e.target.closest('.mb-item');if(mbb&&mbb.dataset.page){renderPage(mbb.dataset.page);return;}});
+document.addEventListener('click',e=>{if(!e.target.closest('.mb-more-wrap'))closeMobileMoreMenu();const mbb=e.target.closest('.mb-item');if(mbb&&mbb.dataset.page){renderPage(mbb.dataset.page);return;}});
 const _accSaveEl=$('accSave');
 if(_accSaveEl){_accSaveEl.addEventListener('click',async(e)=>{e.stopImmediatePropagation();await Account.saveProfile();},true);}
+
+const COINS_KEY='nc_nova_coins_v1';
+function getCoins(){try{const n=parseInt(localStorage.getItem(COINS_KEY)||'0',10);return Number.isFinite(n)&&n>=0?n:0;}catch(e){return 0;}}
+function renderCoins(){const v=getCoins();['coinValue','pcCoinValue'].forEach(id=>{const el=$(id);if(el)el.textContent=String(v);});const modal=$('coinBalance');if(modal)modal.textContent=String(v);}
+function openCoins(){renderCoins();$('coinsModal').classList.add('show');updateDocTitle();}
+function closeCoins(){$('coinsModal').classList.remove('show');updateDocTitle();}
+
+function hasNavMoreAccess(){try{return ['users','journal','ministry'].some(p=>canOpenPage(p));}catch(e){return false;}}
+function navMoreItems(){
+  const out=[];
+  try{
+    if(canOpenPage('users')){
+      out.push({label:T('student_grades'),icon:'icon-chart',tab:'grades'});
+      out.push({label:T('menu_users'),icon:'icon-users',tab:'users'});
+    } else if(canOpenPage('journal'))out.push({label:T('menu_journal'),icon:'icon-book',page:'journal'});
+    if(canOpenPage('ministry'))out.push({label:T('menu_ministry'),icon:'icon-graduation',page:'ministry'});
+  }catch(e){}
+  return out;
+}
+function renderNavMoreList(list){
+  if(!list)return;
+  list.replaceChildren();
+  navMoreItems().forEach(it=>{
+    const b=document.createElement('button');
+    b.type='button';b.className='more-item';b.innerHTML='<svg class="ui-icon" aria-hidden="true"><use href="#'+it.icon+'"></use></svg><span>'+esc(it.label)+'</span>';
+    b.onclick=()=>{closeNavMoreMenu();closeMobileSettings();if(it.tab){manageTab=it.tab;renderPage('users');}else renderPage(it.page);};
+    list.appendChild(b);
+  });
+}
+function renderNavMoreMenu(){
+  renderNavMoreList($('mobileMoreList'));
+  renderNavMoreList($('pcMoreList'));
+}
+function syncTouchNavMode(){
+  let touch=false;
+  try{touch=!!(window.matchMedia&&matchMedia('(hover: none) and (pointer: coarse)').matches);}catch(e){}
+  document.body.classList.toggle('touch-nav',touch);
+}
+function closeNavMoreMenu(){
+  ['mobileMoreMenu','pcMoreMenu'].forEach(id=>{const m=$(id);if(m){m.classList.remove('open');m.setAttribute('aria-hidden','true');}});
+  ['coinBtn','pcMoreBtn'].forEach(id=>{const b=$(id);if(b){b.setAttribute('aria-expanded','false');b.classList.remove('open-more');}});
+}
+function toggleNavMoreMenu(which){
+  const m=$(which==='pc'?'pcMoreMenu':'mobileMoreMenu');if(!m)return;
+  const opening=!m.classList.contains('open');
+  closeNavMoreMenu();
+  if(opening){renderNavMoreMenu();m.classList.add('open');m.setAttribute('aria-hidden','false');}
+  ['coinBtn','pcMoreBtn'].forEach(id=>{const b=$(id);if(b)b.setAttribute('aria-expanded',String(opening));});
+  if(which!=='pc'){const b=$('coinBtn');if(b)b.classList.toggle('open-more',opening);}
+}
+function applyCoinButtonMode(){
+  const more=hasNavMoreAccess();
+  const mobile=$('coinBtn'),pcCoin=$('pcCoinBtn'),pcMore=$('pcMoreBtn');
+  if(mobile){
+    mobile.classList.toggle('is-more',more);
+    const u=mobile.querySelector('use');if(u)u.setAttribute('href',more?'#icon-more-v':'#icon-payments');
+    const v=$('coinValue');if(v)v.style.display=more?'none':'';
+    mobile.setAttribute('aria-label',more?T('nav_more_label'):'NovaCoins');
+    mobile.setAttribute('aria-haspopup',more?'menu':'false');
+    mobile.onclick=more?()=>toggleNavMoreMenu():openCoins;
+  }
+  if(pcCoin){pcCoin.classList.toggle('hidden',more);pcCoin.setAttribute('aria-label','NovaCoins');pcCoin.onclick=openCoins;}
+  if(pcMore){
+    pcMore.classList.toggle('hidden',!more);
+    pcMore.setAttribute('aria-label',T('nav_more_label'));
+    pcMore.setAttribute('aria-haspopup','menu');
+    pcMore.onclick=()=>toggleNavMoreMenu('pc');
+  }
+  if(!more)closeNavMoreMenu();
+}
+(()=>{
+  const close=$('coinClose');if(close)close.onclick=closeCoins;
+  const m=$('coinsModal');if(m)m.onclick=e=>{if(e.target===m)closeCoins();};
+  document.addEventListener('keydown',e=>{
+    if(e.key!=='Escape')return;
+    closeNavMoreMenu();
+    if(m&&m.classList.contains('show'))closeCoins();
+  });
+  document.addEventListener('click',e=>{
+    if(e.target.closest('#coinBtn')||e.target.closest('#pcCoinBtn')||e.target.closest('#pcMoreBtn'))return;
+    if(!e.target.closest('#mobileMoreMenu')&&!e.target.closest('#pcMoreMenu'))closeNavMoreMenu();
+  });
+  $$('.mobile-nav-btn[data-page]').forEach(b=>{b.onclick=()=>{const p=b.dataset.page;closeMobileSettings();if(canOpenPage(p))renderPage(p);else showToast(T('no_access'));};});
+  syncTouchNavMode();
+  try{const mq=matchMedia('(hover: none) and (pointer: coarse)');if(mq.addEventListener)mq.addEventListener('change',syncTouchNavMode);}catch(e){}
+  renderCoins();applyCoinButtonMode();renderNavMoreMenu();
+})();
+
+/* Полноэкранные настройки на телефоне */
+const MS_COLOR_KEY='nc_primary_color_v1';
+const MS_UNLOCKED_KEY='nc_unlocked_colors_v1';
+const MS_COLORS={
+  blue:{p:'#4285F4',pInk:'#3367D6',onp:'#FFFFFF',pc:'#4285F4',onpc:'#FFFFFF',sc:'#F1F3F4',onsc:'#174EA6'},
+  gray:{p:'#5F6368',pInk:'#3C4043',onp:'#FFFFFF',pc:'#5F6368',onpc:'#FFFFFF',sc:'#F1F3F4',onsc:'#3C4043'},
+  green:{p:'#188038',pInk:'#137333',onp:'#FFFFFF',pc:'#188038',onpc:'#FFFFFF',sc:'#E6F4EA',onsc:'#137333'},
+  pink:{p:'#D01884',pInk:'#C2185B',onp:'#FFFFFF',pc:'#D01884',onpc:'#FFFFFF',sc:'#FCE8F6',onsc:'#880E4F'},
+  yellow:{p:'#F9AB00',pInk:'#F57C00',onp:'#000000',pc:'#F9AB00',onpc:'#000000',sc:'#FEF7E0',onsc:'#E37400'}
+};
+let msPage='main';
+function msGet(key,fallback){try{return localStorage.getItem(key)||fallback;}catch(e){return fallback;}}
+function msSet(key,value){try{localStorage.setItem(key,String(value));}catch(e){}}
+function msUnlocked(){try{const a=JSON.parse(msGet(MS_UNLOCKED_KEY,'[]'));return Array.isArray(a)?a:[];}catch(e){return[];}}
+function msAllColorsFree(){try{return typeof isAdmin==='function'&&isAdmin();}catch(e){return false;}}
+function applyPrimaryColor(){
+  const key=msGet(MS_COLOR_KEY,'blue');
+  const c=MS_COLORS[key]||MS_COLORS.blue;
+  const style=document.documentElement.style;
+  style.setProperty('--p',c.p);style.setProperty('--p-ink',c.pInk);style.setProperty('--onp',c.onp);
+  style.setProperty('--pc',c.pc);style.setProperty('--onpc',c.onpc);style.setProperty('--sc',c.sc);style.setProperty('--onsc',c.onsc);
+}
+function setMsCoins(value){msSet(COINS_KEY,Math.max(0,parseInt(value,10)||0));renderCoins();}
+function msTitleText(page){return T(page==='theme'?'themes':(page==='language'?'language':'settings'));}
+function showMsPage(page){
+  msPage=page||'main';
+  document.querySelectorAll('.ms-page').forEach(p=>p.classList.toggle('active',p.dataset.msPage===msPage));
+  const title=$('msTitle');if(title)title.textContent=msTitleText(msPage);
+  if(msPage==='theme'){renderMsTheme();renderMsColors();}
+  if(msPage==='language')renderMsLang();
+}
+function renderMsProfile(){
+  const u=getCurrentUser();if(!u)return;
+  const nameEl=document.querySelector('#mobileSettings [data-user-name]');
+  if(nameEl)nameEl.textContent=formatShortName(u.name,u.email);
+  const emailEl=$('msEmail');if(emailEl)emailEl.textContent=u.email||'';
+  Account.applyAvatar();
+}
+function renderMsTheme(){
+  const dark=Theme.current()==='dark';
+  const sw=$('msThemeSwitch');if(!sw)return;
+  sw.classList.toggle('on',dark);sw.setAttribute('aria-checked',String(dark));
+}
+function renderMsColors(){
+  const cur=msGet(MS_COLOR_KEY,'blue'),unlocked=msUnlocked(),free=msAllColorsFree();
+  document.querySelectorAll('[data-ms-color]').forEach(b=>{
+    const k=b.dataset.msColor;
+    const locked=!free&&k!=='blue'&&unlocked.indexOf(k)===-1;
+    b.classList.toggle('selected',k===cur);
+    b.classList.toggle('locked',locked&&k!==cur);
+    const price=b.querySelector('.ms-price');
+    if(price)price.textContent=free?T('color_unlocked'):(locked?T('color_price'):(k==='blue'?'':T('color_unlocked')));
+    const use=b.querySelector('.ms-color-check use');
+    if(use)use.setAttribute('href',locked?'#icon-lock':'#icon-check');
+  });
+}
+function renderMsLang(){
+  document.querySelectorAll('[data-ms-lang]').forEach(b=>b.classList.toggle('active',b.dataset.msLang===currentLang));
+}
+let _desktopUserChipClick=null;
+function lockPhoneTopbar(){
+  const chip=$('userChip');
+  if(chip&&isPhone()){
+    if(!_desktopUserChipClick&&chip.onclick)_desktopUserChipClick=chip.onclick;
+    chip.onclick=e=>{e.preventDefault();e.stopPropagation();};
+    chip.tabIndex=-1;chip.setAttribute('aria-expanded','false');chip.setAttribute('aria-haspopup','false');
+  }else if(chip){
+    if(_desktopUserChipClick)chip.onclick=_desktopUserChipClick;
+    chip.removeAttribute('tabindex');chip.setAttribute('aria-expanded','false');chip.setAttribute('aria-haspopup','menu');
+  }
+  const dd=$('userDropdown');if(dd)dd.classList.remove('open');
+}
+function openMobileSettings(){
+  const s=$('mobileSettings');if(!s)return;
+  try{UserMenu.close();}catch(e){}
+  try{closeNavMoreMenu();}catch(e){}
+  const old=$('settingsModal');if(old)old.classList.remove('show');
+  const bd=$('msModalBackdrop');if(bd)bd.classList.add('show');
+  renderMsProfile();showMsPage('main');
+  s.classList.add('show');s.setAttribute('aria-hidden','false');
+  document.querySelectorAll('.mobile-nav-btn').forEach(b=>b.classList.toggle('active','openSettings' in b.dataset));
+  setDocTitle(T('settings'));
+}
+function closeMobileSettings(){
+  const s=$('mobileSettings');if(!s||!s.classList.contains('show'))return;
+  const bd=$('msModalBackdrop');if(bd)bd.classList.remove('show');
+  s.classList.remove('show');s.setAttribute('aria-hidden','true');
+  document.querySelectorAll('.mobile-nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===currentPage));
+  updateDocTitle();
+}
+const MobileSettings=(function(){
+  function init(){
+    applyPrimaryColor();
+    const s=$('mobileSettings');if(!s)return;
+    const back=$('msBack');if(back)back.onclick=()=>{if(msPage==='main')closeMobileSettings();else showMsPage('main');};
+    const close=$('msClose');if(close)close.onclick=closeMobileSettings;
+    const backdrop=$('msModalBackdrop');if(backdrop)backdrop.onclick=closeMobileSettings;
+    const themes=$('msThemes');if(themes)themes.onclick=()=>showMsPage('theme');
+    const lang=$('msLanguage');if(lang)lang.onclick=()=>showMsPage('language');
+    const sw=$('msThemeSwitch');if(sw)sw.onclick=()=>{const next=Theme.current()==='dark'?'light':'dark';Theme.apply(next);renderMsTheme();showToast(T(next==='dark'?'theme_dark':'theme_light'));};
+    document.querySelectorAll('[data-ms-color]').forEach(b=>b.onclick=()=>{
+      const k=b.dataset.msColor,cur=msGet(MS_COLOR_KEY,'blue');
+      if(k===cur){showToast(T('color_selected'));return;}
+      const unlocked=msUnlocked(),free=msAllColorsFree();
+      if(!free&&k!=='blue'&&unlocked.indexOf(k)===-1){
+        if(getCoins()<100){showToast(T('not_enough_coins'));return;}
+        setMsCoins(getCoins()-100);unlocked.push(k);msSet(MS_UNLOCKED_KEY,JSON.stringify(unlocked));
+        showToast(T('color_unlocked_msg'));
+      }
+      msSet(MS_COLOR_KEY,k);applyPrimaryColor();renderMsColors();
+    });
+    document.querySelectorAll('[data-ms-lang]').forEach(b=>b.onclick=()=>{
+      I18N.set(b.dataset.msLang);renderMsLang();showMsPage('language');
+    });
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&s.classList.contains('show'))closeMobileSettings();});
+    renderMsTheme();renderMsColors();renderMsLang();
+  }
+  return{init,open:openMobileSettings,close:closeMobileSettings};
+})();
+applyPrimaryColor();
 
 function updateOnlineStatus(){if(!navigator.onLine){$('offlineOverlay').classList.add('show');}else{$('offlineOverlay').classList.remove('show');}}
 window.addEventListener('online',updateOnlineStatus);
@@ -1646,10 +1980,12 @@ window.addEventListener('offline',updateOnlineStatus);
   const revealAuth=()=>{ try{hideLoader();}catch(e){} const a=$('authView'),ap=$('appView'); if(ap) ap.classList.add('hidden'); if(a) a.classList.remove('hidden'); try{updateDocTitle();}catch(e){} };
   try{
     try{checkFields();}catch(e){console.error(e);}
-    try{initAllSelects();buildGradesGrid();}catch(e){console.error(e);}
+    try{initAllSelects();bindLessonAutofill();buildGradesGrid();}catch(e){console.error(e);}
     try{Theme.init();I18N.init();initAuthLanguage();}catch(e){console.error(e);}
     try{UserMenu.init(); try{UserMenu.close();}catch(e){}}catch(e){console.error(e);}
+    try{lockPhoneTopbar();}catch(e){console.error(e);}
     try{Account.init();Account.applyAvatar();}catch(e){console.error(e);}
+    try{MobileSettings.init();}catch(e){console.error(e);}
     try{updateOnlineStatus();}catch(e){console.error(e);}
     const authThemeBtn=$('authThemeToggle');
     if(authThemeBtn){ authThemeBtn.addEventListener('click',()=>{ Theme.apply(Theme.current()==='dark'?'light':'dark'); applyAuthTranslations(); }); }
@@ -1662,7 +1998,7 @@ window.addEventListener('offline',updateOnlineStatus);
       try{applyUserToUI();rebuildMenu();renderPage('home');updateDocTitle();}catch(e){console.error(e);}
       requestAnimationFrame(()=>{ const av=$('appView'); if(av) av.classList.add('ready'); try{moveIndicator();}catch(e){} });
       hideLoader();
-      prefetchAll(s.user).then(()=>{if(['schedule','diary','users','journal','ministry'].includes(currentPage))refreshCurrentPage();}).catch(()=>{});
+      prefetchAll(s.user).then(()=>{if(['schedule','diary','users','journal','ministry'].includes(currentPage))refreshCurrentPage();try{startRealtimeSync();}catch(e){}}).catch(()=>{});
     } else {
       revealAuth();
     }
